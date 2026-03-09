@@ -174,3 +174,16 @@
   align-items: center;
   justify-content: space-between;
 }
+
+.table-header-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  font-family: var(--font-display, 'Space Grotesk', sans-serif);
+  color: hsl(var(--foreground));
+}
+
+.table-header-subtitle {
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  margin-top: 0.125rem;
+}
