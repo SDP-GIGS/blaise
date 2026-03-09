@@ -215,3 +215,16 @@
     height: 1rem;
     flex-shrink: 0;
 }
+.signup-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: hsl(var(--muted-foreground));
+    margin-bottom: 0.5rem;
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.signup-input {
+    width: 100%;
+}
