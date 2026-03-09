@@ -110,3 +110,20 @@
     height: 0.875rem;
     color: hsl(var(--accent));
 }
+.signup-role-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.signup-role-card {
+    position: relative;
+    border-radius: 1rem;
+    padding: 1rem;
+    text-align: left;
+    transition-property: all;
+    transition-duration: 300ms;
+    border: 1px solid transparent;
+    overflow: hidden;
+}
