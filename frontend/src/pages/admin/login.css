@@ -128,3 +128,15 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
+.login-input {
+    width: 100%;
+}
+
+.login-password-wrapper {
+    position: relative;
+}
+
+.login-password-input {
+    width: 100%;
+    padding-right: 2.5rem;
+}
