@@ -173,3 +173,6 @@
     font-weight: 600;
     text-decoration-line: none;
 }
+.login-link:hover {
+    text-decoration-line: underline;
+}
