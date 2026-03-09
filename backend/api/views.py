@@ -37,3 +37,9 @@ def login(request):
         })
     return Response({'error': 'Invalid email or password'}, status=status.HTTP_401_UNAUTHORIZED)
 
+    @api_view(['GET'])
+    @permission_classes([IsAuthenticated])
+    def get_current_user(request):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
+
