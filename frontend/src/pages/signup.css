@@ -174,3 +174,15 @@
     height: 1.25rem;
     color: white;
 }
+.signup-role-name {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: hsl(var(--foreground));
+}
+
+.signup-role-desc {
+    font-size: 11px;
+    color: hsl(var(--muted-foreground));
+    margin-top: 0.25rem;
+    line-height: 1.625;
+}
