@@ -228,3 +228,11 @@
 .signup-input {
     width: 100%;
 }
+.signup-password-wrapper {
+    position: relative;
+}
+
+.signup-password-input {
+    width: 100%;
+    padding-right: 2.5rem;
+}
