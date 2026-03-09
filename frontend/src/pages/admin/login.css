@@ -42,3 +42,27 @@
     background-color: rgba(59, 130, 246, 0.05);
     filter: blur(120px);
 }
+
+.login-content-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 28rem;
+    z-index: 10;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.login-logo-container {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1.25rem;
+}
