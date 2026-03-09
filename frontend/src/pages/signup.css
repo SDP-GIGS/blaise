@@ -236,3 +236,15 @@
     width: 100%;
     padding-right: 2.5rem;
 }
+.signup-password-toggle {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: hsl(var(--muted-foreground));
+    transition: color 0.15s ease-in-out;
+}
+
+.signup-password-toggle:hover {
+    color: hsl(var(--foreground));
+}
