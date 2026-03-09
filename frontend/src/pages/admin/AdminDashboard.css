@@ -150,3 +150,14 @@
   gap: 1rem;
   margin-top: 0.75rem;
 }
+.chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.chart-legend-color {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 9999px;
+}
