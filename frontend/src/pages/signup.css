@@ -258,3 +258,13 @@
     opacity: 0.3;
     cursor: not-allowed;
 }
+.signup-submit-icon {
+    width: 1rem;
+    height: 1rem;
+}
+
+.signup-footer-text {
+    text-align: center;
+    font-size: 0.875rem;
+    color: hsl(var(--muted-foreground));
+}
