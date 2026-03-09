@@ -48,3 +48,21 @@
     background-color: rgba(59, 130, 246, 0.05);
     filter: blur(120px);
 }
+.signup-glow-3 {
+    position: absolute;
+    top: 2.5rem;
+    right: 25%;
+    width: 300px;
+    height: 300px;
+    border-radius: 9999px;
+    background-color: rgba(139, 92, 246, 0.05);
+    filter: blur(100px);
+}
+
+.signup-content-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 32rem;
+    /* slightly wider than login for the grid */
+    z-index: 10;
+}
