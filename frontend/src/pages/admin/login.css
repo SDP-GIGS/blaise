@@ -162,3 +162,14 @@
     width: 1rem;
     height: 1rem;
 }
+.login-footer-text {
+    text-align: center;
+    font-size: 0.875rem;
+    color: hsl(var(--muted-foreground));
+}
+
+.login-link {
+    color: hsl(var(--accent));
+    font-weight: 600;
+    text-decoration-line: none;
+}
