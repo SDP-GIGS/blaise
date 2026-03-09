@@ -10,3 +10,14 @@
     position: relative;
     overflow: hidden;
 }
+@media (min-width: 640px) {
+    .signup-container {
+        padding: 1.5rem;
+    }
+}
+
+.signup-bg-grid {
+    position: absolute;
+    inset: 0;
+    opacity: 0.2;
+}
