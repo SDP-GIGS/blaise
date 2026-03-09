@@ -149,3 +149,19 @@
     transition-property: opacity;
     transition-duration: 300ms;
 }
+
+.signup-role-card:hover .signup-role-hover-overlay {
+    opacity: 1;
+}
+
+.signup-role-icon-box {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+    transition-property: transform;
+    transition-duration: 300ms;
+}
