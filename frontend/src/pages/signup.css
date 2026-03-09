@@ -127,3 +127,12 @@
     border: 1px solid transparent;
     overflow: hidden;
 }
+.signup-role-card.selected {
+    border-color: hsl(var(--accent) / 0.5);
+    background-color: hsl(var(--accent) / 0.05);
+}
+
+.signup-role-card.unselected {
+    border-color: hsl(var(--border));
+    background-color: hsl(var(--card));
+}
