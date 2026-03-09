@@ -217,3 +217,16 @@
   font-weight: 700;
   color: hsl(var(--accent));
 }
+.student-name-text {
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+
+.td-muted {
+  color: hsl(var(--muted-foreground));
+}
+
+.td-muted-sm {
+  color: hsl(var(--muted-foreground));
+  font-size: 0.75rem;
+}
