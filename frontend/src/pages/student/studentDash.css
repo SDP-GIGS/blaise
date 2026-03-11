@@ -244,3 +244,15 @@
     justify-content: center;
   }
   
+.student-dash-week-pill span {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #facc15;
+  }
+  
+  .student-dash-log-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #f9fafb;
+  }
+  
