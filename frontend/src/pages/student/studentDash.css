@@ -169,4 +169,11 @@
   .status-text-approved {
     color: #4ade80;
   }
+  .status-bg-submitted {
+    background-color: rgba(59, 130, 246, 0.18);
+  }
+  
+  .status-text-submitted {
+    color: #93c5fd;
+  }
   
