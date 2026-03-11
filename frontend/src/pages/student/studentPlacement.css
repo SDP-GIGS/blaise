@@ -232,3 +232,16 @@
     color: #e5e7eb;
   }
   
+.placement-timeline-date {
+    margin-top: 0.1rem;
+    font-size: 0.75rem;
+    color: rgba(148, 163, 184, 0.9);
+  }
+  
+  .placement-empty {
+    max-width: 640px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 4rem 1rem;
+  }
+  
