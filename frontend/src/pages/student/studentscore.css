@@ -319,4 +319,18 @@
     overflow: hidden;
   }
   
+
+  .scores-criteria-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(to right, #facc15, #eab308, #f97316);
+  }
+  
+  .scores-criteria-score {
+    width: 3rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #f9fafb;
+    text-align: right;
+  }
   
