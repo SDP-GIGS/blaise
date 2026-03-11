@@ -130,4 +130,17 @@
     font-size: 0.75rem;
     color: rgba(148, 163, 184, 0.95);
   }
+  .student-dash-placement-body {
+    margin-top: 1.3rem;
+    display: grid;
+    gap: 0.9rem;
+  }
+  
+  .student-dash-meta-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: rgba(148, 163, 184, 0.9);
+  }
   
