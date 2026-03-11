@@ -255,4 +255,15 @@
     font-weight: 600;
     color: #f9fafb;
   }
+  .student-dash-log-dates {
+    margin-top: 0.1rem;
+    font-size: 0.75rem;
+    color: rgba(148, 163, 184, 0.95);
+  }
+  
+  .student-dash-log-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
   
