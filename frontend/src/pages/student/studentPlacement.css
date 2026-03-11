@@ -58,3 +58,15 @@
     padding: 1.6rem 1.7rem 1.8rem;
   }
   
+.placement-hero {
+    margin-bottom: 1.5rem;
+  }
+  
+  .placement-hero-top {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+  
