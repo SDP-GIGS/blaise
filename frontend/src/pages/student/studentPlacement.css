@@ -1,0 +1,23 @@
+@import "./studentDash.css";
+
+.placement-root {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.placement-header {
+    margin-bottom: 1.75rem;
+  }
+  
+  .placement-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.35rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: #facc15;
+  }
+  
