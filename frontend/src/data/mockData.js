@@ -1,8 +1,15 @@
 export const UserRole = {
-  STUDENT: 'student',
-  WORKPLACE_SUPERVISOR: 'workplace_supervisor',
-  ACADEMIC_SUPERVISOR: 'academic_supervisor',
-  ADMIN: 'admin',
+  STUDENT: "student",
+  WORKPLACE_SUPERVISOR: "workplace_supervisor",
+  ACADEMIC_SUPERVISOR: "academic_supervisor",
+  ADMIN: "admin",
+};
+
+export const roleLabels = {
+  [UserRole.STUDENT]: "Student",
+  [UserRole.WORKPLACE_SUPERVISOR]: "Workplace Supervisor",
+  [UserRole.ACADEMIC_SUPERVISOR]: "Academic Supervisor",
+  [UserRole.ADMIN]: "Administrator",
 };
 
 export const mockUsers = [

@@ -306,6 +306,104 @@
   text-decoration: underline;
 }
 
+/* Signup role selection */
+.signup-role-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 1.4rem;
+}
+
+.signup-role-card {
+  position: relative;
+  padding: 0.85rem 0.9rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  background: radial-gradient(circle at top left, #020617, #020617);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.08s ease,
+    background-color 0.15s ease;
+}
+
+.signup-role-card:hover {
+  border-color: rgba(250, 204, 21, 0.75);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.9);
+  transform: translateY(-1px);
+}
+
+.signup-role-card--selected {
+  border-color: rgba(250, 204, 21, 0.9);
+  box-shadow:
+    0 0 0 1px rgba(250, 204, 21, 0.7),
+    0 16px 34px rgba(15, 23, 42, 0.95);
+}
+
+.signup-role-icon {
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.signup-role-icon-svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  color: #f9fafb;
+}
+
+.role-accent-blue {
+  background: linear-gradient(to bottom right, #3b82f6, #06b6d4);
+}
+
+.role-accent-emerald {
+  background: linear-gradient(to bottom right, #10b981, #14b8a6);
+}
+
+.role-accent-violet {
+  background: linear-gradient(to bottom right, #8b5cf6, #6366f1);
+}
+
+.role-accent-gold {
+  background: linear-gradient(to bottom right, #facc15, #f97316);
+}
+
+.signup-role-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.signup-role-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.signup-role-description {
+  font-size: 0.7rem;
+  color: rgba(156, 163, 175, 0.95);
+}
+
+.signup-role-check {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.6rem;
+}
+
+.signup-role-check-icon {
+  width: 1rem;
+  height: 1rem;
+  color: #facc15;
+}
+
 /* Small phones */
 @media (max-width: 480px) {
   .login-card-wrapper {
