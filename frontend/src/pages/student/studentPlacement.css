@@ -210,3 +210,15 @@
     justify-content: center;
   }
   
+.placement-timeline-dot--done {
+    background: radial-gradient(circle at 10% 0, #fef3c7 0, #f59e0b 40%, #854d0e 100%);
+    border: none;
+    box-shadow: 0 10px 28px rgba(234, 179, 8, 0.45);
+  }
+  
+  .placement-timeline-dot-check {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #020617;
+  }
+  
