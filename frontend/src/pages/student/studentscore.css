@@ -240,3 +240,20 @@
     gap: 0.8rem;
   }
    
+.scores-eval-icon {
+    width: 2.3rem;
+    height: 2.3rem;
+    border-radius: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .scores-eval-icon--workplace {
+    background: linear-gradient(to bottom right, #10b981, #14b8a6);
+  }
+  
+  .scores-eval-icon--academic {
+    background: linear-gradient(to bottom right, #8b5cf6, #6366f1);
+  }
+  
