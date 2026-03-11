@@ -148,4 +148,18 @@
     align-items: center;
     justify-content: center;
   }
+  .placement-detail-icon-svg {
+    width: 1rem;
+    height: 1rem;
+    color: #f9fafb;
+  }
+  
+  .placement-detail-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: rgba(148, 163, 184, 0.9);
+  }
+  
   
