@@ -70,3 +70,16 @@
     margin-bottom: 1.5rem;
   }
   
+@media (min-width: 640px) {
+    .placement-hero-top {
+      flex-direction: row;
+      align-items: center;
+    }
+  }
+  
+  .placement-hero-main {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
