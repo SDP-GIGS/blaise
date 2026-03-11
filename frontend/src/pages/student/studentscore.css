@@ -106,3 +106,16 @@
     margin-bottom: 1.6rem;
   }
   
+.scores-summary-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  
+  .scores-gauge-wrapper {
+    width: 11rem;
+    height: 11rem;
+    position: relative;
+  }
+  
