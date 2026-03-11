@@ -222,3 +222,13 @@
     color: #020617;
   }
   
+.placement-timeline-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(148, 163, 184, 0.95);
+  }
+  
+  .placement-timeline-label--done {
+    color: #e5e7eb;
+  }
+  
