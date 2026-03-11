@@ -1,0 +1,28 @@
+@import "./studentDash.css";
+
+.scores-root {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.scores-header {
+  margin-bottom: 1.75rem;
+}
+
+.scores-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.35rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: #facc15;
+  }
+  
+  .scores-kicker-icon {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+  

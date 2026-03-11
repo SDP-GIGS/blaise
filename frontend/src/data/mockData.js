@@ -118,3 +118,40 @@ export const statusColors = {
     text: "status-text-approved",
   },
 };
+
+export const mockEvaluations = [
+  {
+    id: 1,
+    studentId: 1,
+    type: "workplace",
+    evaluatorName: "Jane Workplace Supervisor",
+    weight: 60,
+    totalScore: 84,
+    maxTotal: 100,
+    criteria: [
+      { name: "Professionalism", score: 18, maxScore: 20 },
+      { name: "Technical Skills", score: 22, maxScore: 25 },
+      { name: "Communication", score: 20, maxScore: 25 },
+      { name: "Punctuality", score: 24, maxScore: 30 },
+    ],
+    comments:
+      "Consistently meets expectations and shows strong initiative in assigned tasks.",
+  },
+  {
+    id: 2,
+    studentId: 1,
+    type: "academic",
+    evaluatorName: "Dr. Academic Supervisor",
+    weight: 40,
+    totalScore: 90,
+    maxTotal: 100,
+    criteria: [
+      { name: "Report Quality", score: 23, maxScore: 25 },
+      { name: "Reflection", score: 22, maxScore: 25 },
+      { name: "Learning Outcomes", score: 22, maxScore: 25 },
+      { name: "Presentation", score: 23, maxScore: 25 },
+    ],
+    comments:
+      "Demonstrates clear understanding of internship objectives and articulates learning very well.",
+  },
+];
