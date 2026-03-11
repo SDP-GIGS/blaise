@@ -6,3 +6,19 @@
   .student-dash-header {
     margin-bottom: 2rem;
   }
+  .student-dash-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.35rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: #facc15;
+  }
+  
+  .student-dash-kicker-icon {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
