@@ -351,3 +351,9 @@
     margin-bottom: 0.3rem;
   }
   
+.scores-comments-text {
+    font-size: 0.8rem;
+    color: rgba(148, 163, 184, 0.98);
+    line-height: 1.5;
+  }
+  
