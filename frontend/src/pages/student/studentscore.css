@@ -292,3 +292,15 @@
     color: #facc15;
   }
   
+.scores-criteria-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+  
+  .scores-criteria-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  
