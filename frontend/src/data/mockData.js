@@ -42,3 +42,77 @@ export const mockUsers = [
     name: 'Admin User',
   },
 ];
+
+export const mockLogs = [
+  {
+    id: 1,
+    studentId: 1,
+    weekNumber: 1,
+    hoursWorked: 38,
+    status: "approved",
+    startDate: "2026-01-03",
+    endDate: "2026-01-09",
+  },
+  {
+    id: 2,
+    studentId: 1,
+    weekNumber: 2,
+    hoursWorked: 40,
+    status: "approved",
+    startDate: "2026-01-10",
+    endDate: "2026-01-16",
+  },
+  {
+    id: 3,
+    studentId: 1,
+    weekNumber: 3,
+    hoursWorked: 39,
+    status: "submitted",
+    startDate: "2026-01-17",
+    endDate: "2026-01-23",
+  },
+  {
+    id: 4,
+    studentId: 1,
+    weekNumber: 4,
+    hoursWorked: 41,
+    status: "approved",
+    startDate: "2026-01-24",
+    endDate: "2026-01-30",
+  },
+];
+
+export const mockPlacements = [
+  {
+    id: 1,
+    studentId: 1,
+    company: "TechNova Solutions",
+    department: "Software Engineering",
+    startDate: "2026-01-01",
+    endDate: "2026-04-30",
+    status: "active",
+  },
+];
+
+export const statusColors = {
+  approved: {
+    bg: "status-bg-approved",
+    text: "status-text-approved",
+  },
+  submitted: {
+    bg: "status-bg-submitted",
+    text: "status-text-submitted",
+  },
+  pending: {
+    bg: "status-bg-pending",
+    text: "status-text-pending",
+  },
+  rejected: {
+    bg: "status-bg-rejected",
+    text: "status-text-rejected",
+  },
+  active: {
+    bg: "status-bg-approved",
+    text: "status-text-approved",
+  },
+};
