@@ -163,3 +163,17 @@
   }
   
   
+.placement-detail-value {
+    margin-top: 0.3rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #e5e7eb;
+  }
+  
+  .placement-timeline-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #f9fafb;
+    margin-bottom: 0.8rem;
+  }
+  
