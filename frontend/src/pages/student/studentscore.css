@@ -279,3 +279,16 @@
     text-align: right;
   }
   
+.scores-eval-score {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f9fafb;
+  }
+  
+  .scores-eval-percent {
+    margin-top: 0.15rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #facc15;
+  }
+  
