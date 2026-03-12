@@ -33,3 +33,16 @@
     color: #facc15;
   }
   
+.logbook-kicker-icon {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+  
+  .logbook-title {
+    font-size: 2.1rem;
+    line-height: 1.1;
+    font-weight: 700;
+    color: #f9fafb;
+    letter-spacing: -0.03em;
+  }
+  
