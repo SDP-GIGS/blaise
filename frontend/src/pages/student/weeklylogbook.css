@@ -46,3 +46,28 @@
     letter-spacing: -0.03em;
   }
   
+.logbook-subtitle {
+    margin-top: 0.25rem;
+    font-size: 0.85rem;
+    color: rgba(148, 163, 184, 0.95);
+  }
+  
+  .logbook-new-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border-radius: 0.9rem;
+    border: none;
+    padding: 0.55rem 0.9rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    background: linear-gradient(to right, #facc15, #eab308, #f97316);
+    color: #111827;
+    box-shadow:
+      0 14px 32px rgba(234, 179, 8, 0.45),
+      0 0 0 1px rgba(250, 250, 250, 0.05);
+  }
+  
