@@ -209,3 +209,17 @@
     overflow: hidden;
   }
   
+.logbook-card-header {
+    padding: 1.1rem 1.4rem 0.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  
+  .logbook-card-main {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+  
