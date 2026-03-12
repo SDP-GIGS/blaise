@@ -138,3 +138,18 @@
     color: rgba(148, 163, 184, 0.95);
   }
   
+.logbook-input {
+    width: 100%;
+    border-radius: 0.8rem;
+    border: 1px solid rgba(148, 163, 184, 0.45);
+    background-color: rgba(15, 23, 42, 0.9);
+    color: #f9fafb;
+    font-size: 0.85rem;
+    padding: 0.55rem 0.75rem;
+    resize: vertical;
+  }
+  
+  .logbook-input::placeholder {
+    color: rgba(148, 163, 184, 0.78);
+  }
+  
