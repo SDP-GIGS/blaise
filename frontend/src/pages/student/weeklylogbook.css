@@ -163,3 +163,19 @@
     padding-top: 0.4rem;
   }
   
+.logbook-btn-primary,
+.logbook-btn-secondary {
+  border-radius: 0.8rem;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: none;
+}
+
+.logbook-btn-primary {
+  background: linear-gradient(to right, #facc15, #eab308, #f97316);
+  color: #111827;
+}
