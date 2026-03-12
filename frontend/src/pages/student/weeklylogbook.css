@@ -223,3 +223,20 @@
     gap: 0.9rem;
   }
   
+.logbook-week-pill {
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 1rem;
+    background: radial-gradient(circle at top left, rgba(234, 179, 8, 0.16), transparent);
+    border: 1px solid rgba(234, 179, 8, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .logbook-week-pill span {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #facc15;
+  }
+  
