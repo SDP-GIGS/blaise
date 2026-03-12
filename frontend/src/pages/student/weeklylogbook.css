@@ -292,3 +292,13 @@
     color: #4ade80;
   }
   
+.logbook-section-label--amber {
+    color: #facc15;
+  }
+  
+  .logbook-section-text {
+    font-size: 0.8rem;
+    color: rgba(148, 163, 184, 0.98);
+    line-height: 1.5;
+  }
+  
