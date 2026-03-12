@@ -341,3 +341,19 @@
     color: rgba(148, 163, 184, 0.95);
   }
   
+.logbook-actions-row {
+    padding: 0.6rem 1.4rem 0.7rem;
+    border-top: 1px solid rgba(30, 41, 59, 0.9);
+    background-color: rgba(15, 23, 42, 0.8);
+    display: flex;
+    gap: 0.6rem;
+  }
+  
+  .logbook-btn-small {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.7rem;
+  }
+  
