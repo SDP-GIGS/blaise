@@ -330,3 +330,14 @@
     margin-bottom: 0.3rem;
   }
   
+.logbook-supervisor-text {
+    font-size: 0.8rem;
+    color: rgba(250, 250, 249, 0.9);
+  }
+  
+  .logbook-edit-placeholder {
+    padding: 0.9rem 1.4rem 1.1rem;
+    font-size: 0.8rem;
+    color: rgba(148, 163, 184, 0.95);
+  }
+  
