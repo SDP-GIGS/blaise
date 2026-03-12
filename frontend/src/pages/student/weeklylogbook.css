@@ -240,3 +240,15 @@
     color: #facc15;
   }
   
+.logbook-card-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #f9fafb;
+  }
+  
+  .logbook-card-dates {
+    margin-top: 0.1rem;
+    font-size: 0.78rem;
+    color: rgba(148, 163, 184, 0.95);
+  }
+  
