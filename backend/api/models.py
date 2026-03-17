@@ -78,3 +78,10 @@ class WeeklyLog(models.Model):
 
     def __str__(self):
         return f"{self.student.full_name} - Week {self.week_number}"
+    
+    class SupervisorReview(models.Model):
+        STATUS_CHOICES = [
+            ('reviewed', 'Reviewed'),
+            ('approved', 'Approved'),
+            ('rejected', 'Rejected'),
+        ]
