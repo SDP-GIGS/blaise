@@ -63,7 +63,7 @@ const SignUp = () => {
   const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
     setError("");
 
