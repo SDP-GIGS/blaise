@@ -1,0 +1,13 @@
+
+/* Base structural classes */
+.stat-card {
+  background: hsl(222 47% 9%);
+  border: 1px solid hsl(220 30% 16%);
+  border-radius: 14px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
