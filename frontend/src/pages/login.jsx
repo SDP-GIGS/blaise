@@ -29,7 +29,7 @@ const Login = () => {
   const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState("");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -38,7 +38,7 @@ const Login = () => {
       return;
     }
 
-    const result = signIn(email, password);
+    const result =  signIn(email, password);
 
     if (result.success && result.role && rolePaths[result.role]) {
       navigate(rolePaths[result.role]);
