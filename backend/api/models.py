@@ -25,3 +25,9 @@ class CustomUser(AbstractUser):
         ('active', 'Active'),
         ('completed', 'Completed'),
     ]
+    student = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='placements',
+        limit_choices_to={'role': 'student'}
+    )
