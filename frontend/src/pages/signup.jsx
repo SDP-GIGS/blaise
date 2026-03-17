@@ -84,7 +84,7 @@ const SignUp = () => {
       return;
     }
 
-    const result = signUp(name, email, password, selectedRole);
+    const result = await signUp(name, email, password, selectedRole);
 
     if (result.success && rolePaths[selectedRole]) {
       navigate(rolePaths[selectedRole]);
