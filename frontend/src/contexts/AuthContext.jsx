@@ -9,22 +9,27 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const signIn = (email, password) => {
-    const foundUser = users.find((u) => u.email === email && u.password === password);
-    
-    if (foundUser) {
-      setUser(foundUser);
-      setIsAuthenticated(true);
-      return {
-        success: true,
-        role: foundUser.role,
-        user: foundUser,
-      };
-    } else {
-      return {
-        success: false,
-        error: 'Invalid email or password',
-      };
+   const signIn = async (email, password) => {
+    try {
+      const response = await fetch(`${API_URL}/auth/login/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem('access_token', data.access);
+        localStorage.setItem('refresh_token', data.refresh);
+        setUser(data.user);
+        setIsAuthenticated(true);
+        return { success: true, role: data.user.role, user: data.user };
+      } else {
+        return { success: false, error: data.error || 'Login failed.' };
+      }
+    } catch (error) {
+      return { success: false, error: 'Could not connect to server.' };
     }
   };
 
