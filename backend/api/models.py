@@ -40,3 +40,13 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return f"{self.student.full_name} - {self.company}"
+    
+
+class WeeklyLog(models.Model):
+    STATUS_CHOICES = [
+        ('draft', 'Draft'),
+        ('submitted', 'Submitted'),
+        ('reviewed', 'Reviewed'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
