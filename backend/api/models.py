@@ -109,3 +109,10 @@ class Evaluation(models.Model):
         ('academic', 'Academic Evaluation'),
     ]
 
+    student = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='evaluations',
+        limit_choices_to={'role': 'student'}
+    )
+
