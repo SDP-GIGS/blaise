@@ -19,8 +19,8 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return f"{self.full_name} ({self.role})"
     
-    class InternshipPlacement(models.Model):
-     STATUS_CHOICES = [
+class InternshipPlacement(models.Model):
+    STATUS_CHOICES = [
         ('new', 'New'),
         ('active', 'Active'),
         ('completed', 'Completed'),
@@ -56,4 +56,10 @@ class WeeklyLog(models.Model):
         on_delete=models.CASCADE,
         related_name='weekly_logs',
         limit_choices_to={'role': 'student'}
+    )
+
+    placement = models.ForeignKey(
+        InternshipPlacement,
+        on_delete=models.CASCADE,
+        related_name='logs'
     )
