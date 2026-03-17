@@ -102,3 +102,10 @@ class SupervisorReview(models.Model):
     reviewed_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return f"Review for {self.log} by {self.supervisor.full_name}"
+    
+class Evaluation(models.Model):
+    TYPE_CHOICES = [
+        ('workplace', 'Workplace Evaluation'),
+        ('academic', 'Academic Evaluation'),
+    ]
+
