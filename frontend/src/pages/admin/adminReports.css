@@ -1,0 +1,10 @@
+/* Recharts overrides to match theme */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: hsl(220 30% 14%);
+}
+
+.recharts-tooltip-cursor {
+  fill: hsl(222 47% 12%);
+}
+
