@@ -100,4 +100,5 @@ class SupervisorReview(models.Model):
     comment = models.TextField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='reviewed')
     reviewed_at = models.DateTimeField(auto_now_add=True)
-
+    def __str__(self):
+        return f"Review for {self.log} by {self.supervisor.full_name}"
