@@ -32,3 +32,11 @@ class InternshipPlacementSerializer(serializers.ModelSerializer):
         model = InternshipPlacement
         fields = ['id', 'student', 'student_name', 'company', 'start_date', 'end_date', 'status', 'created_at']
         read_only_fields = ['created_at']
+
+class WeeklyLogSerializer(serializers.ModelSerializer):
+    student_name = serializers.CharField(source='student.full_name', read_only=True)
+
+    class Meta:
+        model = WeeklyLog
+        fields = ['id', 'student', 'student_name', 'placement', 'week_number', 'date', 'activities', 'learnings', 'challenges', 'status', 'submitted_at', 'created_at']
+        read_only_fields = ['created_at']
