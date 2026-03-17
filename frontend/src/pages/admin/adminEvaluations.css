@@ -143,3 +143,21 @@
      );
      pointer-events: none;
    }
+   
+   .card-premium:hover {
+     border-color: var(--border-glow);
+     box-shadow: var(--shadow-card), var(--shadow-glow);
+   }
+   
+   .glass-card {
+     background: var(--bg-overlay);
+     border: 1px solid var(--border);
+     backdrop-filter: blur(8px);
+     -webkit-backdrop-filter: blur(8px);
+     border-radius: var(--r-md);
+   }
+   
+   /* ── Gradient helpers ───────────────────────────────────── */
+   .gradient-gold {
+     background: linear-gradient(90deg, var(--accent) 0%, var(--accent-bright) 100%);
+   }
