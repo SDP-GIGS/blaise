@@ -53,3 +53,13 @@
   border-bottom: 1px solid hsl(220 30% 16%);
   background: hsl(222 47% 11%);
 }
+
+.table-premium td {
+  padding: 1rem 1.5rem;
+  font-size: 0.875rem;
+  border-bottom: 1px solid hsl(220 30% 16%);
+}
+
+.table-premium tbody tr {
+  transition: background-color 0.2s ease;
+}
