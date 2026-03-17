@@ -126,3 +126,9 @@ class Evaluation(models.Model):
     evaluation_type = models.CharField(max_length=20, choices=TYPE_CHOICES)
     date = models.DateField(auto_now_add=True)
 
+    class Meta:
+        unique_together = ['student', 'evaluator']
+
+    def __str__(self):
+        return f"{self.evaluation_type} evaluation for {self.student.full_name} by {self.evaluator.full_name}"
+
