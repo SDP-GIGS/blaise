@@ -6,6 +6,7 @@ import StudentDashboard from './pages/student/studentDash'
 import StudentPlacement from './pages/student/studentPlacement'
 import StudentScores from './pages/student/studentscores'
 import WeeklyLogbook from './pages/student/weeklylogbook'
+import AdminEvaluations from './pages/admin/adminEvaluations'
 import './App.css'
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/student/placement" element={<StudentPlacement />} />
         <Route path="/student/scores" element={<StudentScores />} />
         <Route path="/student/logbook" element={<WeeklyLogbook />} />
+        <Route path="/admin/evaluations" element={<AdminEvaluations />} />
       </Routes>
     </Router>
   )
