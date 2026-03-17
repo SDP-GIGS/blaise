@@ -63,3 +63,12 @@ class WeeklyLog(models.Model):
         on_delete=models.CASCADE,
         related_name='logs'
     )
+
+    week_number = models.PositiveIntegerField()
+    date = models.DateField()
+    activities = models.TextField()
+    learnings = models.TextField()
+    challenges = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
+    submitted_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
