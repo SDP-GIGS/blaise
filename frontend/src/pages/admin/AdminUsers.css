@@ -36,3 +36,20 @@
 .pl-11 {
   padding-left: 2.75rem;
 }
+
+.table-premium {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-premium th {
+  text-align: left;
+  padding: 1rem 1.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: hsl(220 15% 65%);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid hsl(220 30% 16%);
+  background: hsl(222 47% 11%);
+}
