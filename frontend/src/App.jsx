@@ -8,6 +8,7 @@ import StudentScores from './pages/student/studentscores'
 import WeeklyLogbook from './pages/student/weeklylogbook'
 import AdminEvaluations from './pages/admin/adminEvaluations'
 import AdminReports from './pages/admin/Adminreports'
+import AdminUsers from './pages/admin/AdminUsers'
 import './App.css'
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
         <Route path="/student/logbook" element={<WeeklyLogbook />} />
         <Route path="/admin/evaluations" element={<AdminEvaluations />} />
         <Route path="/admin/reports" element={<AdminReports />} />
+        <Route path="/admin/users" element={<AdminUsers />} />
       </Routes>
     </Router>
   )
