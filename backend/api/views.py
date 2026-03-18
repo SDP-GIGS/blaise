@@ -149,3 +149,6 @@ def log_submit(request, pk):
         log = WeeklyLog.objects.get(pk=pk, student=request.user)
     except WeeklyLog.DoesNotExist:
         return Response({'error': 'Log not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    if log.status != 'draft':
+        return Response({'error': 'Only draft logs can be submitted'}, status=status.HTTP_400_BAD_REQUEST)
