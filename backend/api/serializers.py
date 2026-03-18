@@ -58,3 +58,4 @@ class EvaluationSerializer(serializers.ModelSerializer):
         model = Evaluation
         fields = ['id', 'student', 'student_name', 'evaluator', 'evaluator_name', 'score', 'comments', 'evaluation_type', 'date']
         read_only_fields = ['date']
+

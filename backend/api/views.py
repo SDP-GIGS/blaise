@@ -83,3 +83,15 @@ def placement_detail(request, pk):
     if request.method == 'DELETE':
         placement.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+@api_view(['GET', 'POST'])
+def log_list(request):
+    if request.method == 'GET':
+        if request.user.role == 'student':
+            logs = WeeklyLog.objects.filter(student=request.user)
+        elif request.user.role == 'workplace_supervisor':
+            logs = WeeklyLog.objects.filter(status__in=['submitted', 'reviewed', 'approved', 'rejected'])
+        else:
+            logs = WeeklyLog.objects.all()
+        serializer = WeeklyLogSerializer(logs, many=True)
+        return Response(serializer.data)   
