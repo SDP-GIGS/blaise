@@ -39,7 +39,7 @@ class WeeklyLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = WeeklyLog
         fields = ['id', 'student', 'student_name', 'placement', 'week_number', 'date', 'activities', 'learnings', 'challenges', 'status', 'submitted_at', 'created_at']
-        read_only_fields = ['created_at']
+        read_only_fields = ['student', 'submitted_at', 'created_at']
 
 class SupervisorReviewSerializer(serializers.ModelSerializer):
     supervisor_name = serializers.CharField(source='supervisor.full_name', read_only=True)
