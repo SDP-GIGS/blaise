@@ -5,7 +5,9 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
-from .serializers import RegisterSerializer, UserSerializer
+from .serializers import RegisterSerializer, UserSerializer, InternshipPlacementSerializer, WeeklyLogSerializer, SupervisorReviewSerializer, EvaluationSerializer
+from .models import InternshipPlacement, WeeklyLog, SupervisorReview, Evaluation
+from django.utils import timezone
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
