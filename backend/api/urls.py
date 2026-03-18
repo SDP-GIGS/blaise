@@ -12,4 +12,9 @@ urlpatterns = [
     path('placements/', views.placement_list, name='placement_list'),
     path('placements/<int:pk>/', views.placement_detail, name='placement_detail'),
 
+    # Weekly Logs
+    path('logs/', views.log_list, name='log_list'),
+    path('logs/<int:pk>/', views.log_detail, name='log_detail'),
+    path('logs/<int:pk>/submit/', views.log_submit, name='log_submit'),
+
 ]
