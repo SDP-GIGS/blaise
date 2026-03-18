@@ -157,3 +157,13 @@ def log_submit(request, pk):
     log.submitted_at = timezone.now()
     log.save()
     return Response(WeeklyLogSerializer(log).data)
+
+
+def review_list(request):
+    if request.method == 'GET':
+        if request.user.role == 'workplace_supervisor':
+            reviews = SupervisorReview.objects.filter(supervisor=request.user)
+        else:
+            reviews = SupervisorReview.objects.all()
+        serializer = SupervisorReviewSerializer(reviews, many=True)
+        return Response(serializer.data)
