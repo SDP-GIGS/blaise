@@ -129,3 +129,7 @@ def log_detail(request, pk):
         log = WeeklyLog.objects.get(pk=pk)
     except WeeklyLog.DoesNotExist:
         return Response({'error': 'Log not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        serializer = WeeklyLogSerializer(log)
+        return Response(serializer.data)
