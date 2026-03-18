@@ -102,3 +102,15 @@ def log_list(request):
             serializer.save(student=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET', 'POST'])
+def log_list(request):
+    if request.method == 'GET':
+        if request.user.role == 'student':
+            logs = WeeklyLog.objects.filter(student=request.user)
+        elif request.user.role == 'workplace_supervisor':
+            logs = WeeklyLog.objects.filter(status__in=['submitted', 'reviewed', 'approved', 'rejected'])
+        else:
+            logs = WeeklyLog.objects.all()
+        serializer = WeeklyLogSerializer(logs, many=True)
+        return Response(serializer.data)
