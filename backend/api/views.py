@@ -114,3 +114,11 @@ def log_list(request):
             logs = WeeklyLog.objects.all()
         serializer = WeeklyLogSerializer(logs, many=True)
         return Response(serializer.data)
+
+
+    if request.method == 'POST':
+        serializer = WeeklyLogSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(student=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
