@@ -68,3 +68,7 @@ def placement_detail(request, pk):
         placement = InternshipPlacement.objects.get(pk=pk)
     except InternshipPlacement.DoesNotExist:
         return Response({'error': 'Placement not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        serializer = InternshipPlacementSerializer(placement)
+        return Response(serializer.data)
