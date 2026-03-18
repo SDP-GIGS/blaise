@@ -142,3 +142,10 @@ def log_detail(request, pk):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['POST'])
+def log_submit(request, pk):
+    try:
+        log = WeeklyLog.objects.get(pk=pk, student=request.user)
+    except WeeklyLog.DoesNotExist:
+        return Response({'error': 'Log not found'}, status=status.HTTP_404_NOT_FOUND)
