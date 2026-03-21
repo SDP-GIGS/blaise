@@ -22,7 +22,7 @@ const HeroSection = () => {
       {/* Content */}
       <div className="relative z-10 max-w-5xl mx-auto px-6 text-center pt-24 pb-16">
         <div
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gold/30 bg-gold/10 mb-8 opacity-0 animate-fade-up"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gold/30 bg-gold/10 mb-8"
           style={{ animationDelay: "0.1s" }}
         >
           <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
@@ -32,7 +32,7 @@ const HeroSection = () => {
         </div>
 
         <h1
-          className="text-5xl sm:text-6xl lg:text-7xl font-serif font-bold text-gold-light leading-tight mb-6 opacity-0 animate-fade-up"
+          className="text-5xl sm:text-6xl lg:text-7xl font-serif font-bold text-gold-light leading-tight mb-6"
           style={{ animationDelay: "0.25s" }}
         >
           Track. Evaluate.{" "}
@@ -40,7 +40,7 @@ const HeroSection = () => {
         </h1>
 
         <p
-          className="text-lg sm:text-xl text-gold/60 max-w-2xl mx-auto mb-10 leading-relaxed opacity-0 animate-fade-up"
+          className="text-lg sm:text-xl text-gold/60 max-w-2xl mx-auto mb-10 leading-relaxed"
           style={{ animationDelay: "0.4s" }}
         >
           A comprehensive platform for managing internship placements, weekly
@@ -49,20 +49,26 @@ const HeroSection = () => {
         </p>
 
         <div
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 opacity-0 animate-fade-up"
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 relative z-20 mt-8"
           style={{ animationDelay: "0.55s" }}
         >
-          <a
-            href="/login"
-            className="px-8 py-3.5 rounded-xl gradient-gold text-navy font-bold text-base hover:opacity-90 transition-opacity shadow-gold"
-          >
-            Get Started
-          </a>
+          <div className="relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400 via-yellow-500 to-amber-500 rounded-full blur opacity-40 group-hover:opacity-75 transition duration-500"></div>
+            <a
+              href="/login"
+              className="relative flex items-center justify-center gap-3 px-12 py-5 rounded-full gradient-gold text-navy font-bold text-xl tracking-wide hover:scale-105 transition-all duration-300 shadow-gold"
+            >
+              Get Started
+              <svg className="w-6 h-6 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </a>
+          </div>
         </div>
 
         {/* Stats */}
         <div
-          className="grid grid-cols-3 gap-6 max-w-lg mx-auto opacity-0 animate-fade-up"
+          className="grid grid-cols-3 gap-6 max-w-lg mx-auto"
           style={{ animationDelay: "0.7s" }}
         >
           {stats.map((stat) => (
