@@ -28,14 +28,34 @@ const navByRole = {
     { label: "My Scores", path: "/student/scores", icon: Award },
   ],
   workplace_supervisor: [
-    { label: "Dashboard", path: "/supervisor/workplace", icon: LayoutDashboard },
-    { label: "Review Logs", path: "/supervisor/workplace/review", icon: ClipboardCheck },
-    { label: "Evaluate", path: "/supervisor/workplace/evaluate", icon: Calculator },
+    {
+      label: "Dashboard",
+      path: "/supervisor/workplace",
+      icon: LayoutDashboard,
+    },
+    {
+      label: "Review Logs",
+      path: "/supervisor/workplace/review",
+      icon: ClipboardCheck,
+    },
+    {
+      label: "Evaluate",
+      path: "/supervisor/workplace/evaluate",
+      icon: Calculator,
+    },
   ],
   academic_supervisor: [
     { label: "Dashboard", path: "/supervisor/academic", icon: LayoutDashboard },
-    { label: "Review Logs", path: "/supervisor/academic/review", icon: ClipboardCheck },
-    { label: "Evaluate", path: "/supervisor/academic/evaluate", icon: Calculator },
+    {
+      label: "Review Logs",
+      path: "/supervisor/academic/review",
+      icon: ClipboardCheck,
+    },
+    {
+      label: "Evaluate",
+      path: "/supervisor/academic/evaluate",
+      icon: Calculator,
+    },
   ],
   admin: [
     { label: "Dashboard", path: "/admin", icon: LayoutDashboard },
@@ -66,13 +86,15 @@ const AppLayout = ({ children }) => {
   const SidebarContent = () => (
     <>
       {/* Logo */}
-      <div className="p-5 border-b border-border/50">
+      <div className="p-5 border-b border-gray-200 dark:border-gray-700">
         <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl gradient-gold flex items-center justify-center shadow-gold transition-transform group-hover:scale-105">
-            <BookOpen className="w-5 h-5 text-background" />
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center shadow-lg transition-transform group-hover:scale-105">
+            <BookOpen className="w-5 h-5 text-white" />
           </div>
           <div>
-            <span className="text-lg font-bold font-display text-foreground tracking-tight">ILES</span>
+            <span className="text-lg font-bold font-display text-foreground tracking-tight">
+              ILES
+            </span>
             <div className="flex items-center gap-1">
               <Sparkles className="w-2.5 h-2.5 text-accent" />
               <span className="text-[10px] text-accent font-medium">PRO</span>
@@ -83,26 +105,28 @@ const AppLayout = ({ children }) => {
 
       {/* Role badge */}
       <div className="px-5 py-4">
-        <div className="glass-card rounded-xl p-3">
-          <p className="text-[10px] font-bold text-accent uppercase tracking-[0.15em]">
+        <div className="rounded-xl bg-white/80 dark:bg-gray-900/80 shadow p-3">
+          <p className="text-[10px] font-bold text-yellow-600 uppercase tracking-widest">
             {roleLabels[user.role]}
           </p>
-          <p className="text-sm font-semibold text-foreground mt-0.5">{user.name}</p>
-          <div className="mt-2 h-1 rounded-full bg-secondary overflow-hidden">
+          <p className="text-sm font-semibold text-gray-900 dark:text-white mt-0.5">
+            {user.name}
+          </p>
+          <div className="mt-2 h-1 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
             <motion.div
-              className="h-full gradient-gold rounded-full"
+              className="h-full bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full"
               initial={{ width: 0 }}
               animate={{ width: "75%" }}
               transition={{ duration: 1.5, delay: 0.5 }}
             />
           </div>
-          <p className="text-[10px] text-muted-foreground mt-1">75% profile complete</p>
+          <p className="text-[10px] text-gray-400 mt-1">75% profile complete</p>
         </div>
       </div>
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-2 space-y-1">
-        <p className="px-3 mb-2 text-[10px] font-bold text-muted-foreground uppercase tracking-[0.15em]">
+        <p className="px-3 mb-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
           Navigation
         </p>
         {navItems.map((item) => {
@@ -114,8 +138,8 @@ const AppLayout = ({ children }) => {
               onClick={() => setMobileOpen(false)}
               className={`relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
                 isActive
-                  ? "text-accent bg-accent/10"
-                  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                  ? "text-yellow-700 bg-yellow-100 dark:bg-yellow-900/20"
+                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-800"
               }`}
             >
               {isActive && (
@@ -125,7 +149,9 @@ const AppLayout = ({ children }) => {
                   transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 />
               )}
-              <item.icon className={`w-4 h-4 transition-colors ${isActive ? "text-accent" : "group-hover:text-foreground"}`} />
+              <item.icon
+                className={`w-4 h-4 transition-colors ${isActive ? "text-yellow-700" : "group-hover:text-gray-900 dark:group-hover:text-white"}`}
+              />
               {item.label}
             </Link>
           );
@@ -133,18 +159,18 @@ const AppLayout = ({ children }) => {
       </nav>
 
       {/* Footer */}
-      <div className="p-3 border-t border-border/50 space-y-1">
+      <div className="p-3 border-t border-gray-200 dark:border-gray-700 space-y-1">
         <Link
           to="/"
           onClick={() => setMobileOpen(false)}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-muted-foreground hover:bg-secondary hover:text-foreground transition-all duration-200"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:hover:text-white dark:hover:bg-gray-800 transition-all duration-200"
         >
           <ChevronLeft className="w-4 h-4" />
           Back to Home
         </Link>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-200"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-red-500 hover:bg-red-100 hover:text-red-700 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-all duration-200"
         >
           <LogOut className="w-4 h-4" />
           Sign Out
@@ -154,22 +180,31 @@ const AppLayout = ({ children }) => {
   );
 
   return (
-    <div className="min-h-screen flex bg-background">
+    <div className="min-h-screen flex bg-gray-50 dark:bg-gray-900">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-[260px] gradient-sidebar border-r border-border/50 flex-col flex-shrink-0 sticky top-0 h-screen">
+      <aside className="hidden lg:flex w-[260px] bg-gradient-to-b from-yellow-50 to-yellow-100 dark:from-yellow-900 dark:to-yellow-950 border-r border-gray-200 dark:border-gray-700 flex-col flex-shrink-0 sticky top-0 h-screen">
         <SidebarContent />
       </aside>
 
       {/* Mobile header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 glass-card-strong flex items-center justify-between px-4">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-white/80 dark:bg-gray-900/80 shadow flex items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg gradient-gold flex items-center justify-center shadow-gold">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center shadow-lg">
             <BookOpen className="w-4 h-4 text-background" />
           </div>
-          <span className="text-base font-bold font-display text-foreground">ILES</span>
+          <span className="text-base font-bold font-display text-gray-900 dark:text-white">
+            ILES
+          </span>
         </Link>
-        <button onClick={() => setMobileOpen(!mobileOpen)} className="p-2 rounded-lg hover:bg-secondary transition-colors">
-          {mobileOpen ? <X className="w-5 h-5 text-foreground" /> : <Menu className="w-5 h-5 text-foreground" />}
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        >
+          {mobileOpen ? (
+            <X className="w-5 h-5 text-foreground" />
+          ) : (
+            <Menu className="w-5 h-5 text-foreground" />
+          )}
         </button>
       </div>
 
@@ -182,14 +217,14 @@ const AppLayout = ({ children }) => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileOpen(false)}
-              className="lg:hidden fixed inset-0 z-40 bg-background/80 backdrop-blur-sm"
+              className="lg:hidden fixed inset-0 z-40 bg-gray-900/80 backdrop-blur-sm"
             />
             <motion.aside
               initial={{ x: -280 }}
               animate={{ x: 0 }}
               exit={{ x: -280 }}
               transition={{ type: "spring", damping: 25 }}
-              className="lg:hidden fixed top-0 left-0 z-50 w-[260px] h-screen gradient-sidebar border-r border-border/50 flex flex-col"
+              className="lg:hidden fixed top-0 left-0 z-50 w-[260px] h-screen bg-gradient-to-b from-yellow-50 to-yellow-100 dark:from-yellow-900 dark:to-yellow-950 border-r border-gray-200 dark:border-gray-700 flex flex-col"
             >
               <SidebarContent />
             </motion.aside>
@@ -201,11 +236,11 @@ const AppLayout = ({ children }) => {
       <main className="flex-1 overflow-auto lg:pt-0 pt-14">
         <div className="relative min-h-screen">
           {/* Subtle grid background */}
-          <div className="absolute inset-0 bg-dot-pattern opacity-30 pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(0,0,0,0.03)_1px,transparent_1px)] [background-size:20px_20px] opacity-30 pointer-events-none" />
           {/* Ambient glow orbs */}
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-accent/3 blur-[120px] pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-blue-500/3 blur-[100px] pointer-events-none" />
-          
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-yellow-100/60 dark:bg-yellow-900/20 blur-[120px] pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-blue-100/60 dark:bg-blue-900/20 blur-[100px] pointer-events-none" />
+
           <div className="relative z-10 p-4 sm:p-6 lg:p-8">
             <motion.div
               initial={{ opacity: 0, y: 12 }}

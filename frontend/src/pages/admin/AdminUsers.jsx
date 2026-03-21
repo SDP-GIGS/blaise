@@ -3,7 +3,6 @@ import { mockUsers, roleLabels } from "@/data/mockData";
 import { motion } from "framer-motion";
 import { Users, Mail, Shield, Search } from "lucide-react";
 import { useState } from "react";
-import "./AdminUsers.css";
 
 const roleColors = {
   student: "from-blue-500 to-cyan-400",
@@ -21,38 +20,74 @@ const roleBadgeColors = {
 
 const AdminUsers = () => {
   const [search, setSearch] = useState("");
-  const filtered = mockUsers.filter(u => u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase()));
+  const filtered = mockUsers.filter(
+    (u) =>
+      u.name.toLowerCase().includes(search.toLowerCase()) ||
+      u.email.toLowerCase().includes(search.toLowerCase()),
+  );
 
   return (
     <AppLayout>
-      <div className="max-w-6xl mx-auto">
-        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="mb-8">
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="mb-8"
+        >
           <div className="flex items-center gap-2 mb-1">
-            <Users className="w-4 h-4 text-accent" />
-            <span className="text-[11px] font-bold text-accent uppercase tracking-[0.15em]">Users</span>
+            <Users className="w-4 h-4 text-emerald-600" />
+            <span className="text-[11px] font-bold text-emerald-700 uppercase tracking-[0.15em]">
+              Users
+            </span>
           </div>
-          <h1 className="text-3xl font-bold font-display text-foreground tracking-tight">User Management</h1>
-          <p className="text-muted-foreground mt-1 text-sm">View and manage all system users</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-1">
+            User Management
+          </h1>
+          <p className="text-gray-500 text-base">
+            View and manage all system users
+          </p>
         </motion.div>
 
         {/* Summary */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
-          {["student", "workplace_supervisor", "academic_supervisor", "admin"].map((role, i) => {
+          {[
+            "student",
+            "workplace_supervisor",
+            "academic_supervisor",
+            "admin",
+          ].map((role, i) => {
             const count = mockUsers.filter((u) => u.role === role).length;
             return (
-              <motion.div key={role} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }} className="stat-card">
-                <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${roleColors[role]} flex items-center justify-center mb-4`}>
+              <motion.div
+                key={role}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.08 }}
+                className="rounded-2xl bg-white dark:bg-gray-900 p-6 shadow hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+              >
+                <div
+                  className={`w-11 h-11 rounded-xl bg-linear-to-br ${roleColors[role]} flex items-center justify-center mb-4`}
+                >
                   <Shield className="w-5 h-5 text-white" />
                 </div>
-                <p className="text-3xl font-bold text-foreground font-display">{count}</p>
-                <p className="text-xs text-muted-foreground mt-1">{roleLabels[role]}s</p>
+                <p className="text-3xl font-bold text-foreground font-display">
+                  {count}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {roleLabels[role]}s
+                </p>
               </motion.div>
             );
           })}
         </div>
 
         {/* Search */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="mb-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="mb-4"
+        >
           <div className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
@@ -65,7 +100,12 @@ const AdminUsers = () => {
         </motion.div>
 
         {/* User table */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="card-premium overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35 }}
+          className="card-premium overflow-hidden"
+        >
           <div className="overflow-x-auto">
             <table className="table-premium">
               <thead>
@@ -80,10 +120,17 @@ const AdminUsers = () => {
                   <tr key={u.id}>
                     <td>
                       <div className="flex items-center gap-3">
-                        <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${roleColors[u.role]} flex items-center justify-center text-[10px] font-bold text-white`}>
-                          {u.name.split(" ").map((n) => n[0]).join("")}
+                        <div
+                          className={`w-9 h-9 rounded-xl bg-linear-to-br ${roleColors[u.role]} flex items-center justify-center text-[10px] font-bold text-white`}
+                        >
+                          {u.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")}
                         </div>
-                        <span className="font-semibold text-foreground">{u.name}</span>
+                        <span className="font-semibold text-foreground">
+                          {u.name}
+                        </span>
                       </div>
                     </td>
                     <td>
@@ -92,7 +139,9 @@ const AdminUsers = () => {
                       </div>
                     </td>
                     <td>
-                      <span className={`status-badge ${roleBadgeColors[u.role]}`}>
+                      <span
+                        className={`status-badge ${roleBadgeColors[u.role]}`}
+                      >
                         {roleLabels[u.role]}
                       </span>
                     </td>

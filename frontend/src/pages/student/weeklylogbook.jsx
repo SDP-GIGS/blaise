@@ -1,93 +1,100 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import AppLayout from "../../components/AppLayout";
 import { useAuth } from "../../contexts/AuthContext";
-import { mockLogs, statusColors } from "../../data/mockData";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Plus,
-  Edit3,
-  Send,
-  Lock,
-  NotebookPen,
-  X,
-} from "lucide-react";
-import "./weeklylogbook.css";
+import { Plus, Edit3, Send, Lock, NotebookPen, X } from "lucide-react";
 
 const WeeklyLogbook = () => {
-  const { user } = useAuth();
-  const [logs, setLogs] = useState(
-    mockLogs.filter((l) => l.studentId === user?.id)
-  );
-  const [editing, setEditing] = useState(null);
+  const { user, token } = useAuth();
+  const [logs, setLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showNew, setShowNew] = useState(false);
   const [form, setForm] = useState({
-    activities: "",
-    learningOutcomes: "",
-    challenges: "",
-    hoursWorked: 0,
+    date: "",
+    department: "",
+    task_description: "",
+    skills_learned: "",
+    hours_worked: "",
+    challenges_faced: "",
+    attachments: null,
   });
 
-  const handleSubmitLog = (logId) => {
-    setLogs((prev) =>
-      prev.map((l) =>
-        l.id === logId
-          ? {
-              ...l,
-              status: "submitted",
-              submittedAt: new Date().toISOString().split("T")[0],
-            }
-          : l
-      )
-    );
+  useEffect(() => {
+    fetchLogs();
+  }, []);
+
+  const fetchLogs = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/api/logs/", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setLogs(response.data);
+    } catch (error) {
+      console.error("Error fetching logs:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleNewLog = () => {
-    const maxWeek = logs.reduce(
-      (max, l) => Math.max(max, l.weekNumber),
-      0
-    );
-    const today = new Date();
-    const sixDaysLater = new Date(today.getTime() + 6 * 86400000);
-
-    const newLog = {
-      id: Date.now(),
-      studentId: user?.id || 0,
-      studentName: user?.name || "",
-      weekNumber: maxWeek + 1,
-      startDate: today.toISOString().split("T")[0],
-      endDate: sixDaysLater.toISOString().split("T")[0],
-      activities: form.activities,
-      learningOutcomes: form.learningOutcomes,
-      challenges: form.challenges,
-      hoursWorked: form.hoursWorked,
-      status: "draft",
-    };
-
-    setLogs((prev) => [...prev, newLog]);
-    setShowNew(false);
-    setForm({
-      activities: "",
-      learningOutcomes: "",
-      challenges: "",
-      hoursWorked: 0,
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    Object.keys(form).forEach((key) => {
+      if (form[key]) formData.append(key, form[key]);
     });
+
+    try {
+      await axios.post("http://127.0.0.1:8000/api/logs/", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      setShowNew(false);
+      setForm({
+        date: "",
+        department: "",
+        task_description: "",
+        skills_learned: "",
+        hours_worked: "",
+        challenges_faced: "",
+        attachments: null,
+      });
+      fetchLogs();
+    } catch (error) {
+      console.error("Error submitting log:", error);
+    }
   };
+
+  const handleFileChange = (e) => {
+    setForm({ ...form, attachments: e.target.files[0] });
+  };
+
+  if (loading)
+    return (
+      <AppLayout>
+        <div>Loading...</div>
+      </AppLayout>
+    );
 
   return (
     <AppLayout>
-      <div className="logbook-root">
-        <div className="logbook-header-row">
+      <div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <div className="logbook-kicker">
-              <NotebookPen className="logbook-kicker-icon" />
+            <div className="flex items-center gap-2 text-emerald-700 font-semibold text-xs uppercase tracking-widest mb-2">
+              <NotebookPen className="w-4 h-4 text-emerald-600" />
               <span>Logbook</span>
             </div>
-            <h1 className="logbook-title">Weekly Logbook</h1>
-            <p className="logbook-subtitle">
-              Document your internship activities each week
+            <h1 className="text-3xl font-bold text-gray-900 mb-1">
+              Daily Internship Logbook
+            </h1>
+            <p className="text-gray-500 text-base">
+              Record your daily internship activities
             </p>
           </motion.div>
           <motion.button
@@ -97,7 +104,7 @@ const WeeklyLogbook = () => {
             className="logbook-new-btn"
           >
             <Plus className="logbook-new-btn-icon" />
-            New Entry
+            Add New Log
           </motion.button>
         </div>
 
@@ -119,40 +126,75 @@ const WeeklyLogbook = () => {
                   <X className="logbook-new-close-icon" />
                 </button>
               </div>
-              <div className="logbook-new-body">
+              <form onSubmit={handleSubmit} className="logbook-new-body">
                 <div>
-                  <label>Activities Performed</label>
-                  <textarea
-                    value={form.activities}
+                  <label>Date</label>
+                  <input
+                    type="date"
+                    value={form.date}
+                    onChange={(e) => setForm({ ...form, date: e.target.value })}
+                    className="logbook-input"
+                    required
+                  />
+                </div>
+                <div>
+                  <label>Department</label>
+                  <input
+                    type="text"
+                    value={form.department}
                     onChange={(e) =>
-                      setForm({ ...form, activities: e.target.value })
+                      setForm({ ...form, department: e.target.value })
+                    }
+                    className="logbook-input"
+                    placeholder="e.g., IT Department"
+                    required
+                  />
+                </div>
+                <div>
+                  <label>Task Description</label>
+                  <textarea
+                    value={form.task_description}
+                    onChange={(e) =>
+                      setForm({ ...form, task_description: e.target.value })
                     }
                     rows={3}
                     className="logbook-input"
-                    placeholder="Describe what you did this week..."
+                    placeholder="Describe the tasks performed..."
+                    required
                   />
                 </div>
                 <div>
-                  <label>Learning Outcomes</label>
+                  <label>Skills Learned</label>
                   <textarea
-                    value={form.learningOutcomes}
+                    value={form.skills_learned}
                     onChange={(e) =>
-                      setForm({
-                        ...form,
-                        learningOutcomes: e.target.value,
-                      })
+                      setForm({ ...form, skills_learned: e.target.value })
                     }
                     rows={2}
                     className="logbook-input"
-                    placeholder="What did you learn?"
+                    placeholder="What skills did you learn?"
+                    required
                   />
                 </div>
                 <div>
-                  <label>Challenges</label>
-                  <textarea
-                    value={form.challenges}
+                  <label>Hours Worked</label>
+                  <input
+                    type="number"
+                    step="0.5"
+                    value={form.hours_worked}
                     onChange={(e) =>
-                      setForm({ ...form, challenges: e.target.value })
+                      setForm({ ...form, hours_worked: e.target.value })
+                    }
+                    className="logbook-input"
+                    required
+                  />
+                </div>
+                <div>
+                  <label>Challenges Faced</label>
+                  <textarea
+                    value={form.challenges_faced}
+                    onChange={(e) =>
+                      setForm({ ...form, challenges_faced: e.target.value })
                     }
                     rows={2}
                     className="logbook-input"
@@ -160,26 +202,16 @@ const WeeklyLogbook = () => {
                   />
                 </div>
                 <div>
-                  <label>Hours Worked</label>
+                  <label>File Attachment</label>
                   <input
-                    type="number"
-                    value={form.hoursWorked}
-                    onChange={(e) =>
-                      setForm({
-                        ...form,
-                        hoursWorked: Number(e.target.value),
-                      })
-                    }
-                    className="logbook-input logbook-input-hours"
+                    type="file"
+                    onChange={handleFileChange}
+                    className="logbook-input"
                   />
                 </div>
                 <div className="logbook-new-actions">
-                  <button
-                    type="button"
-                    onClick={handleNewLog}
-                    className="logbook-btn-primary"
-                  >
-                    Save as Draft
+                  <button type="submit" className="logbook-btn-primary">
+                    Submit Log
                   </button>
                   <button
                     type="button"
@@ -189,128 +221,38 @@ const WeeklyLogbook = () => {
                     Cancel
                   </button>
                 </div>
-              </div>
+              </form>
             </motion.div>
           )}
         </AnimatePresence>
 
         <div className="logbook-list">
-          {logs.map((log, index) => (
-            <motion.div
-              key={log.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.05 }}
-              className="logbook-card"
-            >
-              <div className="logbook-card-header">
-                <div className="logbook-card-main">
-                  <div className="logbook-week-pill">
-                    <span>W{log.weekNumber}</span>
-                  </div>
-                  <div>
-                    <p className="logbook-card-title">
-                      Week {log.weekNumber}
-                    </p>
-                    <p className="logbook-card-dates">
-                      {log.startDate} — {log.endDate}
-                    </p>
-                  </div>
-                </div>
-                <div className="logbook-card-meta">
-                  <span className="logbook-card-hours">
-                    {log.hoursWorked}h
-                  </span>
-                  <span
-                    className={`status-badge ${
-                      statusColors[log.status]?.bg || ""
-                    } ${statusColors[log.status]?.text || ""}`}
-                  >
-                    {log.status}
-                  </span>
-                </div>
-              </div>
-
-              {editing === log.id ? (
-                <div className="logbook-edit-placeholder">
-                  Editing mode placeholder...
-                </div>
-              ) : (
-                <div className="logbook-card-body">
-                  <div className="logbook-section">
-                    <p className="logbook-section-label">Activities</p>
-                    <p className="logbook-section-text">
-                      {log.activities}
-                    </p>
-                  </div>
-                  <div className="logbook-double-grid">
-                    <div className="logbook-section">
-                      <p className="logbook-section-label logbook-section-label--green">
-                        Learning Outcomes
-                      </p>
-                      <p className="logbook-section-text">
-                        {log.learningOutcomes}
-                      </p>
-                    </div>
-                    <div className="logbook-section">
-                      <p className="logbook-section-label logbook-section-label--amber">
-                        Challenges
-                      </p>
-                      <p className="logbook-section-text">
-                        {log.challenges}
-                      </p>
-                    </div>
-                  </div>
-                  {log.supervisorComment && (
-                    <div className="logbook-supervisor">
-                      <p className="logbook-supervisor-label">
-                        Supervisor Comment
-                      </p>
-                      <p className="logbook-supervisor-text">
-                        {log.supervisorComment}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {(log.status === "draft" || log.status === "reviewed") && (
-                <div className="logbook-actions-row">
-                  {log.status === "draft" && (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setEditing(
-                            editing === log.id ? null : log.id
-                          )
-                        }
-                        className="logbook-btn-secondary logbook-btn-small"
-                      >
-                        <Edit3 className="logbook-btn-small-icon" />
-                        Edit
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleSubmitLog(log.id)}
-                        className="logbook-btn-primary logbook-btn-small"
-                      >
-                        <Send className="logbook-btn-small-icon" />
-                        Submit
-                      </button>
-                    </>
-                  )}
-                </div>
-              )}
-
-              {log.status === "approved" && (
-                <div className="logbook-locked-row">
-                  <Lock className="logbook-locked-icon" />
-                  <span>Locked — Approved by supervisor</span>
-                </div>
-              )}
-            </motion.div>
-          ))}
+          <table className="logbook-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Tasks</th>
+                <th>Hours</th>
+                <th>Status</th>
+                <th>Supervisor Comments</th>
+              </tr>
+            </thead>
+            <tbody>
+              {logs.map((log) => (
+                <tr key={log.id}>
+                  <td>{log.date}</td>
+                  <td>{log.task_description}</td>
+                  <td>{log.hours_worked}</td>
+                  <td>
+                    <span className={`status-badge status-${log.status}`}>
+                      {log.status}
+                    </span>
+                  </td>
+                  <td>{log.supervisor_comments || "N/A"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </AppLayout>
@@ -318,4 +260,3 @@ const WeeklyLogbook = () => {
 };
 
 export default WeeklyLogbook;
-

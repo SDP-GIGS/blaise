@@ -3,12 +3,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { mockEvaluations } from "../../data/mockData";
 import { motion } from "framer-motion";
 import { Award, Star, Trophy, Target } from "lucide-react";
-import {
-  RadialBarChart,
-  RadialBar,
-  ResponsiveContainer,
-} from "recharts";
-import "./studentscore.css";
+import { RadialBarChart, RadialBar, ResponsiveContainer } from "recharts";
 
 const StudentScores = () => {
   const { user } = useAuth();
@@ -30,18 +25,18 @@ const StudentScores = () => {
 
   return (
     <AppLayout>
-      <div className="scores-root">
+      <div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="scores-header"
+          className="mb-8"
         >
-          <div className="scores-kicker">
-            <Trophy className="scores-kicker-icon" />
+          <div className="flex items-center gap-2 text-emerald-700 font-semibold text-xs uppercase tracking-widest mb-2">
+            <Trophy className="w-4 h-4 text-emerald-600" />
             <span>Scores</span>
           </div>
-          <h1 className="scores-title">My Scores</h1>
-          <p className="scores-subtitle">
+          <h1 className="text-3xl font-bold text-gray-900 mb-1">My Scores</h1>
+          <p className="text-gray-500 text-base">
             View your evaluation results and weighted scores
           </p>
         </motion.div>
@@ -50,13 +45,15 @@ const StudentScores = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="scores-empty-card"
+            className="rounded-2xl bg-white dark:bg-gray-900 p-8 flex flex-col items-center justify-center shadow text-center"
           >
-            <div className="scores-empty-icon">
-              <Award className="scores-empty-icon-svg" />
+            <div className="w-16 h-16 flex items-center justify-center rounded-full bg-yellow-100 dark:bg-yellow-900/20 mb-4">
+              <Award className="w-8 h-8 text-yellow-600" />
             </div>
-            <h2 className="scores-empty-title">No Evaluations Yet</h2>
-            <p className="scores-empty-text">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              No Evaluations Yet
+            </h2>
+            <p className="text-gray-500 dark:text-gray-400">
               Scores will appear once your supervisors submit evaluations.
             </p>
           </motion.div>
@@ -66,10 +63,10 @@ const StudentScores = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="scores-summary-card"
+              className="rounded-2xl bg-white dark:bg-gray-900 p-8 shadow flex flex-col md:flex-row gap-8 items-center"
             >
-              <div className="scores-summary-grid">
-                <div className="scores-gauge-wrapper">
+              <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="flex items-center justify-center h-40">
                   <ResponsiveContainer width="100%" height="100%">
                     <RadialBarChart
                       cx="50%"
@@ -98,7 +95,9 @@ const StudentScores = () => {
                 </div>
                 <div className="scores-summary-info">
                   <div>
-                    <h2 className="scores-summary-title">Performance Summary</h2>
+                    <h2 className="scores-summary-title">
+                      Performance Summary
+                    </h2>
                     <p className="scores-summary-subtitle">
                       Based on {evals.length} evaluation
                       {evals.length > 1 ? "s" : ""} totaling {maxWeight}% weight
@@ -109,25 +108,19 @@ const StudentScores = () => {
                       <p className="scores-summary-pill-value">
                         {evals.length}
                       </p>
-                      <p className="scores-summary-pill-label">
-                        Evaluations
-                      </p>
+                      <p className="scores-summary-pill-label">Evaluations</p>
                     </div>
                     <div className="scores-summary-pill">
-                      <p className="scores-summary-pill-value">
-                        {maxWeight}%
-                      </p>
-                      <p className="scores-summary-pill-label">
-                        Weight Used
-                      </p>
+                      <p className="scores-summary-pill-value">{maxWeight}%</p>
+                      <p className="scores-summary-pill-label">Weight Used</p>
                     </div>
                     <div className="scores-summary-pill">
                       <p className="scores-summary-pill-grade">
                         {weightedTotal >= 70
                           ? "A"
                           : weightedTotal >= 50
-                          ? "B"
-                          : "C"}
+                            ? "B"
+                            : "C"}
                       </p>
                       <p className="scores-summary-pill-label">Grade</p>
                     </div>
@@ -218,4 +211,3 @@ const StudentScores = () => {
 };
 
 export default StudentScores;
-

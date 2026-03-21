@@ -10,7 +10,6 @@ import {
   Globe,
   Briefcase,
 } from "lucide-react";
-import "./studentPlacement.css";
 
 const StudentPlacement = () => {
   const { user } = useAuth();
@@ -19,16 +18,18 @@ const StudentPlacement = () => {
   if (!placement) {
     return (
       <AppLayout>
-        <div className="placement-empty">
+        <div className="flex flex-col items-center justify-center min-h-[300px] py-12">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
           >
-            <div className="placement-empty-icon">
-              <Building2 className="placement-empty-icon-svg" />
+            <div className="w-16 h-16 flex items-center justify-center rounded-full bg-gray-100 mb-4">
+              <Building2 className="w-8 h-8 text-gray-400" />
             </div>
-            <h2 className="placement-empty-title">No Active Placement</h2>
-            <p className="placement-empty-text">
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              No Active Placement
+            </h2>
+            <p className="text-gray-500">
               Contact your administrator to get assigned.
             </p>
           </motion.div>
@@ -79,18 +80,20 @@ const StudentPlacement = () => {
 
   return (
     <AppLayout>
-      <div className="placement-root">
+      <div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="placement-header"
+          className="mb-8"
         >
-          <div className="placement-kicker">
-            <Briefcase className="placement-kicker-icon" />
+          <div className="flex items-center gap-2 text-emerald-700 font-semibold text-xs uppercase tracking-widest mb-2">
+            <Briefcase className="w-4 h-4 text-emerald-600" />
             <span>Placement</span>
           </div>
-          <h1 className="placement-title">My Placement</h1>
-          <p className="placement-subtitle">
+          <h1 className="text-3xl font-bold text-gray-900 mb-1">
+            My Placement
+          </h1>
+          <p className="text-gray-500 text-base">
             Your current internship assignment details
           </p>
         </motion.div>
@@ -185,4 +188,3 @@ const StudentPlacement = () => {
 };
 
 export default StudentPlacement;
-

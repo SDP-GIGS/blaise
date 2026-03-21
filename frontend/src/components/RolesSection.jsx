@@ -37,16 +37,16 @@ const roles = [
 
 const RolesSection = () => {
   return (
-    <section id="roles" className="py-24 px-6 bg-background">
+    <section id="roles" className="py-24 px-6 bg-gray-50 dark:bg-gray-900">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <span className="text-sm font-semibold text-gold uppercase tracking-widest">
+          <span className="text-sm font-semibold text-yellow-700 dark:text-yellow-300 uppercase tracking-widest">
             User Roles
           </span>
-          <h2 className="text-4xl sm:text-5xl font-serif font-bold text-foreground mt-3">
+          <h2 className="text-4xl sm:text-5xl font-serif font-bold text-gray-900 dark:text-white mt-3">
             Four Roles, One Platform
           </h2>
-          <p className="text-muted-foreground mt-4 max-w-xl mx-auto">
+          <p className="text-gray-500 dark:text-gray-400 mt-4 max-w-xl mx-auto">
             Each role has a tailored dashboard and workflow designed for
             efficiency and clarity.
           </p>
@@ -56,18 +56,18 @@ const RolesSection = () => {
           {roles.map((role, i) => (
             <div
               key={role.title}
-              className="group relative rounded-2xl bg-card p-6 shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 opacity-0 animate-fade-up"
+              className="group relative rounded-2xl bg-white/80 dark:bg-gray-900/80 p-6 shadow hover:shadow-lg transition-all duration-300 hover:-translate-y-1 opacity-0 animate-fade-up"
               style={{ animationDelay: `${0.1 + i * 0.1}s` }}
             >
               <div
-                className={`w-14 h-14 rounded-xl bg-gradient-to-br ${role.color} flex items-center justify-center mb-5`}
+                className={`w-14 h-14 rounded-xl bg-linear-to-br ${role.color} flex items-center justify-center mb-5`}
               >
                 <role.icon className={`w-7 h-7 ${role.iconColor}`} />
               </div>
-              <h3 className="text-lg font-bold text-foreground mb-2 font-serif">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 font-serif">
                 {role.title}
               </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
                 {role.description}
               </p>
             </div>

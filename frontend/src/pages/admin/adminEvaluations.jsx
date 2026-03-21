@@ -2,7 +2,6 @@ import AppLayout from "@/components/AppLayout";
 import { mockEvaluations } from "@/data/mockData";
 import { motion } from "framer-motion";
 import { Award, Target } from "lucide-react";
-import "./adminEvaluations.css";
 
 /* ─── Animation variants ──────────────────────────────────── */
 const pageVariants = {
@@ -34,16 +33,14 @@ const CriterionBar = ({ criterion, delay = 0 }) => {
   return (
     <div className="flex items-center gap-3">
       <p className="text-sm text-muted-foreground w-36 flex-shrink-0">{name}</p>
-
-      <div className="progress-track flex-1">
+      <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
         <motion.div
-          className="progress-fill"
+          className="h-2 bg-emerald-500 rounded-full"
           initial={{ width: 0 }}
           animate={{ width: `${pct}%` }}
           transition={{ duration: 0.75, delay, ease: [0.22, 1, 0.36, 1] }}
         />
       </div>
-
       <span className="text-xs font-bold text-foreground w-12 text-right">
         {score}/{maxScore}
       </span>
@@ -54,10 +51,14 @@ const CriterionBar = ({ criterion, delay = 0 }) => {
 /** Gradient icon badge — emerald for workplace, violet for academic */
 const TypeBadge = ({ type }) => {
   const isWorkplace = type === "workplace";
-  const gradientClass = isWorkplace ? "bg-gradient-emerald" : "bg-gradient-violet";
+  const gradientClass = isWorkplace
+    ? "bg-gradient-to-br from-emerald-400 to-emerald-600"
+    : "bg-gradient-to-br from-violet-400 to-violet-600";
 
   return (
-    <div className={`icon-badge w-12 h-12 ${gradientClass}`}>
+    <div
+      className={`w-12 h-12 flex items-center justify-center rounded-full shadow ${gradientClass}`}
+    >
       <Target className="w-5 h-5 text-white" />
     </div>
   );
@@ -65,9 +66,10 @@ const TypeBadge = ({ type }) => {
 
 /** Single evaluation card */
 const EvaluationCard = ({ ev, index }) => {
-  const weightedScore = ev.maxTotal > 0
-    ? ((ev.totalScore / ev.maxTotal) * ev.weight).toFixed(1)
-    : "0.0";
+  const weightedScore =
+    ev.maxTotal > 0
+      ? ((ev.totalScore / ev.maxTotal) * ev.weight).toFixed(1)
+      : "0.0";
 
   const typeLabel = ev.type === "workplace" ? "Workplace" : "Academic";
 
@@ -77,13 +79,13 @@ const EvaluationCard = ({ ev, index }) => {
       variants={cardVariants}
       initial="initial"
       animate="animate"
-      className="card-premium p-6"
+      className="bg-gradient-to-br from-yellow-50 to-white p-6 rounded-xl shadow border border-yellow-100 mb-4"
     >
       {/* Decorative top line */}
-      <div className="accent-bar" />
+      <div className="h-1 w-full bg-gradient-to-r from-emerald-400 to-yellow-400 rounded-t-xl mb-4" />
 
       {/* Header row */}
-      <div className="eval-header">
+      <div className="flex items-center justify-between mb-4">
         {/* Left: avatar + meta */}
         <div className="flex items-center gap-3">
           <TypeBadge type={ev.type} />
@@ -99,29 +101,27 @@ const EvaluationCard = ({ ev, index }) => {
 
         {/* Right: score */}
         <div className="text-right">
-          <p className="score-total">
+          <p className="text-2xl font-bold text-emerald-700">
             {ev.totalScore}
-            <span className="text-muted-foreground font-bold" style={{ fontSize: "1rem" }}>
+            <span className="text-base text-muted-foreground font-bold">
               /{ev.maxTotal}
             </span>
           </p>
-          <p className="score-weight">Weight: {ev.weight}%</p>
+          <p className="text-xs text-yellow-600 font-semibold">
+            Weight: {ev.weight}%
+          </p>
         </div>
       </div>
 
       {/* Criteria bars */}
       <div className="space-y-3 mb-5">
         {ev.criteria.map((c, ci) => (
-          <CriterionBar
-            key={c.name}
-            criterion={c}
-            delay={0.3 + ci * 0.07}
-          />
+          <CriterionBar key={c.name} criterion={c} delay={0.3 + ci * 0.07} />
         ))}
       </div>
 
       {/* Footer strip */}
-      <div className="glass-card p-3 eval-footer">
+      <div className="flex justify-between items-center bg-white/80 p-3 rounded-lg border-t border-yellow-100 text-xs text-gray-600">
         <span>Weighted: {weightedScore}%</span>
         <span>Submitted: {ev.submittedAt}</span>
       </div>
@@ -135,9 +135,9 @@ const EmptyState = () => (
     variants={emptyVariants}
     initial="initial"
     animate="animate"
-    className="text-center py-20 card-premium"
+    className="text-center py-20 bg-gradient-to-br from-yellow-50 to-white rounded-xl shadow border border-yellow-100"
   >
-    <div className="empty-icon-wrapper">
+    <div className="flex items-center justify-center mb-4">
       <Award className="w-10 h-10 text-muted-foreground" />
     </div>
     <h2 className="text-2xl font-bold font-display text-foreground">
@@ -150,7 +150,6 @@ const EmptyState = () => (
 const AdminEvaluations = () => (
   <AppLayout>
     <div className="max-w-6xl mx-auto">
-
       {/* Page header */}
       <motion.div
         variants={pageVariants}
@@ -159,9 +158,11 @@ const AdminEvaluations = () => (
         transition={{ duration: 0.35 }}
         className="mb-8"
       >
-        <div className="eyebrow">
+        <div className="flex items-center gap-2 mb-1">
           <Award className="w-4 h-4 text-accent" />
-          <span className="eyebrow-label">Evaluations</span>
+          <span className="text-[11px] font-bold text-emerald-700 uppercase tracking-[0.15em]">
+            Evaluations
+          </span>
         </div>
         <h1 className="text-3xl font-bold font-display text-foreground tracking-tight">
           Evaluations
