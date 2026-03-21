@@ -68,7 +68,7 @@ const navByRole = {
 };
 
 const AppLayout = ({ children }) => {
-  const { user, logout } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -77,7 +77,7 @@ const AppLayout = ({ children }) => {
   const navItems = user ? navByRole[user.role] || [] : [];
 
   const handleLogout = () => {
-    logout();
+    signOut();
     navigate("/login");
   };
 
