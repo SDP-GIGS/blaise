@@ -14,15 +14,15 @@ import {
 import { AreaChart, Area, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 
 const StudentDashboard = () => {
-  const { user } = useAuth();
+  const demoStudent = { id: 1, name: "John Student" };
+  const user = demoStudent;
 
   const { logs, placement, approvedLogs, totalHours, pendingLogs, hoursChart } =
     useMemo(() => {
-      const studentLogs = mockLogs.filter((l) => l.studentId === user?.id);
+      const studentLogs = mockLogs.filter((l) => l.studentId === user.id);
       const studentPlacement = mockPlacements.find(
-        (p) => p.studentId === user?.id,
+        (p) => p.studentId === user.id,
       );
-
       const approved = studentLogs.filter(
         (l) => l.status === "approved",
       ).length;
@@ -30,12 +30,10 @@ const StudentDashboard = () => {
       const pending = studentLogs.filter(
         (l) => l.status === "submitted",
       ).length;
-
       const chart = studentLogs.map((l) => ({
         week: `W${l.weekNumber}`,
         hours: l.hoursWorked,
       }));
-
       return {
         logs: studentLogs,
         placement: studentPlacement,
@@ -44,7 +42,7 @@ const StudentDashboard = () => {
         pendingLogs: pending,
         hoursChart: chart,
       };
-    }, [user]);
+    }, []);
 
   const stats = [
     {
@@ -301,6 +299,27 @@ const StudentDashboard = () => {
               )}
             </div>
           </motion.div>
+        </div>
+        {/* CTA Buttons at Bottom */}
+        <div className="w-full flex justify-center gap-3 mt-12 mb-2">
+          <a
+            href="/student/logbook"
+            className="px-4 py-2 text-sm rounded bg-yellow-100 text-[#232526] border border-yellow-300 hover:bg-yellow-200 transition"
+          >
+            Log New Week
+          </a>
+          <a
+            href="/student/placement"
+            className="px-4 py-2 text-sm rounded bg-emerald-50 text-[#232526] border border-emerald-200 hover:bg-emerald-100 transition"
+          >
+            View Placement
+          </a>
+          <a
+            href="/student/scores"
+            className="px-4 py-2 text-sm rounded bg-cyan-50 text-[#232526] border border-cyan-200 hover:bg-cyan-100 transition"
+          >
+            View Scores
+          </a>
         </div>
       </div>
       {/* Ambient Glow Effects */}

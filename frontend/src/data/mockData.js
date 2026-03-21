@@ -15,31 +15,31 @@ export const roleLabels = {
 export const mockUsers = [
   {
     id: 1,
-    email: 'student@example.com',
-    password: 'password123',
+    email: "student@example.com",
+    password: "password123",
     role: UserRole.STUDENT,
-    name: 'John Student',
+    name: "John Student",
   },
   {
     id: 2,
-    email: 'workplace@example.com',
-    password: 'password123',
+    email: "workplace@example.com",
+    password: "password123",
     role: UserRole.WORKPLACE_SUPERVISOR,
-    name: 'Jane Workplace Supervisor',
+    name: "Jane Workplace Supervisor",
   },
   {
     id: 3,
-    email: 'academic@example.com',
-    password: 'password123',
+    email: "academic@example.com",
+    password: "password123",
     role: UserRole.ACADEMIC_SUPERVISOR,
-    name: 'Dr. Academic Supervisor',
+    name: "Dr. Academic Supervisor",
   },
   {
     id: 4,
-    email: 'admin@example.com',
-    password: 'password123',
+    email: "admin@example.com",
+    password: "password123",
     role: UserRole.ADMIN,
-    name: 'Admin User',
+    name: "Admin User",
   },
 ];
 
@@ -54,7 +54,8 @@ export const mockLogs = [
       "Onboarded to the team, set up development environment, and reviewed existing codebase.",
     learningOutcomes:
       "Understood project architecture and deployment workflow; became familiar with code standards.",
-    challenges: "Configuring local environment and resolving dependency issues.",
+    challenges:
+      "Configuring local environment and resolving dependency issues.",
     supervisorComment: "Good start to the internship.",
     hoursWorked: 38,
     status: "approved",
@@ -179,3 +180,34 @@ export const mockEvaluations = [
       "Demonstrates clear understanding of internship objectives and articulates learning very well.",
   },
 ];
+
+/**
+ * Add a new log to the mockLogs array (for demo persistence)
+ * @param {object} log - The log object to add
+ */
+export function addMockLog(log) {
+  mockLogs.unshift(log);
+}
+
+/**
+ * Update a log in the mockLogs array by id
+ * @param {number} id - The log id
+ * @param {object} updates - The fields to update
+ */
+export function updateMockLog(id, updates) {
+  const idx = mockLogs.findIndex((l) => l.id === id);
+  if (idx !== -1) {
+    mockLogs[idx] = { ...mockLogs[idx], ...updates };
+  }
+}
+
+/**
+ * Delete a log from the mockLogs array by id
+ * @param {number} id - The log id
+ */
+export function deleteMockLog(id) {
+  const idx = mockLogs.findIndex((l) => l.id === id);
+  if (idx !== -1) {
+    mockLogs.splice(idx, 1);
+  }
+}
