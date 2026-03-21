@@ -26,6 +26,16 @@ const WeeklyLogbook = () => {
   const [logs, setLogs] = useState(
     mockLogs.filter((l) => l.studentId === demoStudentId),
   );
+  const [historyLog, setHistoryLog] = useState(null);
+  // Demo: Assume deadline is always Sunday 23:59 of the log's endDate week
+  const isPastDeadline = (log) => {
+    if (!log.endDate) return false;
+    const deadline = new Date(log.endDate);
+    deadline.setDate(deadline.getDate() + (7 - deadline.getDay())); // Next Sunday
+    deadline.setHours(23, 59, 59, 999);
+    return new Date() > deadline;
+  };
+  const isLocked = (log) => log.status === "approved" || isPastDeadline(log);
   const [editLog, setEditLog] = useState(null);
   const [editForm, setEditForm] = useState({});
 
@@ -403,6 +413,14 @@ const WeeklyLogbook = () => {
                       >
                         <td className="px-4 py-2">
                           {log.date || `Week ${log.weekNumber}`}
+                          <div className="text-xs text-yellow-200 mt-1">
+                            Deadline: {log.endDate || "-"}
+                            {isPastDeadline(log) && (
+                              <span className="ml-2 text-red-400 font-bold">
+                                (Past)
+                              </span>
+                            )}
+                          </div>
                         </td>
                         <td className="px-4 py-2 max-w-xs truncate">
                           {log.task_description || log.activities}
@@ -416,6 +434,12 @@ const WeeklyLogbook = () => {
                           >
                             {log.status}
                           </span>
+                          <button
+                            className="ml-2 underline text-xs text-cyan-200 hover:text-cyan-100"
+                            onClick={() => setHistoryLog(log)}
+                          >
+                            History
+                          </button>
                         </td>
                         <td className="px-4 py-2">
                           {log.supervisor_comments ||
@@ -425,17 +449,93 @@ const WeeklyLogbook = () => {
                         <td className="px-4 py-2 flex gap-2">
                           <button
                             onClick={() => openEdit(log)}
-                            className="px-3 py-1 rounded bg-yellow-400/80 text-[#232526] font-bold hover:bg-yellow-300 transition"
+                            className="px-3 py-1 rounded bg-yellow-400/80 text-[#232526] font-bold hover:bg-yellow-300 transition disabled:opacity-50"
+                            disabled={isLocked(log)}
                           >
                             Edit
                           </button>
                           <button
                             onClick={() => handleDelete(log.id)}
-                            className="px-3 py-1 rounded bg-red-500/80 text-white font-bold hover:bg-red-400 transition"
+                            className="px-3 py-1 rounded bg-red-500/80 text-white font-bold hover:bg-red-400 transition disabled:opacity-50"
+                            disabled={isLocked(log)}
                           >
                             Delete
                           </button>
                         </td>
+                        {/* Log History Modal */}
+                        <AnimatePresence>
+                          {historyLog && (
+                            <motion.div
+                              initial={{ opacity: 0, y: -10, height: 0 }}
+                              animate={{ opacity: 1, y: 0, height: "auto" }}
+                              exit={{ opacity: 0, y: -10, height: 0 }}
+                              className="rounded-2xl bg-white/20 backdrop-blur-lg border border-white/20 shadow-xl p-7 mb-4 fixed top-0 left-0 right-0 z-50 max-w-lg mx-auto mt-24"
+                            >
+                              <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-xl font-bold text-white">
+                                  Log Status History
+                                </h3>
+                                <button
+                                  type="button"
+                                  onClick={() => setHistoryLog(null)}
+                                  className="text-white/70 hover:text-yellow-300 transition"
+                                >
+                                  <X className="w-6 h-6" />
+                                </button>
+                              </div>
+                              <div className="mb-2">
+                                <div className="mb-2 text-sm text-white/80">
+                                  <b>Status:</b>{" "}
+                                  <span
+                                    className={`px-2 py-1 rounded-full text-xs font-semibold ${statusColors[historyLog.status]?.bg} ${statusColors[historyLog.status]?.text}`}
+                                  >
+                                    {historyLog.status}
+                                  </span>
+                                </div>
+                                <div className="mb-2 text-sm text-white/80">
+                                  <b>Supervisor Comment:</b>{" "}
+                                  {historyLog.supervisor_comments ||
+                                    historyLog.supervisorComment ||
+                                    "N/A"}
+                                </div>
+                                <div className="mb-2 text-sm text-white/80">
+                                  <b>Deadline:</b> {historyLog.endDate || "-"}{" "}
+                                  {isPastDeadline(historyLog) && (
+                                    <span className="ml-2 text-red-400 font-bold">
+                                      (Past)
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="mb-2 text-sm text-white/80">
+                                  <b>Hours Worked:</b>{" "}
+                                  {historyLog.hours_worked ||
+                                    historyLog.hoursWorked}
+                                </div>
+                                {/* Demo static history */}
+                                <div className="mt-4">
+                                  <b className="text-white/90">
+                                    Status History (Demo):
+                                  </b>
+                                  <ul className="list-disc ml-6 mt-2 text-xs text-white/70">
+                                    <li>
+                                      Draft → Submitted (
+                                      {historyLog.startDate || "-"})
+                                    </li>
+                                    {historyLog.status === "approved" && (
+                                      <li>
+                                        Submitted → Approved (
+                                        {historyLog.endDate || "-"})
+                                      </li>
+                                    )}
+                                    {historyLog.status === "submitted" && (
+                                      <li>Awaiting review</li>
+                                    )}
+                                  </ul>
+                                </div>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </tr>
                     ))
                   )}

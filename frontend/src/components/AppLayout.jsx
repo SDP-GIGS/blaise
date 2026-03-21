@@ -26,6 +26,7 @@ const navByRole = {
     { label: "Weekly Logbook", path: "/student/logbook", icon: NotebookPen },
     { label: "My Placement", path: "/student/placement", icon: Building2 },
     { label: "My Scores", path: "/student/scores", icon: Award },
+    { label: "Profile & Settings", path: "/student/profile", icon: Users },
   ],
   workplace_supervisor: [
     {

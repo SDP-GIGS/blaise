@@ -20,11 +20,34 @@ const defaultPlacement = mockPlacements.find(
   (p) => p.studentId === demoStudentId,
 );
 
+// Demo audit trail for placement changes
+const mockPlacementAudit = [
+  {
+    date: "2026-01-01",
+    action: "Placement assigned",
+    by: "Admin User",
+    details: "Assigned to TechNova Solutions, Software Engineering.",
+  },
+  {
+    date: "2026-01-10",
+    action: "Supervisor updated",
+    by: "Admin User",
+    details: "Workplace Supervisor changed to Jane Workplace Supervisor.",
+  },
+  {
+    date: "2026-02-01",
+    action: "Status changed",
+    by: "Admin User",
+    details: "Status set to Active.",
+  },
+];
+
 const StudentPlacement = () => {
   // For demo, always use mock placement for student 1
   const [placement, setPlacement] = useState(defaultPlacement);
   const [showEdit, setShowEdit] = useState(false);
   const [editForm, setEditForm] = useState(placement ? { ...placement } : {});
+  const [showAudit, setShowAudit] = useState(false);
 
   if (!placement) {
     return (
@@ -103,7 +126,24 @@ const StudentPlacement = () => {
               <span>Placement</span>
             </div>
             <h1 className="text-3xl font-bold text-white mb-1">My Placement</h1>
-            <p className="text-white/70 text-base">
+            <div className="flex items-center gap-2 mt-2">
+              <span
+                className={`inline-block px-3 py-1 rounded-full text-xs font-bold border ${statusColors[placement.status]?.bg} ${statusColors[placement.status]?.text} border-white/30 shadow`}
+              >
+                {placement.status === "active"
+                  ? "Active"
+                  : placement.status.charAt(0).toUpperCase() +
+                    placement.status.slice(1)}
+              </span>
+              <button
+                className="ml-2 text-xs text-emerald-300 underline hover:text-yellow-300 transition"
+                onClick={() => setShowAudit(true)}
+                type="button"
+              >
+                View History
+              </button>
+            </div>
+            <p className="text-white/70 text-base mt-2">
               Your current internship assignment details
             </p>
           </motion.div>
@@ -130,11 +170,64 @@ const StudentPlacement = () => {
                 </div>
               </div>
               <span
-                className={`inline-block px-3 py-1 rounded-full text-sm font-bold ${statusColors[placement.status]?.bg} ${statusColors[placement.status]?.text}`}
+                className={`inline-block px-3 py-1 rounded-full text-sm font-bold border ${statusColors[placement.status]?.bg} ${statusColors[placement.status]?.text} border-white/30 shadow`}
+                title={
+                  placement.status === "active"
+                    ? "Placement is active"
+                    : placement.status
+                }
               >
-                {placement.status}
+                {placement.status === "active"
+                  ? "Active"
+                  : placement.status.charAt(0).toUpperCase() +
+                    placement.status.slice(1)}
               </span>
             </div>
+            {/* Audit/History Modal */}
+            <AnimatePresence>
+              {showAudit && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="fixed top-0 left-0 w-full h-full z-50 flex items-center justify-center bg-black/40"
+                >
+                  <div className="bg-white/90 rounded-2xl shadow-2xl p-8 max-w-md w-full relative">
+                    <button
+                      className="absolute top-3 right-3 text-gray-500 hover:text-yellow-400"
+                      onClick={() => setShowAudit(false)}
+                    >
+                      <X className="w-6 h-6" />
+                    </button>
+                    <h3 className="text-xl font-bold text-gray-900 mb-4">
+                      Placement History
+                    </h3>
+                    <ul className="space-y-4">
+                      {mockPlacementAudit.map((item, idx) => (
+                        <li
+                          key={idx}
+                          className="flex flex-col gap-1 border-l-4 pl-4 border-emerald-300 bg-emerald-50/60 rounded-lg py-2"
+                        >
+                          <div className="flex items-center gap-2 text-xs text-gray-600">
+                            <span className="font-bold text-emerald-700">
+                              {item.date}
+                            </span>
+                            <span className="text-gray-400">&middot;</span>
+                            <span>{item.by}</span>
+                          </div>
+                          <div className="text-sm font-semibold text-gray-800">
+                            {item.action}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {item.details}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {details.map((d, index) => (
                 <motion.div

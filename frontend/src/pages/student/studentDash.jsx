@@ -71,9 +71,29 @@ const StudentDashboard = () => {
     },
   ];
 
+  // Demo notification: next log deadline and feedback
+  const nextDeadline =
+    logs.length > 0 ? logs[logs.length - 1].endDate : "2026-01-09";
+  const feedbackMsg =
+    pendingLogs > 0
+      ? `You have ${pendingLogs} log(s) pending supervisor review.`
+      : "All logs reviewed.";
+
   return (
     <AppLayout>
-      <div className="relative min-h-screen w-full bg-gradient-to-br from-[#0f2027] via-[#2c5364] to-[#232526] py-12 px-2 flex flex-col items-center">
+      {/* Notification Bar */}
+      <div className="w-full flex justify-center">
+        <div className="max-w-3xl w-full mt-4 mb-2 px-4">
+          <div className="rounded-xl bg-linear-to-r from-yellow-400 via-emerald-400 to-cyan-400 text-[#232526] px-6 py-3 shadow-lg flex flex-col md:flex-row md:items-center md:justify-between gap-2 text-sm font-semibold">
+            <span>
+              Next log deadline:{" "}
+              <span className="font-bold">{nextDeadline}</span>
+            </span>
+            <span>{feedbackMsg}</span>
+          </div>
+        </div>
+      </div>
+      <div className="relative min-h-screen w-full bg-linear-to-br from-[#0f2027] via-[#2c5364] to-[#232526] py-12 px-2 flex flex-col items-center">
         {/* Glassy Card Container */}
         <div className="w-full max-w-6xl mx-auto flex flex-col gap-10">
           {/* Header */}
@@ -92,7 +112,7 @@ const StudentDashboard = () => {
               </div>
               <h1 className="text-4xl md:text-5xl font-extrabold text-white drop-shadow mb-2">
                 Welcome,{" "}
-                <span className="bg-gradient-to-r from-yellow-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+                <span className="bg-linear-to-r from-yellow-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent">
                   {user?.name?.split(" ")[0] || "Student"}
                 </span>
               </h1>
@@ -101,7 +121,7 @@ const StudentDashboard = () => {
               </p>
             </div>
             <div className="flex flex-col items-end gap-2">
-              <span className="inline-block rounded-full bg-gradient-to-r from-yellow-400 via-emerald-400 to-cyan-400 px-4 py-1 text-xs font-bold text-[#232526] shadow">
+              <span className="inline-block rounded-full bg-linear-to-r from-yellow-400 via-emerald-400 to-cyan-400 px-4 py-1 text-xs font-bold text-[#232526] shadow">
                 2026 Cohort
               </span>
               <span className="text-xs text-white/60">
@@ -121,7 +141,7 @@ const StudentDashboard = () => {
                 className="rounded-2xl bg-white/20 backdrop-blur-lg border border-white/20 shadow-xl p-6 flex flex-col gap-2 hover:scale-[1.03] transition-transform"
               >
                 <div className="flex items-center justify-between mb-2">
-                  <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-br from-yellow-300 via-emerald-300 to-cyan-300 text-[#232526] shadow-lg">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-linear-to-br from-yellow-300 via-emerald-300 to-cyan-300 text-[#232526] shadow-lg">
                     <s.icon className="w-7 h-7" />
                   </div>
                   <ArrowUpRight className="w-5 h-5 text-yellow-200/60" />
@@ -255,7 +275,7 @@ const StudentDashboard = () => {
                   Your latest weekly submissions
                 </p>
               </div>
-              <span className="inline-block bg-gradient-to-r from-yellow-400 via-emerald-400 to-cyan-400 text-[#232526] px-3 py-1 rounded-full text-xs font-bold shadow">
+              <span className="inline-block bg-linear-to-r from-yellow-400 via-emerald-400 to-cyan-400 text-[#232526] px-3 py-1 rounded-full text-xs font-bold shadow">
                 {logs.length} total
               </span>
             </div>
@@ -272,7 +292,7 @@ const StudentDashboard = () => {
                     className="flex items-center justify-between bg-white/10 backdrop-blur rounded-xl px-5 py-4 border border-white/20 shadow"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="bg-gradient-to-br from-yellow-300 via-emerald-300 to-cyan-300 text-[#232526] rounded-full px-3 py-1 text-xs font-bold shadow">
+                      <div className="bg-linear-to-br from-yellow-300 via-emerald-300 to-cyan-300 text-[#232526] rounded-full px-3 py-1 text-xs font-bold shadow">
                         <span>W{log.weekNumber}</span>
                       </div>
                       <div>
@@ -304,19 +324,22 @@ const StudentDashboard = () => {
         <div className="w-full flex justify-center gap-3 mt-12 mb-2">
           <a
             href="/student/logbook"
-            className="px-4 py-2 text-sm rounded bg-yellow-100 text-[#232526] border border-yellow-300 hover:bg-yellow-200 transition"
+            className="px-4 py-2 text-sm rounded bg-yellow-100 text-[#232526] border border-yellow-300 hover:bg-yellow-200 transition font-bold shadow"
+            style={{ textShadow: "0 1px 2px #fff, 0 0px 1px #facc15" }}
           >
             Log New Week
           </a>
           <a
             href="/student/placement"
-            className="px-4 py-2 text-sm rounded bg-emerald-50 text-[#232526] border border-emerald-200 hover:bg-emerald-100 transition"
+            className="px-4 py-2 text-sm rounded bg-emerald-50 text-[#232526] border border-emerald-200 hover:bg-emerald-100 transition font-bold shadow"
+            style={{ textShadow: "0 1px 2px #fff, 0 0px 1px #34d399" }}
           >
             View Placement
           </a>
           <a
             href="/student/scores"
-            className="px-4 py-2 text-sm rounded bg-cyan-50 text-[#232526] border border-cyan-200 hover:bg-cyan-100 transition"
+            className="px-4 py-2 text-sm rounded bg-cyan-50 text-[#232526] border border-cyan-200 hover:bg-cyan-100 transition font-bold shadow"
+            style={{ textShadow: "0 1px 2px #fff, 0 0px 1px #22d3ee" }}
           >
             View Scores
           </a>
@@ -324,8 +347,8 @@ const StudentDashboard = () => {
       </div>
       {/* Ambient Glow Effects */}
       <div className="pointer-events-none fixed top-0 left-0 w-full h-full z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] bg-gradient-to-br from-yellow-400 via-emerald-400 to-cyan-400 opacity-30 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-gradient-to-br from-cyan-400 via-emerald-400 to-yellow-400 opacity-20 blur-[120px] rounded-full" />
+        <div className="absolute top-[-10%] left-[-10%] w-100 h-100 bg-linear-to-br from-yellow-400 via-emerald-400 to-cyan-400 opacity-30 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-100 h-100 bg-linear-to-br from-cyan-400 via-emerald-400 to-yellow-400 opacity-20 blur-[120px] rounded-full" />
       </div>
     </AppLayout>
   );

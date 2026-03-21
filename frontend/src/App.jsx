@@ -7,6 +7,7 @@ import StudentDashboard from "./pages/student/studentDash";
 import StudentPlacement from "./pages/student/studentPlacement";
 import StudentScores from "./pages/student/studentscores";
 import WeeklyLogbook from "./pages/student/weeklylogbook";
+import ProfileSettings from "./pages/student/profile";
 import AdminEvaluations from "./pages/admin/adminEvaluations";
 import AdminReports from "./pages/admin/Adminreports";
 import AdminPlacementManagement from "./pages/admin/AdminPlacementManagement";
@@ -28,6 +29,7 @@ function App() {
         <Route path="/student/placement" element={<StudentPlacement />} />
         <Route path="/student/scores" element={<StudentScores />} />
         <Route path="/student/logbook" element={<WeeklyLogbook />} />
+        <Route path="/student/profile" element={<ProfileSettings />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/evaluations" element={<AdminEvaluations />} />
         <Route path="/admin/reports" element={<AdminReports />} />
