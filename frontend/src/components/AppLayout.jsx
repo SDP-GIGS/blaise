@@ -154,14 +154,14 @@ const AppLayout = ({ children }) => {
   );
 
   return (
-    <div className="min-h-screen flex bg-background">
+    <div className="h-screen w-full overflow-hidden flex bg-background">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-[260px] gradient-sidebar border-r border-border/50 flex-col flex-shrink-0 sticky top-0 h-screen">
+      <aside className="hidden lg:flex w-[260px] gradient-sidebar border-r border-border/50 flex-col flex-shrink-0 h-full">
         <SidebarContent />
       </aside>
 
-      {/* Mobile header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 glass-card-strong flex items-center justify-between px-4">
+      {/* Mobile header (Forces hidden on desktop) */}
+      <div className="lg:!hidden fixed top-0 left-0 right-0 z-50 h-14 glass-card-strong flex items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg gradient-gold flex items-center justify-center shadow-gold">
             <BookOpen className="w-4 h-4 text-background" />
@@ -198,8 +198,8 @@ const AppLayout = ({ children }) => {
       </AnimatePresence>
 
       {/* Main content */}
-      <main className="flex-1 overflow-auto lg:pt-0 pt-14">
-        <div className="relative min-h-screen">
+      <main className="flex-1 overflow-auto lg:pt-0 pt-14 flex flex-col">
+        <div className="relative flex-1 min-h-full">
           {/* Subtle grid background */}
           <div className="absolute inset-0 bg-dot-pattern opacity-30 pointer-events-none" />
           {/* Ambient glow orbs */}

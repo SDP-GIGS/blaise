@@ -39,6 +39,9 @@ const HeroSection = () => {
           <span className="text-gradient-gold">Excel.</span>
         </h1>
 
+
+
+
         <p
           className="text-lg sm:text-xl text-gold/60 max-w-2xl mx-auto mb-10 leading-relaxed"
           style={{ animationDelay: "0.4s" }}
