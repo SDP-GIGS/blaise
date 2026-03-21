@@ -1,4 +1,8 @@
 import { GraduationCap, Briefcase, BookOpen, Shield } from "lucide-react";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+gsap.registerPlugin(ScrollTrigger);
 
 const roles = [
   {
@@ -36,6 +40,28 @@ const roles = [
 ];
 
 const RolesSection = () => {
+  const cardsRef = useRef([]);
+
+  useEffect(() => {
+    if (cardsRef.current) {
+      gsap.fromTo(
+        cardsRef.current,
+        { opacity: 0, y: 60 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          stagger: 0.18,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: cardsRef.current[0]?.parentNode,
+            start: "top 80%",
+          },
+        },
+      );
+    }
+  }, []);
+
   return (
     <section
       id="roles"
@@ -59,8 +85,8 @@ const RolesSection = () => {
           {roles.map((role, i) => (
             <div
               key={role.title}
-              className="group relative rounded-3xl border border-yellow-200/60 dark:border-yellow-900/40 bg-white/70 dark:bg-yellow-900/40 shadow-xl p-8 hover:border-yellow-400/80 hover:bg-yellow-100/80 dark:hover:bg-yellow-900/60 transition-all duration-300 opacity-0 animate-fade-up backdrop-blur-xl hover:scale-105 hover:shadow-2xl"
-              style={{ animationDelay: `${0.1 + i * 0.1}s` }}
+              ref={(el) => (cardsRef.current[i] = el)}
+              className="group relative rounded-3xl border border-yellow-200/60 dark:border-yellow-900/40 bg-white/70 dark:bg-yellow-900/40 shadow-xl p-8 hover:border-yellow-400/80 hover:bg-yellow-100/80 dark:hover:bg-yellow-900/60 transition-all duration-300 opacity-0 backdrop-blur-xl hover:scale-105 hover:shadow-2xl"
             >
               <div
                 className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${role.color} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}
