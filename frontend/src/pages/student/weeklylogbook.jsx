@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import AppLayout from "../../components/AppLayout";
 import { useAuth } from "../../contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -26,10 +25,12 @@ const WeeklyLogbook = () => {
 
   const fetchLogs = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/logs/", {
+      const response = await fetch("http://127.0.0.1:8000/api/logs/", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setLogs(response.data);
+      if (!response.ok) throw new Error("Failed to fetch logs");
+      const data = await response.json();
+      setLogs(data);
     } catch (error) {
       console.error("Error fetching logs:", error);
     } finally {
@@ -45,11 +46,12 @@ const WeeklyLogbook = () => {
     });
 
     try {
-      await axios.post("http://127.0.0.1:8000/api/logs/", formData, {
+      await fetch("http://127.0.0.1:8000/api/logs/", {
+        method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
         },
+        body: formData,
       });
       setShowNew(false);
       setForm({
