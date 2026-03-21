@@ -1,10 +1,17 @@
 import AppLayout from "../../components/AppLayout";
 import { useAuth } from "../../contexts/AuthContext";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const ProfileSettings = () => {
-  const { user } = useAuth() || {
+  const { user, signOut } = useAuth() || {
     user: { name: "John Student", email: "student@example.com" },
+    signOut: () => {},
+  };
+  const navigate = useNavigate();
+  const handleSignOut = () => {
+    signOut();
+    navigate("/login");
   };
   const [form, setForm] = useState({
     name: user.name,
@@ -31,6 +38,13 @@ const ProfileSettings = () => {
     <AppLayout>
       <div className="max-w-xl mx-auto mt-12 bg-white/30 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-white/20">
         <div className="flex flex-col items-center mb-6">
+          <button
+            onClick={handleSignOut}
+            className="absolute right-8 top-8 px-4 py-1 rounded-lg bg-gradient-to-r from-red-400 to-pink-500 text-white font-semibold shadow hover:scale-105 transition-all focus:outline-none focus:ring-2 focus:ring-red-300"
+            style={{ zIndex: 10 }}
+          >
+            Sign Out
+          </button>
           <div className="relative mb-2">
             <span className="inline-block h-24 w-24 rounded-full bg-gradient-to-tr from-yellow-300 via-emerald-400 to-cyan-400 p-1 shadow-lg">
               <span className="flex h-full w-full items-center justify-center rounded-full bg-white/80 dark:bg-gray-900/80 text-4xl font-bold text-gray-700 dark:text-gray-200">

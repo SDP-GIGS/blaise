@@ -18,6 +18,7 @@ import {
   Menu,
   X,
   Sparkles,
+  Bell,
 } from "lucide-react";
 
 const navByRole = {
@@ -68,7 +69,7 @@ const navByRole = {
 };
 
 const AppLayout = ({ children }) => {
-  const { user, logout } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -77,7 +78,7 @@ const AppLayout = ({ children }) => {
   const navItems = user ? navByRole[user.role] || [] : [];
 
   const handleLogout = () => {
-    logout();
+    signOut();
     navigate("/login");
   };
 
@@ -194,16 +195,26 @@ const AppLayout = ({ children }) => {
             ILES
           </span>
         </Link>
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-        >
-          {mobileOpen ? (
-            <X className="w-5 h-5 text-foreground" />
-          ) : (
-            <Menu className="w-5 h-5 text-foreground" />
-          )}
-        </button>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/notifications"
+            className="relative group p-2 rounded-full hover:bg-cyan-100 dark:hover:bg-cyan-900 transition-colors"
+          >
+            <Bell className="w-6 h-6 text-cyan-600 dark:text-cyan-300" />
+            {/* Notification dot (optional): */}
+            <span className="absolute top-1 right-1 w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
+          </Link>
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          >
+            {mobileOpen ? (
+              <X className="w-5 h-5 text-foreground" />
+            ) : (
+              <Menu className="w-5 h-5 text-foreground" />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Mobile sidebar overlay */}
