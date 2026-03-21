@@ -1,105 +1,758 @@
-import { ArrowDown, GraduationCap, Users, ClipboardCheck } from "lucide-react";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const stats = [
-  { icon: GraduationCap, label: "Students", value: "500+" },
-  { icon: Users, label: "Supervisors", value: "120+" },
-  { icon: ClipboardCheck, label: "Evaluations", value: "2,400+" },
+  { label: "Student Interns", value: "500+", sub: "Across all departments" },
+  { label: "Supervisors", value: "120+", sub: "Workplace & academic" },
+  { label: "Evaluations Done", value: "2,400+", sub: "Logged & reviewed" },
+  { label: "Institutions", value: "18", sub: "Partner organisations" },
+];
+
+const pillars = [
+  {
+    code: "01",
+    title: "Place",
+    desc: "Structured placement workflow with validation gates and deadline tracking.",
+  },
+  {
+    code: "02",
+    title: "Log",
+    desc: "Weekly logbook submissions with rich evidence attachments.",
+  },
+  {
+    code: "03",
+    title: "Review",
+    desc: "Supervisor sign-off and academic commentary in a single interface.",
+  },
+  {
+    code: "04",
+    title: "Score",
+    desc: "Automated weighted computation with transparent grade breakdowns.",
+  },
 ];
 
 const HeroSection = () => {
-  return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-yellow-50 to-yellow-100 dark:from-yellow-900 dark:to-yellow-950">
-      {/* Background */}
-      <div className="absolute inset-0">
-        <img
-          src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80"
-          alt="Internship background"
-          className="w-full h-full object-cover opacity-60 scale-105 blur-[1px]"
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/80 via-blue-950/80 to-yellow-900/60 dark:from-blue-950/90 dark:to-yellow-900/80" />
-      </div>
-      <div className="absolute top-20 right-20 w-72 h-72 rounded-full bg-yellow-200/30 blur-3xl animate-pulse-slow" />
-      <div className="absolute bottom-20 left-10 w-96 h-96 rounded-full bg-yellow-100/20 blur-3xl animate-float" />
+  const sectionRef = useRef(null);
+  const eyebrowRef = useRef(null);
+  const headLine1Ref = useRef(null);
+  const headLine2Ref = useRef(null);
+  const headLine3Ref = useRef(null);
+  const taglineRef = useRef(null);
+  const ctaRef = useRef(null);
+  const statsRef = useRef([]);
+  const pillarsRef = useRef([]);
+  const scrollIndRef = useRef(null);
+  const ring1Ref = useRef(null);
+  const ring2Ref = useRef(null);
+  const gridRef = useRef(null);
+  const separatorRef = useRef(null);
+  const scrollBadgeRef = useRef(null);
 
-      {/* Content */}
-      <div className="relative z-10 max-w-5xl mx-auto px-6 text-center pt-28 pb-20">
+  useEffect(() => {
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+    /* ── BG elements ── */
+    gsap.fromTo(
+      gridRef.current,
+      { opacity: 0 },
+      { opacity: 1, duration: 2, ease: "power1.out" },
+    );
+    gsap.fromTo(
+      ring1Ref.current,
+      { scale: 0.6, opacity: 0 },
+      { scale: 1, opacity: 1, duration: 2.2, ease: "expo.out", delay: 0.2 },
+    );
+    gsap.fromTo(
+      ring2Ref.current,
+      { scale: 0.3, opacity: 0 },
+      { scale: 1, opacity: 0.5, duration: 2.6, ease: "expo.out", delay: 0.4 },
+    );
+    // Slow drift on rings
+    gsap.to(ring1Ref.current, {
+      rotate: 360,
+      duration: 30,
+      ease: "none",
+      repeat: -1,
+      transformOrigin: "center",
+    });
+    gsap.to(ring2Ref.current, {
+      rotate: -360,
+      duration: 50,
+      ease: "none",
+      repeat: -1,
+      transformOrigin: "center",
+    });
+
+    /* ── Eyebrow tag ── */
+    tl.fromTo(
+      eyebrowRef.current,
+      { opacity: 0, y: -16, letterSpacing: "0.6em" },
+      { opacity: 1, y: 0, letterSpacing: "0.35em", duration: 1.0 },
+      0.3,
+    );
+
+    /* ── Headline lines: staggered clip reveal ── */
+    [headLine1Ref, headLine2Ref, headLine3Ref].forEach((ref, i) => {
+      tl.fromTo(
+        ref.current,
+        { opacity: 0, y: 48, skewY: 3 },
+        { opacity: 1, y: 0, skewY: 0, duration: 0.95, ease: "expo.out" },
+        0.55 + i * 0.18,
+      );
+    });
+
+    /* ── Separator line draw ── */
+    tl.fromTo(
+      separatorRef.current,
+      { scaleX: 0 },
+      { scaleX: 1, duration: 1.1, ease: "expo.inOut" },
+      1.1,
+    );
+
+    /* ── Tagline ── */
+    tl.fromTo(
+      taglineRef.current,
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.9 },
+      1.3,
+    );
+
+    /* ── CTA ── */
+    tl.fromTo(
+      ctaRef.current?.querySelectorAll("a") || [],
+      { opacity: 0, y: 24, scale: 0.92 },
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.7,
+        ease: "back.out(1.6)",
+        stagger: 0.12,
+      },
+      1.55,
+    );
+
+    /* ── Scroll badge ── */
+    tl.fromTo(
+      scrollBadgeRef.current,
+      { opacity: 0, y: 10 },
+      { opacity: 1, y: 0, duration: 0.6 },
+      2.1,
+    );
+
+    /* ── Stats: scroll-triggered stagger ── */
+    if (statsRef.current.length) {
+      gsap.fromTo(
+        statsRef.current.filter(Boolean),
+        { opacity: 0, y: 40, scale: 0.9 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.7,
+          ease: "back.out(1.4)",
+          stagger: 0.1,
+          scrollTrigger: {
+            trigger: statsRef.current[0],
+            start: "top 88%",
+            toggleActions: "play none none none",
+          },
+        },
+      );
+    }
+
+    /* ── Pillars: scroll-triggered horizontal slide ── */
+    if (pillarsRef.current.length) {
+      gsap.fromTo(
+        pillarsRef.current.filter(Boolean),
+        { opacity: 0, x: -40 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 0.75,
+          ease: "power3.out",
+          stagger: 0.13,
+          scrollTrigger: {
+            trigger: pillarsRef.current[0],
+            start: "top 86%",
+            toggleActions: "play none none none",
+          },
+        },
+      );
+    }
+
+    /* ── Scroll indicator float loop ── */
+    if (scrollIndRef.current) {
+      gsap.to(scrollIndRef.current, {
+        y: 10,
+        duration: 1.6,
+        ease: "sine.inOut",
+        yoyo: true,
+        repeat: -1,
+      });
+    }
+
+    /* ── Parallax on BG rings as user scrolls ── */
+    gsap.to([ring1Ref.current, ring2Ref.current], {
+      y: -120,
+      ease: "none",
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: "top top",
+        end: "bottom top",
+        scrub: 2,
+      },
+    });
+
+    return () => ScrollTrigger.getAll().forEach((t) => t.kill());
+  }, []);
+
+  return (
+    <section
+      ref={sectionRef}
+      style={{
+        position: "relative",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        overflow: "hidden",
+        backgroundColor: "#080c14",
+        paddingTop: 100,
+        paddingBottom: 80,
+      }}
+    >
+      {/* ── Background: photo + dark overlay ── */}
+      <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
+        <img
+          src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=1600"
+          alt=""
+          aria-hidden="true"
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            opacity: 0.07,
+            filter: "grayscale(100%) contrast(1.2)",
+          }}
+        />
         <div
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-yellow-400/40 bg-white/60 dark:bg-yellow-900/30 shadow-lg backdrop-blur-md mb-8 opacity-0 animate-fade-up"
-          style={{ animationDelay: "0.1s" }}
+          style={{
+            position: "absolute",
+            inset: 0,
+            background:
+              "linear-gradient(to bottom, #080c14 0%, rgba(8,12,20,0.6) 40%, rgba(8,12,20,0.85) 70%, #080c14 100%)",
+          }}
+        />
+      </div>
+
+      {/* ── Grid texture ── */}
+      <div
+        ref={gridRef}
+        style={{
+          position: "absolute",
+          inset: 0,
+          zIndex: 1,
+          backgroundImage: `
+          linear-gradient(rgba(180,150,40,0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(180,150,40,0.04) 1px, transparent 1px)
+        `,
+          backgroundSize: "48px 48px",
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* ── Ambient rings ── */}
+      <div
+        ref={ring1Ref}
+        style={{
+          position: "absolute",
+          zIndex: 1,
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 700,
+          height: 700,
+          borderRadius: "50%",
+          border: "1px solid rgba(180,140,30,0.12)",
+          backgroundImage:
+            "repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(180,140,30,0.02) 20px, rgba(180,140,30,0.02) 21px)",
+          pointerEvents: "none",
+        }}
+      />
+      <div
+        ref={ring2Ref}
+        style={{
+          position: "absolute",
+          zIndex: 1,
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 1000,
+          height: 1000,
+          borderRadius: "50%",
+          border: "1px dashed rgba(180,140,30,0.08)",
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* ── Ambient glow ── */}
+      <div
+        style={{
+          position: "absolute",
+          zIndex: 1,
+          top: "20%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: 500,
+          height: 400,
+          borderRadius: "50%",
+          background:
+            "radial-gradient(ellipse, rgba(180,140,30,0.1) 0%, transparent 70%)",
+          filter: "blur(40px)",
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* ── Main content ── */}
+      <div
+        style={{
+          position: "relative",
+          zIndex: 2,
+          maxWidth: 880,
+          margin: "0 auto",
+          padding: "0 28px",
+          textAlign: "center",
+          width: "100%",
+        }}
+      >
+        {/* Eyebrow */}
+        <div
+          ref={eyebrowRef}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 14,
+            marginBottom: 36,
+            fontSize: 11,
+            letterSpacing: "0.35em",
+            textTransform: "uppercase",
+            color: "rgba(180,140,30,0.6)",
+            fontFamily: "monospace",
+          }}
         >
-          <span className="text-base font-semibold text-yellow-700 dark:text-yellow-200 tracking-wide">
-            A comprehensive platform for managing internship placements, weekly
-            logbooks, supervisor reviews, and academic evaluations — all in one
-            place.
-          </span>
+          <span
+            style={{
+              display: "inline-block",
+              width: 28,
+              height: 1,
+              background: "rgba(180,140,30,0.4)",
+            }}
+          />
+          College of Computing &amp; IT · Makerere University · 2026
+          <span
+            style={{
+              display: "inline-block",
+              width: 28,
+              height: 1,
+              background: "rgba(180,140,30,0.4)",
+            }}
+          />
         </div>
 
-        <h1
-          className="text-5xl sm:text-6xl lg:text-7xl font-serif font-extrabold text-yellow-700 dark:text-yellow-200 leading-tight mb-6 drop-shadow-xl opacity-0 animate-fade-up"
-          style={{ animationDelay: "0.25s" }}
-        >
-          Track. Evaluate.{" "}
-          <span className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 bg-clip-text text-transparent animate-gradient-x">
+        {/* Headline */}
+        <div style={{ marginBottom: 8, overflow: "hidden" }}>
+          <h1
+            ref={headLine1Ref}
+            style={{
+              fontSize: "clamp(40px, 7vw, 80px)",
+              fontWeight: 800,
+              fontFamily: "'Georgia', serif",
+              color: "#e8dfc8",
+              lineHeight: 1.05,
+              letterSpacing: "-0.01em",
+              margin: 0,
+            }}
+          >
+            Track. Evaluate.
+          </h1>
+        </div>
+        <div style={{ marginBottom: 8, overflow: "hidden" }}>
+          <h1
+            ref={headLine2Ref}
+            style={{
+              fontSize: "clamp(40px, 7vw, 80px)",
+              fontWeight: 800,
+              fontFamily: "'Georgia', serif",
+              color: "#c9a227",
+              lineHeight: 1.05,
+              letterSpacing: "-0.01em",
+              margin: 0,
+              textShadow: "0 0 60px rgba(180,140,30,0.35)",
+            }}
+          >
             Excel.
-          </span>
-        </h1>
+          </h1>
+        </div>
+        <div style={{ marginBottom: 36, overflow: "hidden" }}>
+          <p
+            ref={headLine3Ref}
+            style={{
+              fontSize: "clamp(16px, 2.2vw, 24px)",
+              fontFamily: "'Georgia', serif",
+              fontStyle: "italic",
+              color: "rgba(232,223,200,0.5)",
+              lineHeight: 1.4,
+              margin: 0,
+              letterSpacing: "0.01em",
+            }}
+          >
+            — Internship Logging &amp; Evaluation System
+          </p>
+        </div>
+
+        {/* Separator */}
+        <div
+          ref={separatorRef}
+          style={{
+            height: 1,
+            maxWidth: 340,
+            margin: "0 auto 32px",
+            background:
+              "linear-gradient(to right, transparent, #c9a227 30%, #c9a227 70%, transparent)",
+            transformOrigin: "center",
+          }}
+        />
+
+        {/* Tagline */}
         <p
-          className="text-lg sm:text-xl text-yellow-800/70 dark:text-yellow-200/70 max-w-2xl mx-auto mb-10 leading-relaxed opacity-0 animate-fade-up"
-          style={{ animationDelay: "0.4s" }}
+          ref={taglineRef}
+          style={{
+            fontSize: "clamp(14px, 1.6vw, 17px)",
+            color: "rgba(232,223,200,0.6)",
+            lineHeight: 1.85,
+            maxWidth: 620,
+            margin: "0 auto 44px",
+            letterSpacing: "0.01em",
+          }}
         >
-          Empowering students, supervisors, and administrators with seamless
-          digital internship management.
+          ILES is a full-stack workflow platform built for Makerere University's
+          internship programme. It connects students with their supervisors and
+          academic coordinators — enabling structured logbook submissions,
+          real-time review, and transparent grade computation across every
+          placement cycle.
         </p>
 
+        {/* CTA */}
         <div
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 opacity-0 animate-fade-up"
-          style={{ animationDelay: "0.55s" }}
+          ref={ctaRef}
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 14,
+            justifyContent: "center",
+            marginBottom: 64,
+          }}
         >
           <a
             href="/login"
-            className="px-10 py-4 rounded-2xl bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 text-blue-900 font-extrabold text-lg shadow-xl hover:scale-105 hover:shadow-2xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-yellow-300 animate-pulse"
+            style={{
+              padding: "15px 38px",
+              background: "#c9a227",
+              color: "#080c14",
+              fontWeight: 700,
+              fontSize: 14,
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              textDecoration: "none",
+              borderRadius: 2,
+              fontFamily: "Georgia, serif",
+              boxShadow: "0 4px 24px rgba(180,140,30,0.35)",
+              transition: "all 0.22s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = "#e8c84a";
+              e.target.style.transform = "translateY(-2px)";
+              e.target.style.boxShadow = "0 8px 32px rgba(180,140,30,0.5)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = "#c9a227";
+              e.target.style.transform = "translateY(0)";
+              e.target.style.boxShadow = "0 4px 24px rgba(180,140,30,0.35)";
+            }}
           >
             Get Started
+          </a>
+          <a
+            href="#modules"
+            style={{
+              padding: "15px 38px",
+              background: "transparent",
+              color: "#c9a227",
+              fontWeight: 600,
+              fontSize: 14,
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              textDecoration: "none",
+              borderRadius: 2,
+              border: "1px solid rgba(180,140,30,0.4)",
+              fontFamily: "Georgia, serif",
+              transition: "all 0.22s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = "rgba(180,140,30,0.08)";
+              e.target.style.transform = "translateY(-2px)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = "transparent";
+              e.target.style.transform = "translateY(0)";
+            }}
+          >
+            Explore System
+          </a>
+          <a
+            href="/signup"
+            style={{
+              padding: "15px 38px",
+              background: "transparent",
+              color: "rgba(232,223,200,0.5)",
+              fontWeight: 500,
+              fontSize: 14,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              textDecoration: "none",
+              borderRadius: 2,
+              border: "1px solid rgba(232,223,200,0.1)",
+              fontFamily: "Georgia, serif",
+              transition: "all 0.22s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.color = "#e8dfc8";
+              e.target.style.borderColor = "rgba(232,223,200,0.28)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.color = "rgba(232,223,200,0.5)";
+              e.target.style.borderColor = "rgba(232,223,200,0.1)";
+            }}
+          >
+            Create Account
           </a>
         </div>
 
         {/* Stats */}
         <div
-          className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-2xl mx-auto mb-8 opacity-0 animate-fade-up"
-          style={{ animationDelay: "0.7s" }}
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
+            gap: 1,
+            maxWidth: 760,
+            margin: "0 auto 80px",
+            border: "1px solid rgba(180,140,30,0.15)",
+            borderRadius: 4,
+            overflow: "hidden",
+            background: "rgba(180,140,30,0.06)",
+          }}
         >
-          {stats.map((stat, i) => (
+          {stats.map((s, i) => (
             <div
-              key={stat.label}
-              className="rounded-xl bg-white/70 dark:bg-yellow-900/30 shadow-lg p-6 flex flex-col items-center backdrop-blur-md hover:scale-105 hover:shadow-2xl transition-all duration-300"
-              style={{ animationDelay: `${0.7 + i * 0.1}s` }}
+              key={s.label}
+              ref={(el) => (statsRef.current[i] = el)}
+              style={{
+                padding: "28px 20px",
+                textAlign: "center",
+                borderRight:
+                  i < stats.length - 1
+                    ? "1px solid rgba(180,140,30,0.1)"
+                    : "none",
+                background: "rgba(8,12,20,0.6)",
+                backdropFilter: "blur(12px)",
+                transition: "background 0.25s",
+                cursor: "default",
+              }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.background = "rgba(180,140,30,0.06)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.background = "rgba(8,12,20,0.6)")
+              }
             >
-              <stat.icon className="w-8 h-8 text-yellow-600 dark:text-yellow-300 mb-2" />
-              <p className="text-3xl font-extrabold text-yellow-700 dark:text-yellow-200 drop-shadow">
-                {stat.value}
-              </p>
-              <p className="text-sm text-yellow-700/60 dark:text-yellow-200/60 mt-1 font-medium">
-                {stat.label}
-              </p>
+              <div
+                style={{
+                  fontSize: "clamp(26px, 3.5vw, 36px)",
+                  fontWeight: 800,
+                  color: "#c9a227",
+                  fontFamily: "Georgia, serif",
+                  letterSpacing: "-0.01em",
+                  textShadow: "0 0 20px rgba(180,140,30,0.3)",
+                }}
+              >
+                {s.value}
+              </div>
+              <div
+                style={{
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "rgba(232,223,200,0.75)",
+                  letterSpacing: "0.06em",
+                  textTransform: "uppercase",
+                  marginTop: 4,
+                }}
+              >
+                {s.label}
+              </div>
+              <div
+                style={{
+                  fontSize: 11,
+                  color: "rgba(232,223,200,0.35)",
+                  letterSpacing: "0.05em",
+                  marginTop: 3,
+                  fontStyle: "italic",
+                }}
+              >
+                {s.sub}
+              </div>
             </div>
           ))}
         </div>
 
-        {/* Scroll indicator */}
-        <div className="mt-16 animate-float">
-          <ArrowDown className="w-7 h-7 text-yellow-700/40 dark:text-yellow-200/40 mx-auto animate-bounce" />
+        {/* Workflow pillars */}
+        <div
+          style={{
+            maxWidth: 760,
+            margin: "0 auto 20px",
+            textAlign: "left",
+          }}
+        >
+          <div
+            style={{
+              fontSize: 10,
+              letterSpacing: "0.35em",
+              textTransform: "uppercase",
+              color: "rgba(180,140,30,0.4)",
+              fontFamily: "monospace",
+              marginBottom: 20,
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+            }}
+          >
+            <span>The ILES workflow</span>
+            <div
+              style={{
+                flex: 1,
+                height: 1,
+                background: "rgba(180,140,30,0.12)",
+              }}
+            />
+          </div>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
+              gap: 12,
+            }}
+          >
+            {pillars.map((p, i) => (
+              <div
+                key={p.code}
+                ref={(el) => (pillarsRef.current[i] = el)}
+                style={{
+                  padding: "20px 18px",
+                  border: "1px solid rgba(180,140,30,0.13)",
+                  borderRadius: 2,
+                  background: "rgba(14,20,32,0.8)",
+                  backdropFilter: "blur(10px)",
+                  transition: "border-color 0.25s, transform 0.25s",
+                  cursor: "default",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(180,140,30,0.45)";
+                  e.currentTarget.style.transform = "translateY(-3px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(180,140,30,0.13)";
+                  e.currentTarget.style.transform = "translateY(0)";
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 10,
+                    letterSpacing: "0.25em",
+                    color: "rgba(180,140,30,0.45)",
+                    fontFamily: "monospace",
+                    marginBottom: 8,
+                  }}
+                >
+                  {p.code}
+                </div>
+                <div
+                  style={{
+                    fontSize: 18,
+                    fontWeight: 700,
+                    fontFamily: "Georgia, serif",
+                    color: "#e8c84a",
+                    marginBottom: 6,
+                  }}
+                >
+                  {p.title}
+                </div>
+                <div
+                  style={{
+                    fontSize: 12,
+                    color: "rgba(232,223,200,0.5)",
+                    lineHeight: 1.6,
+                  }}
+                >
+                  {p.desc}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-      <style>{`
-        @keyframes gradient-x {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-        }
-        .animate-gradient-x {
-          background-size: 200% 200%;
-          animation: gradient-x 3s ease-in-out infinite;
-        }
-      `}</style>
+
+      {/* Scroll indicator */}
+      <div
+        ref={scrollBadgeRef}
+        style={{
+          position: "absolute",
+          bottom: 32,
+          left: "50%",
+          transform: "translateX(-50%)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 8,
+          zIndex: 2,
+          cursor: "default",
+        }}
+      >
+        <span
+          style={{
+            fontSize: 9,
+            letterSpacing: "0.35em",
+            textTransform: "uppercase",
+            color: "rgba(180,140,30,0.35)",
+            fontFamily: "monospace",
+          }}
+        >
+          Scroll
+        </span>
+        <div
+          ref={scrollIndRef}
+          style={{
+            width: 1,
+            height: 40,
+            background:
+              "linear-gradient(to bottom, rgba(180,140,30,0.5), transparent)",
+          }}
+        />
+      </div>
     </section>
   );
 };

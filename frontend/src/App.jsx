@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/login";
 import SignUp from "./pages/signup";
@@ -8,12 +9,13 @@ import StudentScores from "./pages/student/studentscores";
 import WeeklyLogbook from "./pages/student/weeklylogbook";
 import AdminEvaluations from "./pages/admin/adminEvaluations";
 import AdminReports from "./pages/admin/Adminreports";
-import AdminUsers from "./pages/admin/AdminUsers";
 import AdminPlacementManagement from "./pages/admin/AdminPlacementManagement";
-import AcademicSupervisorDashboard from "./pages/supervisor/academicDashboard";
-import WorkplaceSupervisorDashboard from "./pages/supervisor/workplaceDashboard";
-import ReviewWorkflow from "./pages/supervisor/reviewWorkflow";
-import SupervisorEvaluate from "./pages/supervisor/supervisorEvaluate";
+import AdminUsers from "./pages/admin/AdminUsers";
+import Overview from "./pages/Overview";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import SupervisorDashboard from "./pages/supervisor/SupervisorDashboard";
+import AcademicDashboard from "./pages/academic/AcademicDashboard";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -26,24 +28,7 @@ function App() {
         <Route path="/student/placement" element={<StudentPlacement />} />
         <Route path="/student/scores" element={<StudentScores />} />
         <Route path="/student/logbook" element={<WeeklyLogbook />} />
-        <Route
-          path="/supervisor/academic"
-          element={<AcademicSupervisorDashboard />}
-        />
-        <Route
-          path="/supervisor/workplace"
-          element={<WorkplaceSupervisorDashboard />}
-        />
-        <Route path="/supervisor/academic/review" element={<ReviewWorkflow />} />
-        <Route
-          path="/supervisor/academic/evaluate"
-          element={<SupervisorEvaluate />}
-        />
-        <Route path="/supervisor/workplace/review" element={<ReviewWorkflow />} />
-        <Route
-          path="/supervisor/workplace/evaluate"
-          element={<SupervisorEvaluate />}
-        />
+        <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/evaluations" element={<AdminEvaluations />} />
         <Route path="/admin/reports" element={<AdminReports />} />
         <Route path="/admin/users" element={<AdminUsers />} />
@@ -51,6 +36,10 @@ function App() {
           path="/admin/placements"
           element={<AdminPlacementManagement />}
         />
+        <Route path="/supervisor" element={<SupervisorDashboard />} />
+        <Route path="/academic" element={<AcademicDashboard />} />
+        <Route path="/overview" element={<Overview />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );

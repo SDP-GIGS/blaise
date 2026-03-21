@@ -60,17 +60,7 @@ const ModulesSection = () => {
       className="relative py-28 px-6 bg-gradient-to-b from-yellow-50/80 via-white/60 to-yellow-100/90 dark:from-yellow-900/90 dark:via-yellow-900/60 dark:to-yellow-950/80 overflow-hidden"
     >
       <div className="max-w-6xl mx-auto relative z-10">
-        <div className="text-center mb-20">
-          <span className="text-base font-extrabold text-yellow-700 dark:text-yellow-200 uppercase tracking-widest drop-shadow">
-            System Architecture
-          </span>
-          <h2 className="text-5xl sm:text-6xl font-serif font-extrabold text-yellow-700 dark:text-yellow-100 mt-4 drop-shadow-xl">
-            Seven Core Modules
-          </h2>
-          <p className="text-lg text-yellow-700/60 dark:text-yellow-200/60 mt-6 max-w-2xl mx-auto font-medium">
-            A modular architecture covering the complete internship lifecycle.
-          </p>
-        </div>
+        {/* Removed System Architecture section header and description as requested */}
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
           {modules.map((mod, i) => (

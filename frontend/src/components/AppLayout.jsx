@@ -72,11 +72,8 @@ const AppLayout = ({ children }) => {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
-  const navItems = navByRole[user.role] || [];
+  // Allow open navigation: do not redirect if not logged in
+  const navItems = user ? navByRole[user.role] || [] : [];
 
   const handleLogout = () => {
     logout();
