@@ -11,6 +11,7 @@ import AdminReports from "./pages/admin/Adminreports";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminPlacementManagement from "./pages/admin/AdminPlacementManagement";
 import AcademicSupervisorDashboard from "./pages/supervisor/academicDashboard";
+import ReviewWorkflow from "./pages/supervisor/reviewWorkflow";
 
 function App() {
   return (
@@ -27,6 +28,8 @@ function App() {
           path="/supervisor/academic"
           element={<AcademicSupervisorDashboard />}
         />
+        <Route path="/supervisor/academic/review" element={<ReviewWorkflow />} />
+        <Route path="/supervisor/workplace/review" element={<ReviewWorkflow />} />
         <Route path="/admin/evaluations" element={<AdminEvaluations />} />
         <Route path="/admin/reports" element={<AdminReports />} />
         <Route path="/admin/users" element={<AdminUsers />} />
