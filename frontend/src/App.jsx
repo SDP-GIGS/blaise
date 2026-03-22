@@ -1,3 +1,4 @@
+import SupervisorNotifications from "./pages/supervisor/Notifications";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import LandingPage from "./pages/LandingPage";
@@ -51,6 +52,11 @@ function App() {
           path="/supervisor/workplace"
           element={<WorkplaceSupervisorDashboard />}
         />
+        {/* Supervisor Notifications */}
+        <Route
+          path="/supervisor/notifications"
+          element={<SupervisorNotifications />}
+        />
         <Route
           path="/supervisor/workplace/review"
           element={<WorkplaceReviewLogs />}
@@ -59,7 +65,6 @@ function App() {
           path="/supervisor/workplace/evaluate"
           element={<WorkplaceEvaluate />}
         />
-
         {/* Academic Supervisor Routes */}
         <Route
           path="/supervisor/academic"
@@ -73,7 +78,6 @@ function App() {
           path="/supervisor/academic/evaluate"
           element={<AcademicEvaluate />}
         />
-
         {/* Legacy supervisor dashboard route (optional) */}
         <Route path="/supervisor" element={<SupervisorDashboard />} />
         <Route path="/academic" element={<AcademicDashboard />} />

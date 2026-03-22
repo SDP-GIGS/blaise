@@ -23,8 +23,13 @@ const Login = () => {
   const { signIn } = useAuth();
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  // Load saved credentials from localStorage if available
+  const [email, setEmail] = useState(
+    () => localStorage.getItem("login_email") || "",
+  );
+  const [password, setPassword] = useState(
+    () => localStorage.getItem("login_password") || "",
+  );
   const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState("");
 
@@ -36,6 +41,10 @@ const Login = () => {
       setError("Please fill in all fields.");
       return;
     }
+
+    // Save credentials to localStorage
+    localStorage.setItem("login_email", email);
+    localStorage.setItem("login_password", password);
 
     const result = await signIn(email, password);
 
@@ -95,7 +104,10 @@ const Login = () => {
             <input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                localStorage.setItem("login_email", e.target.value);
+              }}
               placeholder="you@university.edu"
               className="w-full rounded-xl border border-slate-400/40 bg-slate-950 px-4 py-3 text-sm text-slate-50 outline-none transition focus:-translate-y-px focus:border-yellow-400/90 focus:shadow-[0_0_0_1px_rgba(250,204,21,0.6)]"
             />
@@ -109,7 +121,10 @@ const Login = () => {
               <input
                 type={showPass ? "text" : "password"}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  localStorage.setItem("login_password", e.target.value);
+                }}
                 placeholder="••••••••"
                 className="w-full rounded-xl border border-slate-400/40 bg-slate-950 px-4 py-3 pr-9 text-sm text-slate-50 outline-none transition focus:-translate-y-px focus:border-yellow-400/90 focus:shadow-[0_0_0_1px_rgba(250,204,21,0.6)]"
               />
