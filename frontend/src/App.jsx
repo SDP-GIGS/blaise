@@ -43,6 +43,7 @@ function App() {
         <Route path="/admin/evaluations" element={<AdminEvaluations />} />
         <Route path="/admin/reports" element={<AdminReports />} />
         <Route path="/admin/users" element={<AdminUsers />} />
+        <Route path="/admin/AdminUsers" element={<AdminUsers />} />
         <Route
           path="/admin/placements"
           element={<AdminPlacementManagement />}

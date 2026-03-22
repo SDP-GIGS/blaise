@@ -4,8 +4,14 @@ import { mockUsers } from "@/data/mockData";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // Try to load user from localStorage on first render
+  const [user, setUser] = useState(() => {
+    const stored = localStorage.getItem("iles_user");
+    return stored ? JSON.parse(stored) : null;
+  });
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    () => !!localStorage.getItem("iles_user"),
+  );
 
   // Mock signIn: check against mockUsers for authentication and role assignment
   const signIn = async (email, password) => {
@@ -21,6 +27,7 @@ export const AuthProvider = ({ children }) => {
     const user = { ...found };
     setUser(user);
     setIsAuthenticated(true);
+    localStorage.setItem("iles_user", JSON.stringify(user));
     return { success: true, role: user.role, user };
   };
 
@@ -38,12 +45,14 @@ export const AuthProvider = ({ children }) => {
     const user = { full_name: name, email, role };
     setUser(user);
     setIsAuthenticated(true);
+    localStorage.setItem("iles_user", JSON.stringify(user));
     return { success: true, role, user };
   };
 
   const signOut = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
+    localStorage.removeItem("iles_user");
     setUser(null);
     setIsAuthenticated(false);
   };
