@@ -155,6 +155,29 @@ const AppLayout = ({ children }) => {
             </Link>
           );
         })}
+
+        {/* Notifications row for supervisors */}
+        {(user?.role === "workplace_supervisor" ||
+          user?.role === "academic_supervisor") && (
+          <Link
+            to="/supervisor/notifications"
+            onClick={() => setMobileOpen(false)}
+            className={`relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
+              location.pathname === "/supervisor/notifications"
+                ? "text-yellow-700 bg-yellow-100 dark:bg-yellow-900/20"
+                : "text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-800"
+            }`}
+          >
+            <Bell
+              className={`w-4 h-4 transition-colors ${location.pathname === "/supervisor/notifications" ? "text-yellow-700" : "group-hover:text-gray-900 dark:group-hover:text-white"}`}
+            />
+            Notifications
+            {/* Notification badge */}
+            <span className="ml-auto inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-bold bg-red-500 text-white animate-pulse">
+              3
+            </span>
+          </Link>
+        )}
       </nav>
 
       {/* Footer */}

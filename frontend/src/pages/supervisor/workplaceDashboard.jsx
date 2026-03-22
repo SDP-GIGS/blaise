@@ -1,7 +1,12 @@
 import { useMemo } from "react";
 import AppLayout from "@/components/AppLayout";
 import { useAuth } from "@/contexts/AuthContext";
-import { mockLogs, mockPlacements, mockUsers, statusColors } from "@/data/mockData";
+import {
+  mockLogs,
+  mockPlacements,
+  mockUsers,
+  statusColors,
+} from "@/data/mockData";
 import { motion } from "framer-motion";
 import {
   Users,
@@ -10,6 +15,11 @@ import {
   AlertCircle,
   ArrowUpRight,
   Briefcase,
+  Sparkles,
+  Send,
+  Download,
+  UserPlus,
+  Star,
 } from "lucide-react";
 
 const WorkplaceSupervisorDashboard = () => {
@@ -68,109 +78,137 @@ const WorkplaceSupervisorDashboard = () => {
 
   return (
     <AppLayout>
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto py-8 px-2 sm:px-6">
+        {/* Unique Glassy Header */}
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="mb-8"
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative mb-10 rounded-3xl overflow-hidden shadow-xl bg-gradient-to-br from-[#0f172a]/90 via-[#334155]/80 to-[#0ea5e9]/80 backdrop-blur-xl border border-blue-900/30"
         >
-          <div className="flex items-center gap-2 mb-1">
-            <Briefcase className="w-4 h-4 text-accent" />
-            <span className="text-[11px] font-bold text-accent uppercase tracking-[0.15em]">
-              Workplace Supervisor
-            </span>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(34,211,238,0.12)_0,transparent_70%)]" />
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 px-10 py-8 relative z-10">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <Briefcase className="w-8 h-8 text-cyan-300 drop-shadow" />
+                <span className="text-lg font-bold tracking-widest text-cyan-100 uppercase bg-cyan-900/30 px-3 py-1 rounded-xl shadow">
+                  Workplace Supervisor
+                </span>
+              </div>
+              <h1 className="text-4xl font-extrabold text-white tracking-tight drop-shadow-lg font-mono">
+                Professional Dashboard
+              </h1>
+              <p className="mt-2 text-cyan-100/90 text-lg font-medium max-w-xl">
+                Empowering workplace mentors to guide, review, and elevate
+                student performance.
+              </p>
+            </div>
+            <div className="flex flex-col items-end gap-2">
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-2xl bg-cyan-700/80 text-white font-semibold shadow-lg text-sm">
+                <Sparkles className="w-4 h-4 text-yellow-300 animate-pulse" />
+                Unique Workplace Experience
+              </span>
+              <span className="text-xs text-cyan-200/80 italic mt-1">
+                "Mentorship is the key to real-world growth."
+              </span>
+            </div>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold font-display text-foreground tracking-tight">
-            Supervisor Dashboard
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Manage student logs and evaluations
-          </p>
         </motion.div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
+        {/* Quick Actions Row */}
+        <div className="flex flex-wrap gap-4 mb-8 justify-center">
+          <button className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-cyan-800 hover:bg-cyan-900 text-white font-semibold shadow transition text-base">
+            <UserPlus className="w-5 h-5" /> Add Placement
+          </button>
+          <button className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-blue-700 hover:bg-blue-800 text-white font-semibold shadow transition text-base">
+            <Send className="w-5 h-5" /> Send Feedback
+          </button>
+          <button className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-slate-700 hover:bg-slate-900 text-white font-semibold shadow transition text-base">
+            <Download className="w-5 h-5" /> Export Report
+          </button>
+        </div>
+
+        {/* Stat Cards - Unique Style */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           {stats.map((s, i) => (
             <motion.div
               key={s.label}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.08 }}
-              className="stat-card"
+              transition={{ delay: i * 0.09 }}
+              className="relative rounded-3xl bg-gradient-to-br from-[#0ea5e9]/80 to-[#334155]/90 shadow-xl border border-cyan-900/30 p-7 flex flex-col gap-2 group hover:scale-[1.03] hover:shadow-2xl transition-transform"
             >
-              <div className="flex items-center justify-between mb-4">
-                <div
-                  className={`w-11 h-11 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center`}
-                >
-                  <s.icon className="w-5 h-5 text-white" />
-                </div>
-                <ArrowUpRight className="w-4 h-4 text-muted-foreground" />
+              <div className="absolute -top-4 -right-4 bg-cyan-900/30 rounded-full p-3 shadow-lg">
+                <s.icon className="w-7 h-7 text-cyan-200 group-hover:text-yellow-300 transition" />
               </div>
-              <p className="text-3xl font-bold text-foreground font-display">
+              <span className="text-4xl font-extrabold text-white font-mono drop-shadow">
                 {s.value}
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">{s.label}</p>
+              </span>
+              <span className="text-base text-cyan-100 font-semibold tracking-wide">
+                {s.label}
+              </span>
             </motion.div>
           ))}
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
+        {/* Assigned Students & Logs Awaiting Review */}
+        <div className="grid lg:grid-cols-2 gap-8">
+          {/* Assigned Students */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="card-premium"
+            transition={{ delay: 0.2 }}
+            className="rounded-3xl bg-gradient-to-br from-[#334155]/80 to-[#0ea5e9]/60 shadow-lg border border-cyan-900/20 p-7"
           >
-            <div className="p-6 border-b border-border/50">
-              <h2 className="text-lg font-bold font-display text-foreground">
-                Assigned Students
-              </h2>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                {assignedStudents.length} students under supervision
-              </p>
-            </div>
-
+            <h2 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+              <Users className="w-5 h-5 text-cyan-300" /> Assigned Students
+            </h2>
+            <p className="text-sm text-cyan-100/80 mb-4">
+              {assignedStudents.length} student(s) under your supervision
+            </p>
             {assignedStudents.length === 0 ? (
-              <div className="p-10 text-center">
-                <Users className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-                <p className="text-sm text-muted-foreground">
+              <div className="py-10 text-center">
+                <Users className="w-10 h-10 text-cyan-400 mx-auto mb-3" />
+                <p className="text-base text-cyan-200/80">
                   No students are currently assigned to you.
                 </p>
               </div>
             ) : (
-              <div className="divide-y divide-border/50">
+              <div className="divide-y divide-cyan-900/20">
                 {assignedStudents.map((p) => {
-                  const studentLogs = allLogs.filter((l) => l.studentId === p.studentId);
-                  const pending = studentLogs.filter((l) => l.status === "submitted").length;
-
+                  const studentLogs = allLogs.filter(
+                    (l) => l.studentId === p.studentId,
+                  );
+                  const pending = studentLogs.filter(
+                    (l) => l.status === "submitted",
+                  ).length;
                   return (
                     <div
                       key={p.id}
-                      className="p-5 flex items-center justify-between hover:bg-secondary/30 transition-all duration-200"
+                      className="py-4 flex items-center justify-between hover:bg-cyan-900/10 rounded-xl transition-all duration-200 px-2"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent/20 to-accent/5 border border-accent/20 flex items-center justify-center text-xs font-bold text-accent">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400/40 to-cyan-900/20 border border-cyan-400/30 flex items-center justify-center text-lg font-bold text-cyan-100 shadow">
                           {p.studentName
                             .split(" ")
                             .map((n) => n[0])
                             .join("")}
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-foreground">
+                          <p className="text-base font-semibold text-white">
                             {p.studentName}
                           </p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-xs text-cyan-200/80">
                             {p.company} • {p.department}
                           </p>
                         </div>
                       </div>
-
                       <div className="flex items-center gap-3">
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-xs text-cyan-200/80">
                           {studentLogs.length} logs
                         </span>
                         {pending > 0 && (
-                          <span className="status-badge bg-amber-500/10 text-amber-400">
-                            {pending} pending
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-yellow-400/20 text-yellow-200 font-semibold text-xs">
+                            <Star className="w-3 h-3" /> {pending} pending
                           </span>
                         )}
                       </div>
@@ -181,56 +219,52 @@ const WorkplaceSupervisorDashboard = () => {
             )}
           </motion.div>
 
+          {/* Logs Awaiting Review */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="card-premium"
+            transition={{ delay: 0.3 }}
+            className="rounded-3xl bg-gradient-to-br from-[#0ea5e9]/80 to-[#334155]/80 shadow-lg border border-cyan-900/20 p-7"
           >
-            <div className="p-6 border-b border-border/50">
-              <h2 className="text-lg font-bold font-display text-foreground">
-                Logs Awaiting Review
-              </h2>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                {pendingReview.length} submissions need attention
-              </p>
-            </div>
-
+            <h2 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+              <ClipboardCheck className="w-5 h-5 text-yellow-300" /> Logs
+              Awaiting Review
+            </h2>
+            <p className="text-sm text-cyan-100/80 mb-4">
+              {pendingReview.length} submission(s) need your attention
+            </p>
             {pendingReview.length === 0 ? (
-              <div className="p-10 text-center">
-                <ClipboardCheck className="w-10 h-10 text-emerald-400 mx-auto mb-3" />
-                <p className="text-sm text-muted-foreground">All caught up!</p>
+              <div className="py-10 text-center">
+                <ClipboardCheck className="w-10 h-10 text-yellow-300 mx-auto mb-3" />
+                <p className="text-base text-cyan-200/80">All caught up!</p>
               </div>
             ) : (
-              <div className="divide-y divide-border/50">
+              <div className="divide-y divide-yellow-400/20">
                 {pendingReview.map((log) => (
                   <div
                     key={log.id}
-                    className="p-5 hover:bg-secondary/30 transition-all duration-200"
+                    className="py-4 flex items-center justify-between hover:bg-yellow-400/10 rounded-xl transition-all duration-200 px-2"
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-500/5 border border-blue-500/20 flex items-center justify-center">
-                          <span className="text-xs font-bold text-blue-400">
-                            W{log.weekNumber}
-                          </span>
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-foreground">
-                            {log.studentName}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            Week {log.weekNumber} • {log.hoursWorked}h
-                          </p>
-                        </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-300/40 to-yellow-900/20 border border-yellow-400/30 flex items-center justify-center">
+                        <span className="text-xs font-bold text-yellow-300">
+                          W{log.weekNumber}
+                        </span>
                       </div>
-
-                      <span
-                        className={`status-badge ${statusColors[log.status]?.bg} ${statusColors[log.status]?.text}`}
-                      >
-                        {log.status}
-                      </span>
+                      <div>
+                        <p className="text-base font-semibold text-white">
+                          {log.studentName}
+                        </p>
+                        <p className="text-xs text-yellow-100/80">
+                          Week {log.weekNumber} • {log.hoursWorked}h
+                        </p>
+                      </div>
                     </div>
+                    <span
+                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg font-semibold text-xs ${statusColors[log.status]?.bg} ${statusColors[log.status]?.text}`}
+                    >
+                      {log.status}
+                    </span>
                   </div>
                 ))}
               </div>

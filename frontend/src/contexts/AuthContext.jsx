@@ -1,25 +1,34 @@
 import React, { createContext, useContext, useState } from "react";
+import { mockUsers } from "@/data/mockData";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // Try to load user from localStorage on first render
+  const [user, setUser] = useState(() => {
+    const stored = localStorage.getItem("iles_user");
+    return stored ? JSON.parse(stored) : null;
+  });
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    () => !!localStorage.getItem("iles_user"),
+  );
 
-  // Mock signIn: accept any email/password, assign role by email prefix
+  // Mock signIn: check against mockUsers for authentication and role assignment
   const signIn = async (email, password) => {
     if (!email || !password) {
       return { success: false, error: "Email and password required." };
     }
-    // Simple role assignment for demo
-    let role = "student";
-    if (email.startsWith("admin")) role = "admin";
-    else if (email.startsWith("supervisor")) role = "workplace_supervisor";
-    else if (email.startsWith("academic")) role = "academic_supervisor";
-    const user = { email, role, full_name: email.split("@")[0] };
+    const found = mockUsers.find(
+      (u) => u.email === email && u.password === password,
+    );
+    if (!found) {
+      return { success: false, error: "Invalid email or password." };
+    }
+    const user = { ...found };
     setUser(user);
     setIsAuthenticated(true);
-    return { success: true, role, user };
+    localStorage.setItem("iles_user", JSON.stringify(user));
+    return { success: true, role: user.role, user };
   };
 
   // Mock signUp: accept any data, store user in state
@@ -36,12 +45,14 @@ export const AuthProvider = ({ children }) => {
     const user = { full_name: name, email, role };
     setUser(user);
     setIsAuthenticated(true);
+    localStorage.setItem("iles_user", JSON.stringify(user));
     return { success: true, role, user };
   };
 
   const signOut = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
+    localStorage.removeItem("iles_user");
     setUser(null);
     setIsAuthenticated(false);
   };
