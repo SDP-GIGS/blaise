@@ -650,7 +650,6 @@ const PlacementManagement = () => {
         onConfirm={confirm?.onConfirm ?? (() => {})}
         onClose={() => setConfirm(null)}
       />
-
       {/* ── Toast ── */}
       <AnimatePresence>
         {toast && (
