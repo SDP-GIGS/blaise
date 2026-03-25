@@ -265,8 +265,8 @@ const AppLayout = ({ children }) => {
       </AnimatePresence>
 
       {/* Main content */}
-      <main className="flex-1 overflow-auto lg:pt-0 pt-14">
-        <div className="relative min-h-screen">
+      <main className="flex-1 overflow-auto lg:pt-0 pt-14 flex flex-col">
+        <div className="relative flex-1 min-h-full">
           {/* Subtle grid background */}
           <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(0,0,0,0.03)_1px,transparent_1px)] [background-size:20px_20px] opacity-30 pointer-events-none" />
           {/* Ambient glow orbs */}

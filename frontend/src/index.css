@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@config "../tailwind.config.js";
 
 @layer utilities {
   .gradient-hero {
@@ -58,6 +59,7 @@
 *::after {
   box-sizing: border-box;
 }
+
 
 body {
   margin: 0;
