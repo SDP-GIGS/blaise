@@ -37,4 +37,8 @@
     background-clip: text;
     color: transparent;
   }
-  
+  .gradient-sidebar {
+    background: linear-gradient(to bottom, #020617, #0f172a);
+  }
+}
+
