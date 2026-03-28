@@ -132,3 +132,8 @@ class Evaluation(models.Model):
     def __str__(self):
         return f"{self.evaluation_type} evaluation for {self.student.full_name} by {self.evaluator.full_name}"
 
+
+
+
+
+
