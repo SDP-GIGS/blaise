@@ -727,3 +727,4 @@ export default function AdminSettings() {
     </AppLayout>
   );
 }
+
