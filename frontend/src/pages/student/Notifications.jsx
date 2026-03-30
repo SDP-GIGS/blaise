@@ -1,8 +1,6 @@
 import AppLayout from "@/components/AppLayout";
 import { Bell } from "lucide-react";
 
-
-
 const mockStudentNotifications = [
   {
     id: 1,
