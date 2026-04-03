@@ -1,37 +1,67 @@
-import React, { createContext, useContext, useState } from "react";
-import { mockUsers } from "@/data/mockData";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { ApiError, getAuthTokens } from "@/lib/apiClient";
+import { authService } from "@/services/authService";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  // Try to load user from localStorage on first render
   const [user, setUser] = useState(() => {
     const stored = localStorage.getItem("iles_user");
     return stored ? JSON.parse(stored) : null;
   });
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    () => !!localStorage.getItem("iles_user"),
-  );
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    const tokens = getAuthTokens();
+    return Boolean(tokens.access || tokens.refresh);
+  });
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
 
-  // Mock signIn: check against mockUsers for authentication and role assignment
+  useEffect(() => {
+    const restoreSession = async () => {
+      const tokens = getAuthTokens();
+
+      if (!tokens.access && !tokens.refresh) {
+        setIsAuthLoading(false);
+        return;
+      }
+
+      try {
+        const currentUser = await authService.me();
+        setUser(currentUser);
+        setIsAuthenticated(true);
+        localStorage.setItem("iles_user", JSON.stringify(currentUser));
+      } catch (error) {
+        authService.logout();
+        localStorage.removeItem("iles_user");
+        setUser(null);
+        setIsAuthenticated(false);
+      } finally {
+        setIsAuthLoading(false);
+      }
+    };
+
+    restoreSession();
+  }, []);
+
   const signIn = async (email, password) => {
     if (!email || !password) {
       return { success: false, error: "Email and password required." };
     }
-    const found = mockUsers.find(
-      (u) => u.email === email && u.password === password,
-    );
-    if (!found) {
-      return { success: false, error: "Invalid email or password." };
+
+    try {
+      const authenticatedUser = await authService.login({ email, password });
+      setUser(authenticatedUser);
+      setIsAuthenticated(true);
+      localStorage.setItem("iles_user", JSON.stringify(authenticatedUser));
+      return { success: true, role: authenticatedUser.role, user: authenticatedUser };
+    } catch (error) {
+      const message =
+        error instanceof ApiError
+          ? error.message
+          : "Unable to sign in right now. Please try again.";
+      return { success: false, error: message };
     }
-    const user = { ...found };
-    setUser(user);
-    setIsAuthenticated(true);
-    localStorage.setItem("iles_user", JSON.stringify(user));
-    return { success: true, role: user.role, user };
   };
 
-  // Mock signUp: accept any data, store user in state
   const signUp = async (name, email, password, role) => {
     if (!name || !email || !password || !role) {
       return { success: false, error: "All fields required." };
@@ -42,16 +72,28 @@ export const AuthProvider = ({ children }) => {
         error: "Password must be at least 6 characters.",
       };
     }
-    const user = { full_name: name, email, role };
-    setUser(user);
-    setIsAuthenticated(true);
-    localStorage.setItem("iles_user", JSON.stringify(user));
-    return { success: true, role, user };
+    try {
+      const registeredUser = await authService.register({
+        fullName: name,
+        email,
+        password,
+        role,
+      });
+      setUser(registeredUser);
+      setIsAuthenticated(true);
+      localStorage.setItem("iles_user", JSON.stringify(registeredUser));
+      return { success: true, role: registeredUser.role, user: registeredUser };
+    } catch (error) {
+      const message =
+        error instanceof ApiError
+          ? error.message
+          : "Unable to create account right now. Please try again.";
+      return { success: false, error: message };
+    }
   };
 
   const signOut = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
+    authService.logout();
     localStorage.removeItem("iles_user");
     setUser(null);
     setIsAuthenticated(false);
@@ -59,7 +101,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated, signIn, signUp, signOut }}
+      value={{ user, isAuthenticated, isAuthLoading, signIn, signUp, signOut }}
     >
       {children}
     </AuthContext.Provider>
