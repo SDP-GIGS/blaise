@@ -34,7 +34,11 @@ def dashboard(request):
         completed_reviews = SupervisorReview.objects.filter(supervisor=user).count()
         total_students = InternshipPlacement.objects.values('student').distinct().count()
 
-
+        return Response({
+            'pending_reviews': pending_reviews,
+            'completed_reviews': completed_reviews,
+            'total_students': total_students,
+        })
 # ── AUTH ──
 @api_view(['POST'])
 @permission_classes([AllowAny])
