@@ -39,6 +39,12 @@ def dashboard(request):
             'completed_reviews': completed_reviews,
             'total_students': total_students,
         })
+    
+    elif user.role == 'academic_supervisor':
+        total_students = InternshipPlacement.objects.values('student').distinct().count()
+        evaluations_given = Evaluation.objects.filter(evaluator=user).count()
+        approved_logs = WeeklyLog.objects.filter(status='approved').count()
+
 # ── AUTH ──
 @api_view(['POST'])
 @permission_classes([AllowAny])
