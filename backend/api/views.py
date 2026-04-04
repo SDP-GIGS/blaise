@@ -28,6 +28,11 @@ def dashboard(request):
             'approved_logs': approved_logs,
             'evaluations': evaluations,
         })
+    
+    elif user.role == 'workplace_supervisor':
+        pending_reviews = WeeklyLog.objects.filter(status='submitted').count()
+        completed_reviews = SupervisorReview.objects.filter(supervisor=user).count()
+        total_students = InternshipPlacement.objects.values('student').distinct().count()
 
 
 # ── AUTH ──
