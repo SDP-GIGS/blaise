@@ -26,3 +26,7 @@ urlpatterns = [
     path('evaluations/', views.evaluation_list, name='evaluation_list'),
 
 ]
+
+
+
+
