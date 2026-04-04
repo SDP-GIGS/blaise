@@ -12,6 +12,23 @@ from .serializers import (
 )
 from .models import InternshipPlacement, WeeklyLog, SupervisorReview, Evaluation
 
+@api_view(['GET'])
+def dashboard(request):
+    user = request.user
+
+    if user.role == 'student':
+        total_logs = WeeklyLog.objects.filter(student=user).count()
+        pending_reviews = WeeklyLog.objects.filter(student=user, status='submitted').count()
+        approved_logs = WeeklyLog.objects.filter(student=user, status='approved').count()
+        evaluations = Evaluation.objects.filter(student=user).count()
+
+        return Response({
+            'logbook_entries': total_logs,
+            'pending_reviews': pending_reviews,
+            'approved_logs': approved_logs,
+            'evaluations': evaluations,
+        })
+
 
 # ── AUTH ──
 @api_view(['POST'])
