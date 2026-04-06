@@ -281,3 +281,12 @@ def user_detail(request, pk):
     if request.method == 'DELETE':
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+@api_view(['GET'])
+def users_by_role(request, role):
+    if request.user.role != 'admin':
+        return Response({'error': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
+
+    users = CustomUser.objects.filter(role=role)
+    serializer = UserSerializer(users, many=True)
+    return Response(serializer.data)
