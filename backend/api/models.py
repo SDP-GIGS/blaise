@@ -26,6 +26,22 @@ class InternshipPlacement(models.Model):
         ('completed', 'Completed'),
         ('pending', 'Pending'),
     ]
+
+    student = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='placements',
+        limit_choices_to={'role': 'student'}
+    )
+    company = models.CharField(max_length=255)
+    department = models.CharField(max_length=255, blank=True, null=True)
+    workplace_supervisor = models.ForeignKey(
+        CustomUser,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='supervised_placements',
+        limit_choices_to={'role': 'workplace_supervisor'}
+    )
     
 
 class WeeklyLog(models.Model):
