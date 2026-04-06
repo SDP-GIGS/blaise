@@ -113,10 +113,12 @@ def placement_list(request):
     if request.method == 'GET':
         if request.user.role == 'student':
             placements = InternshipPlacement.objects.filter(student=request.user)
+        elif request.user.role == 'academic_supervisor':
+            placements = InternshipPlacement.objects.filter(academic_supervisor=request.user)
+        elif request.user.role == 'workplace_supervisor':
+            placements = InternshipPlacement.objects.filter(workplace_supervisor=request.user)
         else:
             placements = InternshipPlacement.objects.all()
-        serializer = InternshipPlacementSerializer(placements, many=True)
-        return Response(serializer.data)
 
     if request.method == 'POST':
         serializer = InternshipPlacementSerializer(data=request.data)
