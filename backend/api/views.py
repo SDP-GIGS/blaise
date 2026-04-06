@@ -257,4 +257,7 @@ def user_list(request):
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
    
-       
+@api_view(['GET', 'PUT', 'DELETE'])
+def user_detail(request, pk):
+    if request.user.role != 'admin':
+        return Response({'error': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
