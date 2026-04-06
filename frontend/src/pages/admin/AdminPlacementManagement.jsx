@@ -264,6 +264,8 @@ const PlacementManagement = () => {
   const [sortField, setSortField] = useState("student_name");
   const [sortAsc, setSortAsc] = useState(true);
   const [toast, setToast] = useState(null);
+  const [academicSupervisors, setAcademicSupervisors] = useState([]);
+  const [workplaceSupervisors, setWorkplaceSupervisors] = useState([]);
 
   const showToast = (msg, type = "success") => {
     setToast({ message: msg, type });
@@ -275,6 +277,8 @@ const PlacementManagement = () => {
       const [placementsData, studentsData] = await Promise.all([
         apiClient.get('/placements/'),
         apiClient.get('/users/role/student/'),
+        apiClient.get('/users/role/academic_supervisor/'),
+      apiClient.get('/users/role/workplace_supervisor/'),
       ]);
       setPlacements(Array.isArray(placementsData) ? placementsData : []);
       setStudents(Array.isArray(studentsData) ? studentsData : []);
