@@ -155,14 +155,23 @@ def placement_detail(request, pk):
 @api_view(['GET', 'POST'])
 def log_list(request):
     if request.method == 'GET':
-        if request.user.role == 'student':
-            logs = WeeklyLog.objects.filter(student=request.user)
-        elif request.user.role == 'workplace_supervisor':
-            logs = WeeklyLog.objects.filter(status__in=['submitted', 'reviewed', 'approved', 'rejected'])
-        else:
-            logs = WeeklyLog.objects.all()
-        serializer = WeeklyLogSerializer(logs, many=True)
-        return Response(serializer.data)
+    if request.user.role == 'student':
+        logs = WeeklyLog.objects.filter(student=request.user)
+    elif request.user.role == 'workplace_supervisor':
+        assigned_students = InternshipPlacement.objects.filter(
+            workplace_supervisor=request.user
+        ).values_list('student', flat=True)
+        logs = WeeklyLog.objects.filter(
+            student__in=assigned_students,
+            status__in=['submitted', 'reviewed', 'approved', 'rejected']
+        )
+    elif request.user.role == 'academic_supervisor':
+        assigned_students = InternshipPlacement.objects.filter(
+            academic_supervisor=request.user
+        ).values_list('student', flat=True)
+        logs = WeeklyLog.objects.filter(student__in=assigned_students)
+    else:
+        logs = WeeklyLog.objects.all()
 
     if request.method == 'POST':
         serializer = WeeklyLogSerializer(data=request.data)
