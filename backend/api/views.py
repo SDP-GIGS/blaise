@@ -122,7 +122,12 @@ def placement_list(request):
         return Response(serializer.data)
 
     if request.method == 'POST':
-        serializer = InternshipPlacementSerializer(data=request.data)
+        data = request.data.copy()
+        if data.get('academic_supervisor') == '':
+            data['academic_supervisor'] = None
+        if data.get('workplace_supervisor') == '':
+            data['workplace_supervisor'] = None
+        serializer = InternshipPlacementSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
