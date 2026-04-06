@@ -245,6 +245,16 @@ def evaluation_list(request):
             serializer.save(evaluator=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# ── ADMIN ──
+@api_view(['GET'])
+def user_list(request):
+    if request.user.role != 'admin':
+        return Response({'error': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
     
+    users = CustomUser.objects.all()
+    serializer = UserSerializer(users, many=True)
+    return Response(serializer.data)
    
        
