@@ -83,7 +83,15 @@ const ConfirmModal = ({ open, title, description, onConfirm, onClose }) => (
   </AnimatePresence>
 );
 
-const EMPTY_FORM = { student: "", company: "", start_date: "", end_date: "", status: "new" };
+const EMPTY_FORM = { 
+  student: "", 
+  company: "", 
+  start_date: "", 
+  end_date: "", 
+  status: "new",
+  academic_supervisor: "",
+  workplace_supervisor: "",
+};
 
 const PlacementModal = ({ open, onClose, onSave, editPlacement, students }) => {
   const [form, setForm] = useState(EMPTY_FORM);
