@@ -278,7 +278,7 @@ const PlacementManagement = () => {
         apiClient.get('/placements/'),
         apiClient.get('/users/role/student/'),
         apiClient.get('/users/role/academic_supervisor/'),
-      apiClient.get('/users/role/workplace_supervisor/'),
+        apiClient.get('/users/role/workplace_supervisor/'),
       ]);
       setPlacements(Array.isArray(placementsData) ? placementsData : []);
       setStudents(Array.isArray(studentsData) ? studentsData : []);
