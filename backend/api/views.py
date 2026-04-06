@@ -107,7 +107,6 @@ def get_current_user(request):
     return Response(serializer.data)
 
 
-# ── INTERNSHIP PLACEMENT ──
 @api_view(['GET', 'POST'])
 def placement_list(request):
     if request.method == 'GET':
@@ -119,6 +118,8 @@ def placement_list(request):
             placements = InternshipPlacement.objects.filter(workplace_supervisor=request.user)
         else:
             placements = InternshipPlacement.objects.all()
+        serializer = InternshipPlacementSerializer(placements, many=True)
+        return Response(serializer.data)
 
     if request.method == 'POST':
         serializer = InternshipPlacementSerializer(data=request.data)
