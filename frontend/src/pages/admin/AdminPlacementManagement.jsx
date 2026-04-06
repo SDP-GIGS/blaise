@@ -518,11 +518,13 @@ const PlacementManagement = () => {
       </div>
 
       <PlacementModal
-        open={modalOpen}
-        onClose={() => { setModalOpen(false); setEditPlacement(null); }}
-        onSave={editPlacement ? handleEdit : handleCreate}
-        editPlacement={editPlacement}
-        students={students}
+       open={modalOpen}
+      onClose={() => { setModalOpen(false); setEditPlacement(null); }}
+      onSave={editPlacement ? handleEdit : handleCreate}
+      editPlacement={editPlacement}
+      students={students}
+      academicSupervisors={academicSupervisors}
+      workplaceSupervisors={workplaceSupervisors}
       />
 
       <ConfirmModal
