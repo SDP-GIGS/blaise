@@ -267,8 +267,25 @@ const PlacementModal = ({
                     </select>
                   </div>
                 </div>
-                  
-                  
+
+                <div>
+                  <label className={labelCls}>Workplace Supervisor</label>
+                  <div className="relative">
+                    <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
+                    <select
+                      value={form.workplace_supervisor}
+                      onChange={f("workplace_supervisor")}
+                      className={`${inputCls} pl-10 appearance-none`}
+                    >
+                      <option value="">Select workplace supervisor…</option>
+                      {workplaceSupervisors.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.full_name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
 
                 <div>
                   <label className={labelCls}>
