@@ -448,25 +448,23 @@ const PlacementManagement = () => {
   };
 
   const loadData = async () => {
-    try {
-      const [placementsData, studentsData] = await Promise.all([
-        apiClient.get("/placements/"),
-        apiClient.get("/users/role/student/"),
-        apiClient.get("/users/role/academic_supervisor/"),
-        apiClient.get("/users/role/workplace_supervisor/"),
-      ]);
-      setPlacements(Array.isArray(placementsData) ? placementsData : []);
-      setStudents(Array.isArray(studentsData) ? studentsData : []);
-      setAcademicSupervisors(Array.isArray(academicData) ? academicData : []);
-      setWorkplaceSupervisors(
-        Array.isArray(workplaceData) ? workplaceData : [],
-      );
-    } catch (err) {
-      showToast(err.message || "Failed to load data.", "error");
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    const [placementsData, studentsData, academicData, workplaceData] = await Promise.all([
+      apiClient.get('/placements/'),
+      apiClient.get('/users/role/student/'),
+      apiClient.get('/users/role/academic_supervisor/'),
+      apiClient.get('/users/role/workplace_supervisor/'),
+    ]);
+    setPlacements(Array.isArray(placementsData) ? placementsData : []);
+    setStudents(Array.isArray(studentsData) ? studentsData : []);
+    setAcademicSupervisors(Array.isArray(academicData) ? academicData : []);
+    setWorkplaceSupervisors(Array.isArray(workplaceData) ? workplaceData : []);
+  } catch (err) {
+    showToast(err.message || 'Failed to load data.', 'error');
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     loadData();
