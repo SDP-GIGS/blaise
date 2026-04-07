@@ -203,9 +203,6 @@ const SignUp = () => {
               className="w-full rounded-xl border border-slate-400/40 bg-slate-950 px-4 py-3 text-sm text-slate-50 outline-none transition focus:-translate-y-px focus:border-yellow-400/90 focus:shadow-[0_0_0_1px_rgba(250,204,21,0.6)]"
             />
           </div>
-
-
-
           <div className="flex flex-col gap-1.5">
             <label className="text-[0.7rem] font-bold uppercase tracking-[0.18em] text-slate-400">
               Password
