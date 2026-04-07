@@ -398,3 +398,4 @@ const LoadingDots = () => {
 };
 
 export default SplashScreen;
+
