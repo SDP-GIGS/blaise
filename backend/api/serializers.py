@@ -80,4 +80,3 @@ class EvaluationSerializer(serializers.ModelSerializer):
 
     def get_total_score(self, obj):
         return obj.total_score()
-

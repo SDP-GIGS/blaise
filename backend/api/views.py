@@ -454,3 +454,5 @@ def student_score(request, student_id):
         logbook_contribution = 0
 
     final_score = round(workplace_contribution + academic_contribution + logbook_contribution, 2)
+
+    
