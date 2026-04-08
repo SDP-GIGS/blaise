@@ -316,6 +316,26 @@ def evaluation_list(request):
         # Set evaluation type based on role
         evaluation_type = 'workplace' if request.user.role == 'workplace_supervisor' else 'academic'
 
+
+    # Expected criteria based on type
+        WORKPLACE_CRITERIA = [
+            {'criteria': 'technical_competence', 'max_score': 20},
+            {'criteria': 'professionalism', 'max_score': 20},
+            {'criteria': 'teamwork', 'max_score': 20},
+            {'criteria': 'problem_solving', 'max_score': 20},
+            {'criteria': 'overall_attitude', 'max_score': 20},
+        ]
+        ACADEMIC_CRITERIA = [
+            {'criteria': 'understanding', 'max_score': 20},
+            {'criteria': 'documentation', 'max_score': 20},
+            {'criteria': 'report_writing', 'max_score': 20},
+            {'criteria': 'professional_development', 'max_score': 20},
+            {'criteria': 'academic_progress', 'max_score': 20},
+        ]
+
+        criteria_list = WORKPLACE_CRITERIA if evaluation_type == 'workplace' else ACADEMIC_CRITERIA
+        criteria_data = request.data.get('criteria_scores', [])
+
 # ── ADMIN ──
 @api_view(['GET'])
 def user_list(request):
