@@ -432,3 +432,25 @@ def student_score(request, student_id):
     except Evaluation.DoesNotExist:
         academic_total = 0
         academic_contribution = 0
+
+ # ── Logbook Score (30%) ──
+    reviewed_logs = WeeklyLog.objects.filter(
+        student=student,
+        status__in=['reviewed', 'approved']
+    )
+    log_scores = []
+    for log in reviewed_logs:
+        try:
+            review = log.review
+            log_scores.append(review.total_score())
+        except SupervisorReview.DoesNotExist:
+            pass
+
+    if log_scores:
+        average_log_score = sum(log_scores) / len(log_scores)
+        logbook_contribution = (average_log_score / 30) * 30
+    else:
+        average_log_score = 0
+        logbook_contribution = 0
+
+    final_score = round(workplace_contribution + academic_contribution + logbook_contribution, 2)
