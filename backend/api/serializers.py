@@ -49,14 +49,23 @@ class WeeklyLogSerializer(serializers.ModelSerializer):
         fields = ['id', 'student', 'student_name', 'placement', 'week_number', 'date', 'activities', 'learnings', 'challenges', 'status', 'submitted_at', 'created_at']
         read_only_fields = ['student', 'submitted_at', 'created_at']
 
+class CriteriaScoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CriteriaScore
+        fields = ['id', 'criteria', 'score', 'max_score']
+
 class SupervisorReviewSerializer(serializers.ModelSerializer):
     supervisor_name = serializers.CharField(source='supervisor.full_name', read_only=True)
+    criteria_scores = CriteriaScoreSerializer(many=True, read_only=True)
+    total_score = serializers.SerializerMethodField()
 
     class Meta:
         model = SupervisorReview
-        fields = ['id', 'log', 'supervisor', 'supervisor_name', 'comment', 'status', 'reviewed_at']
+        fields = ['id', 'log', 'supervisor', 'supervisor_name', 'comment', 'status', 'reviewed_at', 'criteria_scores', 'total_score']
         read_only_fields = ['supervisor', 'reviewed_at']
 
+    def get_total_score(self, obj):
+        return obj.total_score()
         
 class EvaluationSerializer(serializers.ModelSerializer):
     student_name = serializers.CharField(source='student.full_name', read_only=True)
@@ -67,7 +76,3 @@ class EvaluationSerializer(serializers.ModelSerializer):
         fields = ['id', 'student', 'student_name', 'evaluator', 'evaluator_name', 'score', 'comments', 'evaluation_type', 'date']
         read_only_fields = ['evaluator', 'date']
 
-class CriteriaScoreSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CriteriaScore
-        fields = ['id', 'criteria', 'score', 'max_score']
