@@ -422,3 +422,13 @@ def student_score(request, student_id):
     except Evaluation.DoesNotExist:
         workplace_total = 0
         workplace_contribution = 0
+
+# ── Academic Evaluation (30%) ──
+    try:
+        academic_eval = Evaluation.objects.get(student=student, evaluation_type='academic')
+        academic_total = academic_eval.total_score()
+        academic_max = 100
+        academic_contribution = (academic_total / academic_max) * 30
+    except Evaluation.DoesNotExist:
+        academic_total = 0
+        academic_contribution = 0
