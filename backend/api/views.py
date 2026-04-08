@@ -306,6 +306,15 @@ def evaluation_list(request):
         serializer = EvaluationSerializer(evaluations, many=True)
         return Response(serializer.data)
 
+    if request.method == 'POST':
+        if request.user.role not in ['academic_supervisor', 'workplace_supervisor']:
+            return Response(
+                {'error': 'Only supervisors can submit evaluations'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        # Set evaluation type based on role
+        evaluation_type = 'workplace' if request.user.role == 'workplace_supervisor' else 'academic'
 
 # ── ADMIN ──
 @api_view(['GET'])
