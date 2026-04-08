@@ -70,9 +70,14 @@ class SupervisorReviewSerializer(serializers.ModelSerializer):
 class EvaluationSerializer(serializers.ModelSerializer):
     student_name = serializers.CharField(source='student.full_name', read_only=True)
     evaluator_name = serializers.CharField(source='evaluator.full_name', read_only=True)
+    criteria_scores = CriteriaScoreSerializer(many=True, read_only=True)
+    total_score = serializers.SerializerMethodField()
 
     class Meta:
         model = Evaluation
-        fields = ['id', 'student', 'student_name', 'evaluator', 'evaluator_name', 'score', 'comments', 'evaluation_type', 'date']
+        fields = ['id', 'student', 'student_name', 'evaluator', 'evaluator_name', 'comments', 'evaluation_type', 'date', 'criteria_scores', 'total_score']
         read_only_fields = ['evaluator', 'date']
+
+    def get_total_score(self, obj):
+        return obj.total_score()
 
