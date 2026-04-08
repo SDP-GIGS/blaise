@@ -423,7 +423,7 @@ def student_score(request, student_id):
         workplace_total = 0
         workplace_contribution = 0
 
-# ── Academic Evaluation (30%) ──
+    # ── Academic Evaluation (30%) ──
     try:
         academic_eval = Evaluation.objects.get(student=student, evaluation_type='academic')
         academic_total = academic_eval.total_score()
@@ -433,7 +433,7 @@ def student_score(request, student_id):
         academic_total = 0
         academic_contribution = 0
 
- # ── Logbook Score (30%) ──
+    # ── Logbook Score (30%) ──
     reviewed_logs = WeeklyLog.objects.filter(
         student=student,
         status__in=['reviewed', 'approved']
@@ -455,4 +455,27 @@ def student_score(request, student_id):
 
     final_score = round(workplace_contribution + academic_contribution + logbook_contribution, 2)
 
-    
+    return Response({
+        'student': UserSerializer(student).data,
+        'workplace_evaluation': {
+            'score': workplace_total,
+            'out_of': 100,
+            'contribution': round(workplace_contribution, 2),
+            'weight': '40%',
+        },
+        'academic_evaluation': {
+            'score': academic_total,
+            'out_of': 100,
+            'contribution': round(academic_contribution, 2),
+            'weight': '30%',
+        },
+        'logbook': {
+            'average_score': round(average_log_score, 2),
+            'out_of': 30,
+            'logs_reviewed': len(log_scores),
+            'contribution': round(logbook_contribution, 2),
+            'weight': '30%',
+        },
+        'final_score': final_score,
+        'final_score_out_of': 100,
+    })
