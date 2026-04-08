@@ -297,19 +297,14 @@ def evaluation_list(request):
     if request.method == 'GET':
         if request.user.role == 'student':
             evaluations = Evaluation.objects.filter(student=request.user)
-        elif request.user.role in ['workplace_supervisor', 'academic_supervisor']:
+        elif request.user.role in ['academic_supervisor', 'workplace_supervisor']:
             evaluations = Evaluation.objects.filter(evaluator=request.user)
-        else:
+        elif request.user.role == 'admin':
             evaluations = Evaluation.objects.all()
+        else:
+            evaluations = Evaluation.objects.none()
         serializer = EvaluationSerializer(evaluations, many=True)
         return Response(serializer.data)
-
-    if request.method == 'POST':
-        serializer = EvaluationSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(evaluator=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # ── ADMIN ──
