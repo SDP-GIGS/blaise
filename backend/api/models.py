@@ -150,7 +150,45 @@ class Evaluation(models.Model):
     def total_score(self):
         return sum(cs.score for cs in self.criteria_scores.all())
 
+class CriteriaScore(models.Model):
+    CRITERIA_CHOICES = [
+        # Logbook review criteria
+        ('quality_of_work', 'Quality of Work'),
+        ('initiative', 'Initiative & Creativity'),
+        ('punctuality', 'Punctuality & Deadlines'),
+        # Workplace evaluation criteria
+        ('technical_competence', 'Technical Competence'),
+        ('professionalism', 'Professionalism'),
+        ('teamwork', 'Teamwork & Communication'),
+        ('problem_solving', 'Problem Solving'),
+        ('overall_attitude', 'Overall Attitude'),
+        # Academic evaluation criteria
+        ('understanding', 'Understanding of Concepts'),
+        ('documentation', 'Quality of Documentation'),
+        ('report_writing', 'Report Writing'),
+        ('professional_development', 'Professional Development'),
+        ('academic_progress', 'Academic Progress'),
+    ]
 
+    # Link to either a review or an evaluation (one must be set)
+    review = models.ForeignKey(
+        SupervisorReview,
+        on_delete=models.CASCADE,
+        related_name='criteria_scores',
+        null=True, blank=True
+    )
+    evaluation = models.ForeignKey(
+        Evaluation,
+        on_delete=models.CASCADE,
+        related_name='criteria_scores',
+        null=True, blank=True
+    )
+    criteria = models.CharField(max_length=30, choices=CRITERIA_CHOICES)
+    score = models.PositiveIntegerField(default=0)
+    max_score = models.PositiveIntegerField(default=10)
+
+    def __str__(self):
+        return f"{self.criteria}: {self.score}/{self.max_score}"
 
 
 
