@@ -67,3 +67,7 @@ class EvaluationSerializer(serializers.ModelSerializer):
         fields = ['id', 'student', 'student_name', 'evaluator', 'evaluator_name', 'score', 'comments', 'evaluation_type', 'date']
         read_only_fields = ['evaluator', 'date']
 
+class CriteriaScoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CriteriaScore
+        fields = ['id', 'criteria', 'score', 'max_score']
