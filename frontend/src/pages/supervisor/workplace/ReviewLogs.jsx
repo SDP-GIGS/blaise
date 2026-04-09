@@ -74,9 +74,8 @@ const ReviewDrawer = ({ log, onClose, onSubmit, saving }) => {
           className="absolute right-0 top-0 bottom-0 w-full max-w-md bg-[#0d1926] border-l border-[#1a3050] shadow-2xl flex flex-col overflow-hidden"
           initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
           transition={{ type: "spring", stiffness: 300, damping: 32 }}
-        ></motion.div>
-
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#1a3050] bg-[#0b1523] flex-shrink-0">
+        >
+          <div className="flex items-center justify-between px-6 py-4 border-b border-[#1a3050] bg-[#0b1523] flex-shrink-0">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-sky-500/10 border border-sky-500/20">
                 <FileText className="w-4 h-4 text-sky-400" />
@@ -159,7 +158,8 @@ const ReviewDrawer = ({ log, onClose, onSubmit, saving }) => {
                 ))}
               </div>
             </div>
-{/* Comment */}
+
+            {/* Comment */}
             <div>
               <p className="text-xs font-medium text-slate-500 mb-2 uppercase tracking-wider">Supervisor Comment</p>
               <textarea rows={3} placeholder="Add feedback for the student…"
@@ -241,7 +241,8 @@ const StudentRow = ({ placement, logs, onReview, index }) => {
           <ChevronDown className={`w-4 h-4 text-slate-600 transition-transform duration-200 ${expanded ? "rotate-180" : ""}`} />
         </div>
       </button>
-            <AnimatePresence initial={false}>
+
+      <AnimatePresence initial={false}>
         {expanded && (
           <motion.div key="logs"
             initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
@@ -285,6 +286,7 @@ const StudentRow = ({ placement, logs, onReview, index }) => {
     </motion.div>
   );
 };
+
 const WorkplaceReviewLogs = () => {
   const [placements, setPlacements] = useState([]);
   const [logs, setLogs] = useState([]);
@@ -462,5 +464,3 @@ const WorkplaceReviewLogs = () => {
 };
 
 export default WorkplaceReviewLogs;
-
-
