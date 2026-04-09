@@ -96,7 +96,7 @@ const AcademicReviewLogs = () => {
     loadData();
   }, []);
 
-    const filteredPlacements = placements.filter((p) => {
+  const filteredPlacements = placements.filter((p) => {
     const q = search.toLowerCase();
     return !q || (p.student_name ?? "").toLowerCase().includes(q) || (p.company ?? "").toLowerCase().includes(q);
   });
@@ -107,9 +107,9 @@ const AcademicReviewLogs = () => {
     const matchStudent = l.student === selectedStudentId;
     const matchStatus = filterStatus === "all" || l.status === filterStatus;
     return matchStudent && matchStatus;
-  });  
+  });
 
-   const getStudentLogStats = (studentId) => {
+  const getStudentLogStats = (studentId) => {
     const sl = logs.filter((l) => l.student === studentId);
     return {
       total: sl.length,
@@ -224,7 +224,8 @@ const AcademicReviewLogs = () => {
                       </div>
                     </div>
                   )}
-{/* Filter Bar */}
+
+                  {/* Filter Bar */}
                   <div className="flex items-center gap-2 flex-wrap">
                     <Filter size={13} className="text-gray-400" />
                     {["all", "submitted", "approved", "reviewed", "rejected"].map((f) => (
