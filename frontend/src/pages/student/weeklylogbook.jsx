@@ -334,7 +334,7 @@ const WeeklyLogbook = () => {
                     ) : (
                       logs.map((log) => (
                         <tr key={log.id} className="border-b border-white/10 hover:bg-white/10 transition">
-                          <td className="px-4 py-2">Week {log.weekNumber}</td>
+                          <td className="px-4 py-2">Week {log.week_Number}</td>
                           <td className="px-4 py-2">{log.date}</td>
                           <td className="px-4 py-2 max-w-sm truncate">{log.activities}</td>
                           <td className="px-4 py-2">
