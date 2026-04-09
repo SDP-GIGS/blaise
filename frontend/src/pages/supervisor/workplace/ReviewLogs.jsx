@@ -285,5 +285,182 @@ const StudentRow = ({ placement, logs, onReview, index }) => {
     </motion.div>
   );
 };
+const WorkplaceReviewLogs = () => {
+  const [placements, setPlacements] = useState([]);
+  const [logs, setLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [activeLog, setActiveLog] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  const showToast = (msg, type = "success") => {
+    setToast({ message: msg, type });
+    setTimeout(() => setToast(null), 3500);
+  };
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [placementsData, logsData] = await Promise.all([
+          apiClient.get('/placements/'),
+          apiClient.get('/logs/'),
+        ]);
+        setPlacements(Array.isArray(placementsData) ? placementsData : []);
+        setLogs(Array.isArray(logsData) ? logsData : []);
+      } catch (err) {
+        showToast(err.message || 'Failed to load data.', 'error');
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, []);
+
+  const handleReviewSubmit = async (log, status, comment, criteriaScores) => {
+    setSaving(true);
+    try {
+      await apiClient.post('/reviews/', {
+        log: log.id,
+        comment,
+        status,
+        criteria_scores: LOGBOOK_CRITERIA.map((c) => ({
+          criteria: c.criteria,
+          score: Number(criteriaScores[c.criteria]),
+        })),
+      });
+      setLogs((prev) => prev.map((l) => l.id === log.id ? { ...l, status } : l));
+      setActiveLog(null);
+      const messages = {
+        approved: 'Log approved successfully.',
+        reviewed: 'Log marked as reviewed.',
+        rejected: 'Log rejected — student can resubmit.',
+      };
+      showToast(messages[status] || 'Log updated.');
+    } catch (err) {
+      showToast(err.message || 'Failed to submit review.', 'error');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const filteredPlacements = placements.filter((p) => {
+    const q = search.toLowerCase();
+    return !q || (p.student_name ?? "").toLowerCase().includes(q) || (p.company ?? "").toLowerCase().includes(q);
+  });
+
+  const logsForStudent = (studentId) => {
+    let sl = logs.filter((l) => l.student === studentId);
+    if (statusFilter !== "all") sl = sl.filter((l) => l.status === statusFilter);
+    return sl;
+  };
+
+  const totalPending = logs.filter((l) => l.status === "submitted").length;
+  const totalApproved = logs.filter((l) => l.status === "approved").length;
+
+  return (
+    <AppLayout>
+      <div className="min-h-screen bg-[#07101f] text-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+
+          <motion.div initial={{ opacity: 0, y: -14 }} animate={{ opacity: 1, y: 0 }}
+            className="relative rounded-2xl overflow-hidden border border-[#1a3050] bg-[#0d1926]">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-sky-500/50 to-transparent" />
+            <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-7 py-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-xl bg-sky-500/10 border border-sky-500/20">
+                  <ClipboardCheck className="w-6 h-6 text-sky-400" />
+                </div>
+                <div>
+                  <p className="text-xs font-medium tracking-widest text-sky-400 uppercase mb-1">Logbook Review</p>
+                  <h1 className="text-2xl font-bold text-white">Student Weekly Logs</h1>
+                  <p className="text-sm text-slate-400 mt-0.5">Review, approve, or reject submitted log entries.</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2.5">
+                {[
+                  { label: "Pending",  value: totalPending,  color: "bg-amber-400/10 text-amber-300 border-amber-500/20"   },
+                  { label: "Approved", value: totalApproved, color: "bg-emerald-400/10 text-emerald-300 border-emerald-500/20" },
+                  { label: "Total",    value: logs.length,   color: "bg-sky-400/10 text-sky-300 border-sky-500/20"          },
+                ].map((c) => (
+                  <div key={c.label} className={`px-3.5 py-2 rounded-xl border text-center ${c.color}`}>
+                    <p className="text-lg font-bold leading-none">{c.value}</p>
+                    <p className="text-xs mt-0.5 opacity-80">{c.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+              <input type="text" placeholder="Search student or company…" value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0d1926] border border-[#1a3050] text-sm text-white placeholder-slate-600 focus:outline-none focus:border-sky-500/50 transition" />
+            </div>
+            <div className="relative">
+              <Filter className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+              <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}
+                className="pl-10 pr-10 py-2.5 rounded-xl bg-[#0d1926] border border-[#1a3050] text-sm text-white appearance-none cursor-pointer focus:outline-none focus:border-sky-500/50 transition">
+                <option value="all">All statuses</option>
+                <option value="submitted">Submitted</option>
+                <option value="reviewed">Reviewed</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+          </div>
+
+          {totalPending > 0 && (
+            <div className="flex items-center gap-3 px-5 py-3.5 rounded-xl bg-amber-400/8 border border-amber-500/25 text-amber-300">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              <p className="text-sm font-medium">
+                You have <span className="font-bold">{totalPending}</span> log{totalPending !== 1 ? "s" : ""} awaiting review.
+              </p>
+            </div>
+          )}
+
+          {loading ? (
+            <div className="py-20 text-center text-slate-500">Loading logs...</div>
+          ) : filteredPlacements.length === 0 ? (
+            <div className="py-20 text-center rounded-2xl bg-[#0d1926] border border-[#1a3050]">
+              <User className="w-10 h-10 text-slate-700 mx-auto mb-3" />
+              <p className="text-sm text-slate-500">{search ? "No students match your search." : "No students assigned yet."}</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {filteredPlacements.map((placement, i) => (
+                <StudentRow
+                  key={placement.id}
+                  placement={placement}
+                  logs={logsForStudent(placement.student)}
+                  onReview={setActiveLog}
+                  index={i}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {activeLog && (
+          <ReviewDrawer key="drawer" log={activeLog}
+            onClose={() => setActiveLog(null)}
+            onSubmit={handleReviewSubmit}
+            saving={saving} />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {toast && <Toast key="toast" message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+      </AnimatePresence>
+    </AppLayout>
+  );
+};
+
+export default WorkplaceReviewLogs;
 
 
