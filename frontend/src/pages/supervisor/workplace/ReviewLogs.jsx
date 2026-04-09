@@ -75,3 +75,18 @@ const ReviewDrawer = ({ log, onClose, onSubmit, saving }) => {
           initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
           transition={{ type: "spring", stiffness: 300, damping: 32 }}
         ></motion.div>
+
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#1a3050] bg-[#0b1523] flex-shrink-0">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-sky-500/10 border border-sky-500/20">
+                <FileText className="w-4 h-4 text-sky-400" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-white">Review Log</p>
+                <p className="text-xs text-slate-500">Week {log.week_number} · {log.student_name}</p>
+              </div>
+            </div>
+            <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
