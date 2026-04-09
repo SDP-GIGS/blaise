@@ -121,10 +121,9 @@ const WeeklyLogbook = () => {
       });
 
       setLogs((prev) =>
-        prev
-          .map((item) => (item.id === editLog.id ? updated : item))
-          .sort((a, b) => b.weekNumber - a.weekNumber),
-      );
+  prev.map((item) => (item.id === editLog.id ? updated : item))
+  .sort((a, b) => b.week_number - a.week_number),
+);
       setEditLog(null);
     } catch (saveError) {
       setError(saveError?.message || "Failed to update log.");
