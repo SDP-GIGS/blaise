@@ -111,3 +111,51 @@ const ReviewDrawer = ({ log, onClose, onSubmit, saving }) => {
                 <p className="text-sm text-slate-300 leading-relaxed">{log.activities}</p>
               </div>
             </div>
+
+            {/* Learnings */}
+            <div>
+              <p className="text-xs font-medium text-slate-500 mb-2 uppercase tracking-wider">Learnings</p>
+              <div className="rounded-xl bg-[#0b1523] border border-[#1e3a5f] p-4">
+                <p className="text-sm text-slate-300 leading-relaxed">{log.learnings}</p>
+              </div>
+            </div>
+
+            {/* Challenges */}
+            <div>
+              <p className="text-xs font-medium text-slate-500 mb-2 uppercase tracking-wider">Challenges</p>
+              <div className="rounded-xl bg-[#0b1523] border border-[#1e3a5f] p-4">
+                <p className="text-sm text-slate-300 leading-relaxed">{log.challenges}</p>
+              </div>
+            </div>
+
+            {/* Criteria Scores */}
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Score Criteria</p>
+                <span className="text-xs text-sky-400 font-semibold">{totalScore}/30</span>
+              </div>
+              <div className="space-y-4">
+                {LOGBOOK_CRITERIA.map((c) => (
+                  <div key={c.criteria}>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-sm text-white">{c.label}</label>
+                      <span className="text-xs text-slate-500">{criteriaScores[c.criteria]}/{c.max_score}</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <input type="range" min={0} max={c.max_score}
+                        value={criteriaScores[c.criteria]}
+                        onChange={(e) => handleScoreChange(c.criteria, e.target.value, c.max_score)}
+                        className="flex-1 accent-sky-500" />
+                      <input type="number" min={0} max={c.max_score}
+                        value={criteriaScores[c.criteria]}
+                        onChange={(e) => handleScoreChange(c.criteria, e.target.value, c.max_score)}
+                        className="w-14 px-2 py-1.5 rounded-lg bg-[#0b1523] border border-[#1e3a5f] text-white text-center text-sm focus:outline-none focus:border-sky-500/50" />
+                    </div>
+                    <div className="h-1.5 rounded-full bg-[#1a3050] overflow-hidden mt-1">
+                      <div className="h-full rounded-full bg-sky-500 transition-all duration-300"
+                        style={{ width: `${(criteriaScores[c.criteria] / c.max_score) * 100}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
