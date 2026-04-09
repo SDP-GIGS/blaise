@@ -1,395 +1,358 @@
-import { useState, useEffect, useMemo } from "react";
-import AppLayout from "@/components/AppLayout";
-import { apiClient } from "@/lib/apiClient";
-import { useAuth } from "@/contexts/AuthContext";
-import {
-  UserCircle2, GraduationCap, ClipboardList, CheckCircle2,
-  Building2, Mail, BadgeCheck, ChevronRight, BookOpen,
-  Star, Bell, AlertCircle, BarChart3, X,
-} from "lucide-react";
-import {
-  AreaChart, Area, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid,
-} from "recharts";
+import { useEffect, useMemo, useState } from "react";
+import AppLayout from "../../components/AppLayout";
+import { motion, AnimatePresence } from "framer-motion";
+import { Plus, NotebookPen, X, Send } from "lucide-react";
+import { internshipService } from "@/services/internshipService";
 
-const statusColor = (status) => {
-  const s = status?.toLowerCase();
-  if (s === "active" || s === "approved" || s === "completed") return "bg-emerald-100 text-emerald-800 border border-emerald-200";
-  if (s === "new") return "bg-amber-100 text-amber-800 border border-amber-200";
-  if (s === "rejected") return "bg-red-100 text-red-800 border border-red-200";
-  return "bg-gray-100 text-gray-700 border border-gray-200";
+const statusStyles = {
+  draft:     "bg-slate-500/70 text-white",
+  submitted: "bg-yellow-400/80 text-[#232526]",
+  reviewed:  "bg-cyan-400/80 text-[#232526]",
+  approved:  "bg-green-500/80 text-white",
+  rejected:  "bg-red-500/80 text-white",
 };
 
-const StatCard = ({ icon: Icon, value, label, accent }) => (
-  <div className="relative overflow-hidden rounded-2xl bg-white border border-gray-100 shadow-sm p-6 flex flex-col gap-1 hover:shadow-md transition-shadow"
-    style={{ borderTop: `3px solid ${accent}` }}>
-    <div className="absolute top-4 right-4 h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: `${accent}18` }}>
-      <Icon size={20} style={{ color: accent }} />
-    </div>
-    <span className="text-3xl font-bold text-gray-900 mt-1">{value}</span>
-    <span className="text-sm text-gray-500 font-medium">{label}</span>
-  </div>
-);
+const emptyForm = {
+  placement: "",
+  week_number: "",
+  date: "",
+  activities: "",
+  learnings: "",
+  challenges: "",
+};
 
-const SectionHeader = ({ title, subtitle, accent = "#0891b2" }) => (
-  <div className="flex items-center gap-3 mb-5">
-    <div className="h-7 w-1 rounded-full" style={{ background: accent }} />
-    <div>
-      <h2 className="text-base font-bold text-gray-800 tracking-tight">{title}</h2>
-      {subtitle && <p className="text-xs text-gray-400 mt-0.5">{subtitle}</p>}
-    </div>
-  </div>
-);
-
-const EmptyRow = ({ cols, message }) => (
-  <tr>
-    <td colSpan={cols} className="px-4 py-10 text-center text-sm text-gray-400 italic">{message}</td>
-  </tr>
-);
-
-const AcademicSupervisorDashboard = () => {
-  const { user } = useAuth();
-  const [placements, setPlacements] = useState([]);
+const WeeklyLogbook = () => {
+  const [showNew, setShowNew] = useState(false);
+  const [form, setForm] = useState(emptyForm);
   const [logs, setLogs] = useState([]);
-  const [evaluations, setEvaluations] = useState([]);
+  const [placements, setPlacements] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [reviewOpen, setReviewOpen] = useState(false);
-  const [selectedLog, setSelectedLog] = useState(null);
-  const [reviewComment, setReviewComment] = useState("");
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [historyLog, setHistoryLog] = useState(null);
+  const [editLog, setEditLog] = useState(null);
+  const [editForm, setEditForm] = useState(emptyForm);
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [placementsData, logsData, evalsData] = await Promise.all([
-          apiClient.get('/placements/'),
-          apiClient.get('/logs/'),
-          apiClient.get('/evaluations/'),
-        ]);
-        setPlacements(Array.isArray(placementsData) ? placementsData : []);
-        setLogs(Array.isArray(logsData) ? logsData : []);
-        setEvaluations(Array.isArray(evalsData) ? evalsData : []);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadData();
-  }, []);
-
-  const pendingLogs = useMemo(() => logs.filter((l) => l.status === 'submitted'), [logs]);
-  const academicEvals = useMemo(() => evaluations.filter((e) => e.evaluation_type === 'academic'), [evaluations]);
-  const avgScore = academicEvals.length
-    ? (academicEvals.reduce((s, e) => s + e.score, 0) / academicEvals.length).toFixed(1)
-    : null;
-
-  const chartData = useMemo(() =>
-    logs.reduce((acc, l) => {
-      const week = `W${l.week_number}`;
-      const existing = acc.find((a) => a.week === week);
-      if (existing) existing.logs += 1;
-      else acc.push({ week, logs: 1 });
-      return acc;
-    }, []).sort((a, b) => a.week.localeCompare(b.week)),
-    [logs]);
-
-  const filteredPlacements = placements.filter((p) => {
-    const q = search.toLowerCase();
-    return !q || (p.student_name ?? "").toLowerCase().includes(q) || (p.company ?? "").toLowerCase().includes(q);
-  });
-
-  const filteredLogs = pendingLogs.filter((l) => {
-    const q = search.toLowerCase();
-    return !q || (l.student_name ?? "").toLowerCase().includes(q);
-  });
-
-  const handleReviewLog = async (action) => {
-    if (!selectedLog) return;
-    setSaving(true);
+  const loadData = async () => {
+    setLoading(true);
+    setError("");
     try {
-      const newStatus = action === 'approve' ? 'approved' : 'reviewed';
-      await apiClient.post('/reviews/', {
-        log: selectedLog.id,
-        comment: reviewComment,
-        status: newStatus,
+      const [placementsData, logsData] = await Promise.all([
+        internshipService.listPlacements(),
+        internshipService.listLogs(),
+      ]);
+      setPlacements(placementsData);
+      setLogs(logsData.sort((a, b) => b.week_number - a.week_number));
+      if (placementsData.length && !form.placement) {
+        setForm((prev) => ({ ...prev, placement: String(placementsData[0].id) }));
+      }
+    } catch (loadError) {
+      setError(loadError?.message || "Unable to load your logs.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { loadData(); }, []);
+
+  const createLog = async (shouldSubmit) => {
+    setSaving(true);
+    setError("");
+    try {
+      const created = await internshipService.createLog({
+        placement: Number(form.placement),
+        week_number: Number(form.week_number),
+        date: form.date,
+        activities: form.activities,
+        learnings: form.learnings,
+        challenges: form.challenges,
       });
-      setLogs((prev) => prev.map((l) =>
-        l.id === selectedLog.id ? { ...l, status: newStatus } : l
-      ));
-      setReviewOpen(false);
-      setReviewComment("");
-      setSelectedLog(null);
-    } catch (err) {
-      console.error(err);
+      const finalLog = shouldSubmit ? await internshipService.submitLog(created.id) : created;
+      setLogs((prev) => [finalLog, ...prev].sort((a, b) => b.week_number - a.week_number));
+      setShowNew(false);
+      setForm((prev) => ({ ...emptyForm, placement: prev.placement }));
+    } catch (saveError) {
+      setError(saveError?.message || "Failed to save log.");
     } finally {
       setSaving(false);
     }
   };
 
+  const openEdit = (log) => {
+    setEditLog(log);
+    setEditForm({
+      placement: String(log.placement),
+      week_number: String(log.week_number),
+      date: log.date || "",
+      activities: log.activities || "",
+      learnings: log.learnings || "",
+      challenges: log.challenges || "",
+    });
+  };
+
+  const saveEditedLog = async (event) => {
+    event.preventDefault();
+    if (!editLog) return;
+    setSaving(true);
+    setError("");
+    try {
+      const updated = await internshipService.updateLog(editLog.id, {
+        placement: Number(editForm.placement),
+        week_number: Number(editForm.week_number),
+        date: editForm.date,
+        activities: editForm.activities,
+        learnings: editForm.learnings,
+        challenges: editForm.challenges,
+      });
+      setLogs((prev) =>
+        prev.map((item) => (item.id === editLog.id ? updated : item))
+          .sort((a, b) => b.week_number - a.week_number)
+      );
+      setEditLog(null);
+    } catch (saveError) {
+      setError(saveError?.message || "Failed to update log.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const submitDraft = async (logId) => {
+    setSaving(true);
+    setError("");
+    try {
+      const submitted = await internshipService.submitLog(logId);
+      setLogs((prev) => prev.map((item) => (item.id === logId ? submitted : item)));
+    } catch (submitError) {
+      setError(submitError?.message || "Failed to submit log.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const placementOptions = useMemo(
+    () => placements.map((item) => ({ id: String(item.id), label: `${item.company} (${item.status})` })),
+    [placements],
+  );
+
   return (
     <AppLayout>
-      <div className="min-h-screen" style={{ background: "linear-gradient(135deg, #f0fdf4 0%, #ecfeff 50%, #f8fafc 100%)", fontFamily: "'DM Sans', system-ui, sans-serif" }}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 space-y-8">
+      <div className="relative min-h-screen w-full bg-gradient-to-br from-[#0f2027] via-[#2c5364] to-[#232526] py-12 px-2 flex flex-col items-center">
+        <div className="w-full max-w-5xl mx-auto flex flex-col gap-8">
 
-          {/* Profile Header */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="h-24 w-full" style={{ background: "linear-gradient(120deg, #0891b2 0%, #059669 60%, #0d9488 100%)" }} />
-            <div className="px-8 pb-7 -mt-10 flex flex-col sm:flex-row sm:items-end gap-4">
-              <div className="relative shrink-0">
-                <div className="h-20 w-20 rounded-2xl flex items-center justify-center shadow-lg border-4 border-white"
-                  style={{ background: "linear-gradient(135deg, #0891b2, #059669)" }}>
-                  <UserCircle2 className="w-12 h-12 text-white" />
-                </div>
-                <span className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center shadow">
-                  <BadgeCheck size={13} className="text-white" />
-                </span>
+          <motion.div initial={{ opacity: 0, y: -24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
+            className="rounded-3xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl px-8 py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <NotebookPen className="w-6 h-6 text-yellow-400 drop-shadow" />
+                <span className="text-lg font-bold tracking-widest text-yellow-300 uppercase drop-shadow">Weekly Logbook</span>
               </div>
-              <div className="flex-1 min-w-0 mt-2 sm:mt-0">
-                <h1 className="text-2xl font-extrabold text-gray-900">{user?.full_name ?? "Academic Supervisor"}</h1>
-                <div className="flex flex-wrap gap-3 mt-1">
-                  <span className="flex items-center gap-1 text-sm text-gray-500">
-                    <GraduationCap size={14} className="text-cyan-600" /> Academic Supervisor
-                  </span>
-                  <span className="flex items-center gap-1 text-sm text-gray-500">
-                    <Mail size={14} className="text-cyan-600" /> {user?.email}
-                  </span>
+              <h1 className="text-3xl md:text-4xl font-extrabold text-white drop-shadow mb-2">Internship Activity Log</h1>
+              <p className="text-lg text-white/70 font-medium">Save drafts, then submit to your supervisor when ready.</p>
+            </div>
+            <motion.button initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+              onClick={() => setShowNew(true)}
+              className="rounded-xl bg-gradient-to-r from-yellow-400 via-emerald-400 to-cyan-400 text-[#232526] font-bold px-6 py-3 shadow-lg hover:scale-105 transition-all text-lg">
+              <Plus className="w-5 h-5 mr-2 inline-block" /> Add New Log
+            </motion.button>
+          </motion.div>
+
+          {error && (
+            <div className="rounded-xl border border-red-300/30 bg-red-500/15 px-4 py-3 text-sm text-red-100">{error}</div>
+          )}
+
+          <AnimatePresence>
+            {showNew && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, height: 0 }}
+                animate={{ opacity: 1, y: 0, height: "auto" }}
+                exit={{ opacity: 0, y: -10, height: 0 }}
+                className="rounded-2xl bg-white/20 backdrop-blur-lg border border-white/20 shadow-xl p-7"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-bold text-white">New Log Entry</h3>
+                  <button type="button" onClick={() => setShowNew(false)} className="text-white/70 hover:text-yellow-300 transition">
+                    <X className="w-6 h-6" />
+                  </button>
                 </div>
+                <form className="grid grid-cols-1 md:grid-cols-2 gap-5" onSubmit={(e) => e.preventDefault()}>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-xs text-white/70">Placement</label>
+                    <select value={form.placement} onChange={(e) => setForm({ ...form, placement: e.target.value })}
+                      className="rounded-lg px-3 py-2 bg-white/10 text-white border border-white/20 focus:border-yellow-400 outline-none" required>
+                      <option value="" disabled>Select placement</option>
+                      {placementOptions.map((option) => (
+                        <option key={option.id} value={option.id} className="text-black">{option.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-xs text-white/70">Week Number</label>
+                    <input type="number" min="1" value={form.week_number}
+                      onChange={(e) => setForm({ ...form, week_number: e.target.value })}
+                      className="rounded-lg px-3 py-2 bg-white/10 text-white border border-white/20 focus:border-yellow-400 outline-none" required />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-xs text-white/70">Date</label>
+                    <input type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })}
+                      className="rounded-lg px-3 py-2 bg-white/10 text-white border border-white/20 focus:border-yellow-400 outline-none" required />
+                  </div>
+                  <div className="flex flex-col gap-2 md:col-span-2">
+                    <label className="text-xs text-white/70">Activities</label>
+                    <textarea value={form.activities} onChange={(e) => setForm({ ...form, activities: e.target.value })}
+                      rows={2} className="rounded-lg px-3 py-2 bg-white/10 text-white border border-white/20 focus:border-yellow-400 outline-none" required />
+                  </div>
+                  <div className="flex flex-col gap-2 md:col-span-2">
+                    <label className="text-xs text-white/70">Learnings</label>
+                    <textarea value={form.learnings} onChange={(e) => setForm({ ...form, learnings: e.target.value })}
+                      rows={2} className="rounded-lg px-3 py-2 bg-white/10 text-white border border-white/20 focus:border-yellow-400 outline-none" required />
+                  </div>
+                  <div className="flex flex-col gap-2 md:col-span-2">
+                    <label className="text-xs text-white/70">Challenges</label>
+                    <textarea value={form.challenges} onChange={(e) => setForm({ ...form, challenges: e.target.value })}
+                      rows={2} className="rounded-lg px-3 py-2 bg-white/10 text-white border border-white/20 focus:border-yellow-400 outline-none" />
+                  </div>
+                  <div className="flex gap-3 md:col-span-2 mt-2">
+                    <button type="button" disabled={saving} onClick={() => createLog(false)}
+                      className="rounded-xl bg-white/15 text-white border border-white/20 px-6 py-2 font-bold hover:bg-white/25 transition disabled:opacity-50">
+                      Save Draft
+                    </button>
+                    <button type="button" disabled={saving} onClick={() => createLog(true)}
+                      className="rounded-xl bg-gradient-to-r from-yellow-400 via-emerald-400 to-cyan-400 text-[#232526] font-bold px-6 py-2 shadow hover:scale-105 transition-all disabled:opacity-50">
+                      Save and Submit
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div className="rounded-2xl bg-white/20 backdrop-blur-lg border border-white/20 shadow-xl p-7">
+            <h2 className="text-xl font-bold text-white mb-4">Your Logbook Entries</h2>
+            {loading ? (
+              <p className="text-white/80">Loading logs...</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-sm text-white/90">
+                  <thead>
+                    <tr className="bg-white/10">
+                      <th className="px-4 py-2 text-left font-bold">Week</th>
+                      <th className="px-4 py-2 text-left font-bold">Date</th>
+                      <th className="px-4 py-2 text-left font-bold">Activities</th>
+                      <th className="px-4 py-2 text-left font-bold">Status</th>
+                      <th className="px-4 py-2 text-left font-bold">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {logs.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="text-center py-6 text-white/60">No log entries yet.</td>
+                      </tr>
+                    ) : logs.map((log) => (
+                      <tr key={log.id} className="border-b border-white/10 hover:bg-white/10 transition">
+                        <td className="px-4 py-2">Week {log.week_number}</td>
+                        <td className="px-4 py-2">{log.date}</td>
+                        <td className="px-4 py-2 max-w-sm truncate">{log.activities}</td>
+                        <td className="px-4 py-2">
+                          <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${statusStyles[log.status] || statusStyles.draft}`}>
+                            {log.status}
+                          </span>
+                        </td>
+                        <td className="px-4 py-2 flex gap-2">
+                          <button onClick={() => openEdit(log)}
+                            disabled={log.status !== "draft" || saving}
+                            className="px-3 py-1 rounded bg-yellow-400/80 text-[#232526] font-bold hover:bg-yellow-300 transition disabled:opacity-50">
+                            Edit
+                          </button>
+                          <button onClick={() => submitDraft(log.id)}
+                            disabled={log.status !== "draft" || saving}
+                            className="px-3 py-1 rounded bg-cyan-500/80 text-white font-bold hover:bg-cyan-400 transition disabled:opacity-50">
+                            <Send className="w-3 h-3 inline mr-1" /> Submit
+                          </button>
+                          <button onClick={() => setHistoryLog(log)}
+                            className="px-3 py-1 rounded bg-white/10 text-white border border-white/20 font-bold hover:bg-white/20 transition">
+                            View
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            </div>
+            )}
           </div>
 
-          {/* Stat Cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5">
-            <StatCard icon={GraduationCap} value={placements.length}    label="Total Placements"  accent="#0891b2" />
-            <StatCard icon={ClipboardList} value={pendingLogs.length}   label="Pending Reviews"   accent="#f59e0b" />
-            <StatCard icon={BookOpen}      value={academicEvals.length} label="Evaluations Done"  accent="#059669" />
-            <StatCard icon={Star}          value={avgScore ? `${avgScore}%` : "—"} label="Avg Score" accent="#fbbf24" />
-            <StatCard icon={CheckCircle2}  value={logs.filter((l) => l.status === "approved").length} label="Approved Logs" accent="#6366f1" />
-          </div>
+          <AnimatePresence>
+            {historyLog && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, height: 0 }}
+                animate={{ opacity: 1, y: 0, height: "auto" }}
+                exit={{ opacity: 0, y: -10, height: 0 }}
+                className="rounded-2xl bg-white/20 backdrop-blur-lg border border-white/20 shadow-xl p-7 fixed top-0 left-0 right-0 z-50 max-w-lg mx-auto mt-24"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-bold text-white">Log Details</h3>
+                  <button type="button" onClick={() => setHistoryLog(null)} className="text-white/70 hover:text-yellow-300 transition">
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+                <div className="text-sm text-white/90 space-y-2">
+                  <p><b>Week:</b> {historyLog.week_number}</p>
+                  <p><b>Date:</b> {historyLog.date}</p>
+                  <p><b>Status:</b> {historyLog.status}</p>
+                  <p><b>Activities:</b> {historyLog.activities}</p>
+                  <p><b>Learnings:</b> {historyLog.learnings}</p>
+                  <p><b>Challenges:</b> {historyLog.challenges || "-"}</p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          {/* Chart */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-6 py-6">
-            <div className="flex items-center gap-2 mb-4">
-              <BarChart3 className="w-5 h-5 text-emerald-400" />
-              <span className="font-semibold text-emerald-700 text-sm">Weekly Log Submissions</span>
-            </div>
-            <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="colorLogs" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.8} />
-                    <stop offset="95%" stopColor="#06b6d4" stopOpacity={0.1} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="week" stroke="#94a3b8" fontSize={12} />
-                <YAxis stroke="#94a3b8" fontSize={12} width={30} />
-                <Tooltip contentStyle={{ fontSize: 13 }} />
-                <Area type="monotone" dataKey="logs" stroke="#06b6d4" fillOpacity={1} fill="url(#colorLogs)" name="Logs" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Placements Table */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="px-6 pt-6 pb-2 flex flex-col gap-2">
-              <SectionHeader title="Assigned Students" subtitle={`${placements.length} student(s) under your supervision`} accent="#0891b2" />
-              <input type="text"
-                className="w-full max-w-xs rounded-lg border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-200"
-                placeholder="Search students or company..." value={search} onChange={(e) => setSearch(e.target.value)} />
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
-                <thead>
-                  <tr className="border-y border-gray-100 bg-gray-50">
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">#</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Student</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Company</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Start Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {loading ? (
-                    <EmptyRow cols={5} message="Loading..." />
-                  ) : filteredPlacements.length === 0 ? (
-                    <EmptyRow cols={5} message="No students assigned yet." />
-                  ) : filteredPlacements.map((p, i) => (
-                    <tr key={p.id} className="border-b border-gray-50 hover:bg-cyan-50/30 transition-colors">
-                      <td className="px-6 py-4 text-gray-300 font-mono text-xs">{String(i + 1).padStart(2, "0")}</td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2.5">
-                          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-cyan-400 to-emerald-500 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                            {(p.student_name ?? "?").charAt(0)}
-                          </div>
-                          <span className="font-semibold text-gray-800">{p.student_name}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-gray-600">
-                        <div className="flex items-center gap-1.5">
-                          <Building2 size={13} className="text-gray-300 shrink-0" />{p.company}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold ${statusColor(p.status)}`}>
-                          {p.status.charAt(0).toUpperCase() + p.status.slice(1)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-gray-500 text-xs font-mono">{p.start_date ?? "—"}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Pending Reviews Table */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="px-6 pt-6 pb-2">
-              <SectionHeader title="Pending Log Reviews" subtitle="Student logs awaiting your review" accent="#f59e0b" />
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
-                <thead>
-                  <tr className="border-y border-gray-100 bg-gray-50">
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">#</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Student</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Week</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Submitted</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredLogs.length === 0 ? (
-                    <EmptyRow cols={6} message="No pending reviews. You're all caught up!" />
-                  ) : filteredLogs.map((log, i) => (
-                    <tr key={log.id} className="border-b border-gray-50 hover:bg-amber-50/30 transition-colors">
-                      <td className="px-6 py-4 text-gray-300 font-mono text-xs">{String(i + 1).padStart(2, "0")}</td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2.5">
-                          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-amber-400 to-orange-400 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                            {(log.student_name ?? "?").charAt(0)}
-                          </div>
-                          <span className="font-semibold text-gray-800">{log.student_name}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-gray-600">Week {log.week_number}</td>
-                      <td className="px-6 py-4 text-gray-500 text-xs font-mono">
-                        {log.submitted_at ? new Date(log.submitted_at).toLocaleDateString("en-GB") : "—"}
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200">
-                          Submitted
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <button onClick={() => { setSelectedLog(log); setReviewOpen(true); }}
-                          className="text-xs font-semibold text-cyan-600 hover:text-cyan-800 hover:underline underline-offset-2 transition-colors flex items-center gap-1">
-                          Review <ChevronRight size={12} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Evaluations Table */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="px-6 pt-6 pb-2">
-              <SectionHeader title="Academic Evaluations" subtitle="Scores you have submitted" accent="#059669" />
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
-                <thead>
-                  <tr className="border-y border-gray-100 bg-gray-50">
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">#</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Student</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Score</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Date</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Comments</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {academicEvals.length === 0 ? (
-                    <EmptyRow cols={5} message="No evaluations recorded yet." />
-                  ) : academicEvals.map((e, i) => (
-                    <tr key={e.id} className="border-b border-gray-50 hover:bg-emerald-50/30 transition-colors">
-                      <td className="px-6 py-4 text-gray-300 font-mono text-xs">{String(i + 1).padStart(2, "0")}</td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2.5">
-                          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                            {(e.student_name ?? "?").charAt(0)}
-                          </div>
-                          <span className="font-semibold text-gray-800">{e.student_name}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                          <Star size={10} /> {e.score}/100
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-gray-500 text-xs font-mono">{e.date ?? "—"}</td>
-                      <td className="px-6 py-4 text-gray-500 max-w-xs truncate">
-                        {e.comments ?? <span className="italic text-gray-300">No comments</span>}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <AnimatePresence>
+            {editLog && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, height: 0 }}
+                animate={{ opacity: 1, y: 0, height: "auto" }}
+                exit={{ opacity: 0, y: -10, height: 0 }}
+                className="rounded-2xl bg-white/20 backdrop-blur-lg border border-white/20 shadow-xl p-7 fixed top-0 left-0 right-0 z-50 max-w-lg mx-auto mt-24"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-bold text-white">Edit Draft</h3>
+                  <button type="button" onClick={() => setEditLog(null)} className="text-white/70 hover:text-yellow-300 transition">
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+                <form onSubmit={saveEditedLog} className="grid grid-cols-1 gap-4">
+                  <input type="date" value={editForm.date}
+                    onChange={(e) => setEditForm({ ...editForm, date: e.target.value })}
+                    className="rounded-lg px-3 py-2 bg-white/10 text-white border border-white/20" required />
+                  <textarea value={editForm.activities}
+                    onChange={(e) => setEditForm({ ...editForm, activities: e.target.value })}
+                    rows={2} className="rounded-lg px-3 py-2 bg-white/10 text-white border border-white/20" required />
+                  <textarea value={editForm.learnings}
+                    onChange={(e) => setEditForm({ ...editForm, learnings: e.target.value })}
+                    rows={2} className="rounded-lg px-3 py-2 bg-white/10 text-white border border-white/20" required />
+                  <textarea value={editForm.challenges}
+                    onChange={(e) => setEditForm({ ...editForm, challenges: e.target.value })}
+                    rows={2} className="rounded-lg px-3 py-2 bg-white/10 text-white border border-white/20" />
+                  <div className="flex gap-3">
+                    <button type="submit" disabled={saving}
+                      className="rounded-xl bg-gradient-to-r from-yellow-400 via-emerald-400 to-cyan-400 text-[#232526] font-bold px-6 py-2 shadow disabled:opacity-50">
+                      Save Changes
+                    </button>
+                    <button type="button" onClick={() => setEditLog(null)}
+                      className="rounded-xl bg-white/10 text-white border border-white/20 px-6 py-2 font-bold">
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
         </div>
       </div>
-
-      {/* Review Modal */}
-      {reviewOpen && selectedLog && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-2xl overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4 border-b bg-gray-50">
-              <h3 className="text-base font-semibold text-gray-800">Review Log — Week {selectedLog.week_number}</h3>
-              <button onClick={() => { setReviewOpen(false); setSelectedLog(null); setReviewComment(""); }}
-                className="p-1.5 rounded-lg hover:bg-gray-200 text-gray-500 transition">
-                <X size={16} />
-              </button>
-            </div>
-            <div className="px-6 py-5 space-y-4">
-              <div className="rounded-xl bg-gray-50 border border-gray-100 p-4 space-y-2 text-sm">
-                <p><span className="font-semibold text-gray-600">Student:</span> {selectedLog.student_name}</p>
-                <p><span className="font-semibold text-gray-600">Activities:</span> {selectedLog.activities}</p>
-                <p><span className="font-semibold text-gray-600">Learnings:</span> {selectedLog.learnings}</p>
-                <p><span className="font-semibold text-gray-600">Challenges:</span> {selectedLog.challenges}</p>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1.5">Your Comment</label>
-                <textarea rows={3} placeholder="Add feedback for the student…"
-                  value={reviewComment} onChange={(e) => setReviewComment(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-200 resize-none" />
-              </div>
-              <div className="flex gap-2.5">
-                <button onClick={() => { setReviewOpen(false); setSelectedLog(null); setReviewComment(""); }}
-                  className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-500 hover:text-gray-800 transition">
-                  Cancel
-                </button>
-                <button onClick={() => handleReviewLog("review")} disabled={saving}
-                  className="flex-1 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-semibold transition disabled:opacity-50">
-                  Mark Reviewed
-                </button>
-                <button onClick={() => handleReviewLog("approve")} disabled={saving}
-                  className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold transition disabled:opacity-50">
-                  Approve
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </AppLayout>
   );
 };
 
-export default AcademicSupervisorDashboard;
+export default WeeklyLogbook;
