@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Plus, NotebookPen, X, Send } from "lucide-react";
 import { internshipService } from "@/services/internshipService";
 
+
+
 const statusStyles = {
   draft:     "bg-slate-500/70 text-white",
   submitted: "bg-yellow-400/80 text-[#232526]",
@@ -11,6 +13,8 @@ const statusStyles = {
   approved:  "bg-green-500/80 text-white",
   rejected:  "bg-red-500/80 text-white",
 };
+
+
 
 const emptyForm = {
   placement: "",
