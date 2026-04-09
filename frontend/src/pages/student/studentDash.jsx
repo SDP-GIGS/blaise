@@ -54,8 +54,7 @@ const StudentDashboard = () => {
       const submitted = logs.length;
       const chart = logs
         .slice()
-        .sort((a, b) => a.weekNumber - b.weekNumber)
-        .map((log) => ({ week: `W${log.weekNumber}`, entries: 1 }));
+        .
 
       const placement =
         placements.find((item) => item.status === "active") || placements[0] || null;
