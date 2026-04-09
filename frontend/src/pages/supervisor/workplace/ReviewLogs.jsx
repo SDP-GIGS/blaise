@@ -49,3 +49,18 @@ const Toast = ({ message, type, onClose }) => (
     </button>
   </motion.div>
 );
+
+const ReviewDrawer = ({ log, onClose, onSubmit, saving }) => {
+  const [comment, setComment] = useState("");
+  const [criteriaScores, setCriteriaScores] = useState(
+    Object.fromEntries(LOGBOOK_CRITERIA.map((c) => [c.criteria, 0]))
+  );
+
+  const totalScore = Object.values(criteriaScores).reduce((a, b) => a + Number(b), 0);
+
+  const handleScoreChange = (criteria, value, max) => {
+    const num = Math.min(Math.max(0, Number(value)), max);
+    setCriteriaScores((prev) => ({ ...prev, [criteria]: num }));
+  };
+
+  if (!log) return null;
