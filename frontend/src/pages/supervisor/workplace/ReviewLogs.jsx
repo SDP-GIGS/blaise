@@ -90,3 +90,24 @@ const ReviewDrawer = ({ log, onClose, onSubmit, saving }) => {
               <X className="w-4 h-4" />
             </button>
           </div>
+
+          <div className="flex-1 overflow-y-auto px-6 py-5 space-y-5">
+            {/* Log Details */}
+            <div className="rounded-xl bg-[#0b1523] border border-[#1e3a5f] p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-base font-semibold text-white">{log.student_name}</p>
+                <StatusBadge status={log.status} />
+              </div>
+              <div className="grid grid-cols-2 gap-3 text-xs text-slate-400">
+                <div><span className="text-slate-600">Week</span><p className="text-white mt-0.5">Week {log.week_number}</p></div>
+                <div><span className="text-slate-600">Date</span><p className="text-white mt-0.5">{log.date}</p></div>
+              </div>
+            </div>
+
+            {/* Activities */}
+            <div>
+              <p className="text-xs font-medium text-slate-500 mb-2 uppercase tracking-wider">Activities</p>
+              <div className="rounded-xl bg-[#0b1523] border border-[#1e3a5f] p-4">
+                <p className="text-sm text-slate-300 leading-relaxed">{log.activities}</p>
+              </div>
+            </div>
