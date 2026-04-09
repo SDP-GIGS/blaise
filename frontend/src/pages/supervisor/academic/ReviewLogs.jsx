@@ -224,3 +224,70 @@ const AcademicReviewLogs = () => {
                       </div>
                     </div>
                   )}
+{/* Filter Bar */}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Filter size={13} className="text-gray-400" />
+                    {["all", "submitted", "approved", "reviewed", "rejected"].map((f) => (
+                      <button key={f} onClick={() => setFilterStatus(f)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${
+                          filterStatus === f
+                            ? "bg-cyan-600 text-white border-cyan-600"
+                            : "bg-white text-gray-500 border-gray-200 hover:border-gray-300"
+                        }`}>
+                        {f === "all" ? "All Logs" : f.charAt(0).toUpperCase() + f.slice(1)}
+                      </button>
+                    ))}
+                    <span className="ml-auto text-xs text-gray-400">{studentLogs.length} log{studentLogs.length !== 1 ? "s" : ""}</span>
+                  </div>
+
+                  {/* Logs Table */}
+                  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    <table className="w-full text-sm border-collapse">
+                      <thead>
+                        <tr className="border-b border-gray-100 bg-gray-50">
+                          <th className="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Week</th>
+                          <th className="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Date</th>
+                          <th className="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Submitted</th>
+                          <th className="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Status</th>
+                          <th className="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {studentLogs.length === 0 ? (
+                          <tr>
+                            <td colSpan={5} className="px-5 py-12 text-center text-sm text-gray-400 italic">
+                              No logs match the selected filter.
+                            </td>
+                          </tr>
+                        ) : studentLogs.map((log) => (
+                          <tr key={log.id} className="border-b border-gray-50 hover:bg-slate-50/60 transition-colors">
+                            <td className="px-5 py-4 font-bold text-gray-800">Week {log.week_number}</td>
+                            <td className="px-5 py-4 text-gray-500 text-xs font-mono">{log.date}</td>
+                            <td className="px-5 py-4 text-gray-500 text-xs font-mono">
+                              {log.submitted_at ? new Date(log.submitted_at).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "—"}
+                            </td>
+                            <td className="px-5 py-4"><Badge status={log.status} /></td>
+                            <td className="px-5 py-4">
+                              <button onClick={() => setSelectedLog(log)}
+                                className="flex items-center gap-1.5 text-xs font-semibold text-cyan-600 hover:text-cyan-800 transition-colors">
+                                <Eye size={13} /> View
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {selectedLog && <LogDetailPanel log={selectedLog} onClose={() => setSelectedLog(null)} />}
+    </AppLayout>
+  );
+};
+
+export default AcademicReviewLogs;
