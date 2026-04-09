@@ -4,8 +4,7 @@ import { apiClient } from "@/lib/apiClient";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   UserCircle2, GraduationCap, ClipboardList, CheckCircle2,
-  Building2, Mail, BadgeCheck, ChevronRight, BookOpen,
-  Star, Bell, AlertCircle, BarChart3, X,
+  Building2, Mail, BadgeCheck, BookOpen, Star, BarChart3,
 } from "lucide-react";
 import {
   AreaChart, Area, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid,
@@ -53,10 +52,6 @@ const AcademicSupervisorDashboard = () => {
   const [evaluations, setEvaluations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [reviewOpen, setReviewOpen] = useState(false);
-  const [selectedLog, setSelectedLog] = useState(null);
-  const [reviewComment, setReviewComment] = useState("");
-  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -81,7 +76,7 @@ const AcademicSupervisorDashboard = () => {
   const pendingLogs = useMemo(() => logs.filter((l) => l.status === 'submitted'), [logs]);
   const academicEvals = useMemo(() => evaluations.filter((e) => e.evaluation_type === 'academic'), [evaluations]);
   const avgScore = academicEvals.length
-    ? (academicEvals.reduce((s, e) => s + e.score, 0) / academicEvals.length).toFixed(1)
+    ? (academicEvals.reduce((s, e) => s + (e.total_score ?? 0), 0) / academicEvals.length).toFixed(1)
     : null;
 
   const chartData = useMemo(() =>
@@ -103,29 +98,6 @@ const AcademicSupervisorDashboard = () => {
     const q = search.toLowerCase();
     return !q || (l.student_name ?? "").toLowerCase().includes(q);
   });
-
-  const handleReviewLog = async (action) => {
-    if (!selectedLog) return;
-    setSaving(true);
-    try {
-      const newStatus = action === 'approve' ? 'approved' : 'reviewed';
-      await apiClient.post('/reviews/', {
-        log: selectedLog.id,
-        comment: reviewComment,
-        status: newStatus,
-      });
-      setLogs((prev) => prev.map((l) =>
-        l.id === selectedLog.id ? { ...l, status: newStatus } : l
-      ));
-      setReviewOpen(false);
-      setReviewComment("");
-      setSelectedLog(null);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setSaving(false);
-    }
-  };
 
   return (
     <AppLayout>
@@ -164,7 +136,7 @@ const AcademicSupervisorDashboard = () => {
             <StatCard icon={GraduationCap} value={placements.length}    label="Total Placements"  accent="#0891b2" />
             <StatCard icon={ClipboardList} value={pendingLogs.length}   label="Pending Reviews"   accent="#f59e0b" />
             <StatCard icon={BookOpen}      value={academicEvals.length} label="Evaluations Done"  accent="#059669" />
-            <StatCard icon={Star}          value={avgScore ? `${avgScore}%` : "—"} label="Avg Score" accent="#fbbf24" />
+            <StatCard icon={Star}          value={avgScore ? `${avgScore}` : "—"} label="Avg Score" accent="#fbbf24" />
             <StatCard icon={CheckCircle2}  value={logs.filter((l) => l.status === "approved").length} label="Approved Logs" accent="#6366f1" />
           </div>
 
@@ -244,10 +216,10 @@ const AcademicSupervisorDashboard = () => {
             </div>
           </div>
 
-          {/* Pending Reviews Table */}
+          {/* Pending Reviews — Read Only */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="px-6 pt-6 pb-2">
-              <SectionHeader title="Pending Log Reviews" subtitle="Student logs awaiting your review" accent="#f59e0b" />
+              <SectionHeader title="Pending Log Reviews" subtitle="Logs awaiting review by the workplace supervisor" accent="#f59e0b" />
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm border-collapse">
@@ -258,12 +230,12 @@ const AcademicSupervisorDashboard = () => {
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Week</th>
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Submitted</th>
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Action</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Note</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredLogs.length === 0 ? (
-                    <EmptyRow cols={6} message="No pending reviews. You're all caught up!" />
+                    <EmptyRow cols={6} message="No pending logs." />
                   ) : filteredLogs.map((log, i) => (
                     <tr key={log.id} className="border-b border-gray-50 hover:bg-amber-50/30 transition-colors">
                       <td className="px-6 py-4 text-gray-300 font-mono text-xs">{String(i + 1).padStart(2, "0")}</td>
@@ -284,11 +256,8 @@ const AcademicSupervisorDashboard = () => {
                           Submitted
                         </span>
                       </td>
-                      <td className="px-6 py-4">
-                        <button onClick={() => { setSelectedLog(log); setReviewOpen(true); }}
-                          className="text-xs font-semibold text-cyan-600 hover:text-cyan-800 hover:underline underline-offset-2 transition-colors flex items-center gap-1">
-                          Review <ChevronRight size={12} />
-                        </button>
+                      <td className="px-6 py-4 text-xs text-gray-400 italic">
+                        Reviewed by workplace supervisor
                       </td>
                     </tr>
                   ))}
@@ -329,7 +298,7 @@ const AcademicSupervisorDashboard = () => {
                       </td>
                       <td className="px-6 py-4">
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                          <Star size={10} /> {e.score}/100
+                          <Star size={10} /> {e.total_score}/100
                         </span>
                       </td>
                       <td className="px-6 py-4 text-gray-500 text-xs font-mono">{e.date ?? "—"}</td>
@@ -345,49 +314,6 @@ const AcademicSupervisorDashboard = () => {
 
         </div>
       </div>
-
-      {/* Review Modal */}
-      {reviewOpen && selectedLog && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-2xl overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4 border-b bg-gray-50">
-              <h3 className="text-base font-semibold text-gray-800">Review Log — Week {selectedLog.week_number}</h3>
-              <button onClick={() => { setReviewOpen(false); setSelectedLog(null); setReviewComment(""); }}
-                className="p-1.5 rounded-lg hover:bg-gray-200 text-gray-500 transition">
-                <X size={16} />
-              </button>
-            </div>
-            <div className="px-6 py-5 space-y-4">
-              <div className="rounded-xl bg-gray-50 border border-gray-100 p-4 space-y-2 text-sm">
-                <p><span className="font-semibold text-gray-600">Student:</span> {selectedLog.student_name}</p>
-                <p><span className="font-semibold text-gray-600">Activities:</span> {selectedLog.activities}</p>
-                <p><span className="font-semibold text-gray-600">Learnings:</span> {selectedLog.learnings}</p>
-                <p><span className="font-semibold text-gray-600">Challenges:</span> {selectedLog.challenges}</p>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1.5">Your Comment</label>
-                <textarea rows={3} placeholder="Add feedback for the student…"
-                  value={reviewComment} onChange={(e) => setReviewComment(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-200 resize-none" />
-              </div>
-              <div className="flex gap-2.5">
-                <button onClick={() => { setReviewOpen(false); setSelectedLog(null); setReviewComment(""); }}
-                  className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-500 hover:text-gray-800 transition">
-                  Cancel
-                </button>
-                <button onClick={() => handleReviewLog("review")} disabled={saving}
-                  className="flex-1 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-semibold transition disabled:opacity-50">
-                  Mark Reviewed
-                </button>
-                <button onClick={() => handleReviewLog("approve")} disabled={saving}
-                  className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold transition disabled:opacity-50">
-                  Approve
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </AppLayout>
   );
 };
