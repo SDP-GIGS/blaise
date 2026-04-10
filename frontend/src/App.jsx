@@ -21,7 +21,7 @@ import AdminReports from "./pages/admin/Adminreports";
 import AdminPlacementManagement from "./pages/admin/AdminPlacementManagement";
 import AdminUsers from "./pages/admin/AdminUsers";
 
-import SupervisorDashboard from "./pages/supervisor/SupervisorDashboard";
+
 import SupervisorNotifications from "./pages/supervisor/Notifications";
 import WorkplaceSupervisorDashboard from "./pages/supervisor/workplace/Dashboard";
 import WorkplaceReviewLogs from "./pages/supervisor/workplace/ReviewLogs";
@@ -70,7 +70,6 @@ function App() {
         <Route path="/supervisor/academic/evaluate" element={<ProtectedRoute allowedRoles={['academic_supervisor']}><AcademicEvaluate /></ProtectedRoute>} />
 
         {/* Legacy Routes */}
-        <Route path="/supervisor" element={<ProtectedRoute allowedRoles={['workplace_supervisor']}><SupervisorDashboard /></ProtectedRoute>} />
         <Route path="/academic" element={<ProtectedRoute allowedRoles={['academic_supervisor']}><AcademicDashboard /></ProtectedRoute>} />
 
         {/* Notifications */}

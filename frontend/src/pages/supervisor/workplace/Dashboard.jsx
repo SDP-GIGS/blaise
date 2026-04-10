@@ -2,56 +2,12 @@ import { useMemo, useState, useEffect } from "react";
 import AppLayout from "@/components/AppLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { apiClient } from "@/lib/apiClient";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   Users, ClipboardCheck, Clock, AlertCircle, Briefcase,
-  Download, CheckCircle2, Eye, X, FileText, Search, Filter, Bell,
+  Download, CheckCircle2, Bell, FileText, Search, Filter,
+  ChevronDown,
 } from "lucide-react";
-
-const Modal = ({ open, onClose, title, children }) => (
-  <AnimatePresence>
-    {open && (
-      <motion.div className="fixed inset-0 z-50 flex items-center justify-center p-4"
-        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-        <motion.div className="absolute inset-0 bg-[#0b1120]/80 backdrop-blur-sm" onClick={onClose} />
-        <motion.div
-          className="relative z-10 w-full max-w-lg rounded-2xl bg-[#111c30] border border-[#1e3a5f] shadow-2xl overflow-hidden"
-          initial={{ opacity: 0, scale: 0.94, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.94, y: 20 }}
-          transition={{ type: "spring", stiffness: 320, damping: 28 }}
-        >
-          <div className="flex items-center justify-between px-6 py-4 border-b border-[#1e3a5f] bg-[#0d1926]">
-            <h3 className="text-base font-semibold text-white">{title}</h3>
-            <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition">
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-          <div className="px-6 py-5">{children}</div>
-        </motion.div>
-      </motion.div>
-    )}
-  </AnimatePresence>
-);
-
-const Toast = ({ message, type, onClose }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 40, scale: 0.95 }}
-    animate={{ opacity: 1, y: 0, scale: 1 }}
-    exit={{ opacity: 0, y: 40, scale: 0.95 }}
-    className={`fixed bottom-6 right-6 z-[100] flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-2xl border text-sm font-medium ${
-      type === "success" ? "bg-emerald-950 border-emerald-700 text-emerald-200" : "bg-red-950 border-red-700 text-red-200"
-    }`}
-  >
-    {type === "success"
-      ? <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-      : <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0" />}
-    {message}
-    <button onClick={onClose} className="ml-2 text-white/40 hover:text-white transition">
-      <X className="w-3.5 h-3.5" />
-    </button>
-  </motion.div>
-);
 
 const getStatusStyle = (status) => {
   switch (status) {
@@ -63,24 +19,98 @@ const getStatusStyle = (status) => {
   }
 };
 
+const StudentRow = ({ placement, logs, index }) => {
+  const [expanded, setExpanded] = useState(false);
+  const pending = logs.filter((l) => l.status === "submitted").length;
+  const approved = logs.filter((l) => l.status === "approved").length;
+  const progress = logs.length ? Math.round((approved / logs.length) * 100) : 0;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05 }}
+      className="rounded-2xl bg-[#0d1926] border border-[#1a3050] overflow-hidden"
+    >
+      <button onClick={() => setExpanded((v) => !v)}
+        className="w-full flex items-center gap-4 px-6 py-4 hover:bg-white/[0.02] transition-colors text-left">
+        <div className="w-10 h-10 rounded-full bg-sky-500/20 border border-sky-500/30 flex items-center justify-center text-sm font-bold text-sky-300 flex-shrink-0">
+          {(placement.student_name ?? "?").split(" ").map((n) => n[0]).join("").slice(0, 2)}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-white truncate">{placement.student_name}</p>
+          <p className="text-xs text-slate-500 truncate">{placement.company}</p>
+        </div>
+        <div className="hidden sm:block w-28">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs text-slate-600">Progress</span>
+            <span className="text-xs text-slate-400">{progress}%</span>
+          </div>
+          <div className="h-1.5 rounded-full bg-[#1a3050] overflow-hidden">
+            <div className="h-full rounded-full bg-emerald-500 transition-all duration-700" style={{ width: `${progress}%` }} />
+          </div>
+        </div>
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <div className="text-center hidden md:block">
+            <p className="text-sm font-bold text-white">{logs.length}</p>
+            <p className="text-xs text-slate-600">logs</p>
+          </div>
+          {pending > 0 && (
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400/15 text-amber-300 text-xs font-medium border border-amber-500/30">
+              <AlertCircle className="w-3 h-3" /> {pending}
+            </span>
+          )}
+          <ChevronDown className={`w-4 h-4 text-slate-600 transition-transform duration-200 ${expanded ? "rotate-180" : ""}`} />
+        </div>
+      </button>
+
+      {expanded && (
+        <div className="border-t border-[#1a3050]">
+          {logs.length === 0 ? (
+            <div className="py-8 text-center">
+              <FileText className="w-6 h-6 text-slate-700 mx-auto mb-2" />
+              <p className="text-sm text-slate-500">No logs submitted yet.</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-[#122030]">
+              {logs.map((log) => (
+                <div key={log.id} className="flex items-center justify-between px-6 py-3.5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-[#122030] border border-[#1a3050] flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs font-bold text-slate-400">W{log.week_number}</span>
+                    </div>
+                    <div>
+                      <p className="text-sm text-slate-300">Week {log.week_number}</p>
+                      <p className="text-xs text-slate-500">{log.date}</p>
+                    </div>
+                  </div>
+                  <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${getStatusStyle(log.status)}`}>
+                    {log.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="px-6 py-3 border-t border-[#1a3050]">
+            <a href="/supervisor/workplace/review"
+              className="text-xs text-sky-400 hover:underline font-medium">
+              Go to Review Logs →
+            </a>
+          </div>
+        </div>
+      )}
+    </motion.div>
+  );
+};
+
 const WorkplaceSupervisorDashboard = () => {
   const { user } = useAuth();
   const [logs, setLogs] = useState([]);
   const [placements, setPlacements] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [toast, setToast] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [activeTab, setActiveTab] = useState("overview");
-  const [reviewOpen, setReviewOpen] = useState(false);
-  const [selectedLog, setSelectedLog] = useState(null);
-  const [reviewComment, setReviewComment] = useState("");
-  const [saving, setSaving] = useState(false);
-
-  const showToast = (message, type = "success") => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 3500);
-  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -92,7 +122,7 @@ const WorkplaceSupervisorDashboard = () => {
         setLogs(Array.isArray(logsData) ? logsData : []);
         setPlacements(Array.isArray(placementsData) ? placementsData : []);
       } catch (err) {
-        showToast(err.message || 'Failed to load data.', 'error');
+        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -101,39 +131,18 @@ const WorkplaceSupervisorDashboard = () => {
   }, []);
 
   const pendingLogs = useMemo(() => logs.filter((l) => l.status === 'submitted'), [logs]);
-  const reviewedLogs = useMemo(() => logs.filter((l) => ['reviewed', 'approved'].includes(l.status)), [logs]);
+  const reviewedLogs = useMemo(() => logs.filter((l) => l.status === 'reviewed'), [logs]);
+  const approvedLogs = useMemo(() => logs.filter((l) => l.status === 'approved'), [logs]);
 
-  const filteredLogs = useMemo(() => {
-    return logs.filter((l) => {
-      const q = searchQuery.toLowerCase();
-      const matchSearch = !q || (l.student_name ?? "").toLowerCase().includes(q);
-      const matchStatus = statusFilter === "all" || l.status === statusFilter;
-      return matchSearch && matchStatus;
-    });
-  }, [logs, searchQuery, statusFilter]);
+  const filteredPlacements = placements.filter((p) => {
+    const q = searchQuery.toLowerCase();
+    return !q || (p.student_name ?? "").toLowerCase().includes(q) || (p.company ?? "").toLowerCase().includes(q);
+  });
 
-  const handleReviewLog = async (action) => {
-    if (!selectedLog) return;
-    setSaving(true);
-    try {
-      const newStatus = action === 'approve' ? 'approved' : 'reviewed';
-      const review = await apiClient.post('/reviews/', {
-        log: selectedLog.id,
-        comment: reviewComment,
-        status: newStatus,
-      });
-      setLogs((prev) => prev.map((l) =>
-        l.id === selectedLog.id ? { ...l, status: newStatus } : l
-      ));
-      setReviewOpen(false);
-      setReviewComment("");
-      setSelectedLog(null);
-      showToast(action === 'approve' ? 'Log approved.' : 'Log marked as reviewed.');
-    } catch (err) {
-      showToast(err.message || 'Failed to submit review.', 'error');
-    } finally {
-      setSaving(false);
-    }
+  const logsForStudent = (studentId) => {
+    let sl = logs.filter((l) => l.student === studentId);
+    if (statusFilter !== "all") sl = sl.filter((l) => l.status === statusFilter);
+    return sl;
   };
 
   const handleExport = () => {
@@ -144,14 +153,13 @@ const WorkplaceSupervisorDashboard = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a"); a.href = url; a.download = "supervisor-report.csv"; a.click();
     URL.revokeObjectURL(url);
-    showToast("Report exported.");
   };
 
   const stats = [
-    { icon: Users,         label: "Assigned Students", value: placements.length,      color: "text-sky-400",     bg: "bg-sky-400/10",     border: "border-sky-500/20"     },
-    { icon: AlertCircle,   label: "Pending Review",    value: pendingLogs.length,      color: "text-amber-400",   bg: "bg-amber-400/10",   border: "border-amber-500/20"   },
-    { icon: ClipboardCheck,label: "Reviewed",          value: reviewedLogs.length,     color: "text-emerald-400", bg: "bg-emerald-400/10", border: "border-emerald-500/20" },
-    { icon: Clock,         label: "Total Logs",        value: logs.length,             color: "text-violet-400",  bg: "bg-violet-400/10",  border: "border-violet-500/20"  },
+    { icon: Users,          label: "Assigned Students", value: placements.length,    color: "text-sky-400",     bg: "bg-sky-400/10",     border: "border-sky-500/20"     },
+    { icon: AlertCircle,    label: "Pending Review",    value: pendingLogs.length,    color: "text-amber-400",   bg: "bg-amber-400/10",   border: "border-amber-500/20"   },
+    { icon: Clock,          label: "Reviewed",          value: reviewedLogs.length,   color: "text-sky-400",     bg: "bg-sky-400/10",     border: "border-sky-500/20"     },
+    { icon: ClipboardCheck, label: "Approved",          value: approvedLogs.length,   color: "text-emerald-400", bg: "bg-emerald-400/10", border: "border-emerald-500/20" },
   ];
 
   return (
@@ -183,10 +191,16 @@ const WorkplaceSupervisorDashboard = () => {
                   </p>
                 </div>
               </div>
-              <button onClick={handleExport}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1a2e47] hover:bg-[#1e3554] border border-[#1e3a5f] text-slate-200 hover:text-white text-sm font-semibold transition">
-                <Download className="w-4 h-4" /> Export
-              </button>
+              <div className="flex gap-2">
+                <button onClick={handleExport}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1a2e47] hover:bg-[#1e3554] border border-[#1e3a5f] text-slate-200 hover:text-white text-sm font-semibold transition">
+                  <Download className="w-4 h-4" /> Export
+                </button>
+                <a href="/supervisor/workplace/review"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-sky-500 hover:bg-sky-400 text-white text-sm font-semibold transition">
+                  <ClipboardCheck className="w-4 h-4" /> Review Logs
+                </a>
+              </div>
             </div>
           </motion.div>
 
@@ -209,7 +223,7 @@ const WorkplaceSupervisorDashboard = () => {
 
           {/* Tabs */}
           <div className="flex items-center gap-1 border-b border-[#1a3050]">
-            {["overview", "students", "logs"].map((tab) => (
+            {["overview", "students"].map((tab) => (
               <button key={tab} onClick={() => setActiveTab(tab)}
                 className={`px-5 py-2.5 text-sm font-semibold capitalize tracking-wide transition border-b-2 -mb-px ${
                   activeTab === tab ? "border-sky-500 text-sky-400" : "border-transparent text-slate-500 hover:text-slate-300"
@@ -269,14 +283,17 @@ const WorkplaceSupervisorDashboard = () => {
                 </div>
               </div>
 
-              {/* Pending Logs */}
+              {/* Pending Logs — Read Only */}
               <div className="rounded-2xl bg-[#0d1926] border border-[#1a3050] overflow-hidden">
                 <div className="flex items-center justify-between px-6 py-4 border-b border-[#1a3050]">
                   <div className="flex items-center gap-2.5">
                     <ClipboardCheck className="w-4 h-4 text-amber-400" />
-                    <h2 className="text-sm font-semibold text-white">Awaiting Review</h2>
+                    <h2 className="text-sm font-semibold text-white">Pending Logs</h2>
                   </div>
-                  <span className="text-xs text-slate-500">{pendingLogs.length} pending</span>
+                  <a href="/supervisor/workplace/review"
+                    className="text-xs text-sky-400 hover:underline font-medium">
+                    Review all →
+                  </a>
                 </div>
                 <div className="divide-y divide-[#122030] overflow-y-auto max-h-80">
                   {pendingLogs.length === 0 ? (
@@ -292,18 +309,12 @@ const WorkplaceSupervisorDashboard = () => {
                         </div>
                         <div>
                           <p className="text-sm font-medium text-white">{log.student_name}</p>
-                          <p className="text-xs text-slate-500">Week {log.week_number}</p>
+                          <p className="text-xs text-slate-500">Week {log.week_number} · {log.date}</p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${getStatusStyle(log.status)}`}>
-                          {log.status}
-                        </span>
-                        <button onClick={() => { setSelectedLog(log); setReviewOpen(true); }}
-                          className="p-1.5 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/20 text-sky-400 transition">
-                          <Eye className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
+                      <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${getStatusStyle(log.status)}`}>
+                        {log.status}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -313,66 +324,7 @@ const WorkplaceSupervisorDashboard = () => {
 
           {/* Students Tab */}
           {activeTab === "students" && (
-            <motion.div key="students" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-              <div className="rounded-2xl bg-[#0d1926] border border-[#1a3050] overflow-hidden">
-                <div className="px-6 py-4 border-b border-[#1a3050]">
-                  <h2 className="text-sm font-semibold text-white">All Assigned Students</h2>
-                </div>
-                {placements.length === 0 ? (
-                  <div className="py-16 text-center">
-                    <Users className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-                    <p className="text-sm text-slate-500">No students assigned yet.</p>
-                  </div>
-                ) : (
-                  <div className="divide-y divide-[#122030]">
-                    {placements.map((p) => {
-                      const sLogs = logs.filter((l) => l.student === p.student);
-                      const approved = sLogs.filter((l) => l.status === "approved").length;
-                      const progress = sLogs.length ? Math.round((approved / sLogs.length) * 100) : 0;
-                      const pending = sLogs.filter((l) => l.status === "submitted").length;
-                      return (
-                        <div key={p.id} className="px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-4">
-                          <div className="flex items-center gap-3 flex-1 min-w-0">
-                            <div className="w-10 h-10 rounded-full bg-sky-500/20 border border-sky-500/30 flex items-center justify-center text-sm font-bold text-sky-300 flex-shrink-0">
-                              {(p.student_name ?? "?").split(" ").map((n) => n[0]).join("").slice(0, 2)}
-                            </div>
-                            <div className="min-w-0">
-                              <p className="text-sm font-semibold text-white truncate">{p.student_name}</p>
-                              <p className="text-xs text-slate-500 truncate">{p.company}</p>
-                            </div>
-                          </div>
-                          <div className="flex-1 max-w-xs">
-                            <div className="flex items-center justify-between mb-1.5">
-                              <span className="text-xs text-slate-500">Approval progress</span>
-                              <span className="text-xs text-slate-400">{progress}%</span>
-                            </div>
-                            <div className="h-1.5 rounded-full bg-[#1a3050] overflow-hidden">
-                              <div className="h-full rounded-full bg-emerald-500 transition-all duration-500" style={{ width: `${progress}%` }} />
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-3 flex-shrink-0">
-                            <div className="text-center">
-                              <p className="text-sm font-semibold text-white">{sLogs.length}</p>
-                              <p className="text-xs text-slate-500">logs</p>
-                            </div>
-                            {pending > 0 && (
-                              <span className="px-2 py-0.5 rounded-full bg-amber-400/15 text-amber-300 text-xs border border-amber-500/30">
-                                {pending} pending
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          )}
-
-          {/* Logs Tab */}
-          {activeTab === "logs" && (
-            <motion.div key="logs" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+            <motion.div key="students" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
               <div className="flex flex-col sm:flex-row gap-3">
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
@@ -393,111 +345,30 @@ const WorkplaceSupervisorDashboard = () => {
                 </div>
               </div>
 
-              <div className="rounded-2xl bg-[#0d1926] border border-[#1a3050] overflow-hidden">
-                <div className="px-6 py-4 border-b border-[#1a3050] flex items-center justify-between">
-                  <h2 className="text-sm font-semibold text-white">Log Submissions</h2>
-                  <span className="text-xs text-slate-500">{filteredLogs.length} entries</span>
+              {loading ? (
+                <div className="py-20 text-center text-slate-500">Loading...</div>
+              ) : filteredPlacements.length === 0 ? (
+                <div className="py-20 text-center rounded-2xl bg-[#0d1926] border border-[#1a3050]">
+                  <Users className="w-10 h-10 text-slate-700 mx-auto mb-3" />
+                  <p className="text-sm text-slate-500">No students found.</p>
                 </div>
-                {filteredLogs.length === 0 ? (
-                  <div className="py-16 text-center">
-                    <FileText className="w-8 h-8 text-slate-600 mx-auto mb-3" />
-                    <p className="text-sm text-slate-500">No logs found.</p>
-                  </div>
-                ) : (
-                  <div className="divide-y divide-[#122030] overflow-y-auto max-h-[480px]">
-                    {filteredLogs.map((log) => (
-                      <div key={log.id} className="flex items-center justify-between px-6 py-3.5 hover:bg-white/[0.03] transition-colors">
-                        <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-lg bg-[#122030] border border-[#1a3050] flex items-center justify-center flex-shrink-0">
-                            <span className="text-xs font-bold text-slate-400">W{log.week_number}</span>
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-white">{log.student_name}</p>
-                            <p className="text-xs text-slate-500">Week {log.week_number} · {log.date}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${getStatusStyle(log.status)}`}>
-                            {log.status}
-                          </span>
-                          {log.status === "submitted" && (
-                            <button onClick={() => { setSelectedLog(log); setReviewOpen(true); }}
-                              className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/20 text-sky-400 font-medium transition">
-                              <Eye className="w-3 h-3" /> Review
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+              ) : (
+                <div className="space-y-3">
+                  {filteredPlacements.map((placement, i) => (
+                    <StudentRow
+                      key={placement.id}
+                      placement={placement}
+                      logs={logsForStudent(placement.student)}
+                      index={i}
+                    />
+                  ))}
+                </div>
+              )}
             </motion.div>
           )}
+
         </div>
       </div>
-
-      {/* Review Modal */}
-      <Modal open={reviewOpen} onClose={() => { setReviewOpen(false); setSelectedLog(null); setReviewComment(""); }} title="Review Log Submission">
-        {selectedLog && (
-          <div className="space-y-4">
-            <div className="rounded-xl bg-[#0b1523] border border-[#1e3a5f] p-4 space-y-2">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-semibold text-white">{selectedLog.student_name}</p>
-                <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${getStatusStyle(selectedLog.status)}`}>
-                  {selectedLog.status}
-                </span>
-              </div>
-              <div className="grid grid-cols-2 gap-3 text-xs text-slate-400">
-                <div><span className="text-slate-600">Week</span><p className="text-white mt-0.5">{selectedLog.week_number}</p></div>
-                <div><span className="text-slate-600">Date</span><p className="text-white mt-0.5">{selectedLog.date}</p></div>
-              </div>
-              {selectedLog.activities && (
-                <div>
-                  <span className="text-xs text-slate-600">Activities</span>
-                  <p className="text-xs text-slate-300 mt-0.5 leading-relaxed">{selectedLog.activities}</p>
-                </div>
-              )}
-              {selectedLog.learnings && (
-                <div>
-                  <span className="text-xs text-slate-600">Learnings</span>
-                  <p className="text-xs text-slate-300 mt-0.5 leading-relaxed">{selectedLog.learnings}</p>
-                </div>
-              )}
-              {selectedLog.challenges && (
-                <div>
-                  <span className="text-xs text-slate-600">Challenges</span>
-                  <p className="text-xs text-slate-300 mt-0.5 leading-relaxed">{selectedLog.challenges}</p>
-                </div>
-              )}
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1.5">Supervisor Comment</label>
-              <textarea rows={3} placeholder="Add comments for the student…"
-                value={reviewComment} onChange={(e) => setReviewComment(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#0b1523] border border-[#1e3a5f] text-sm text-white placeholder-slate-600 focus:outline-none focus:border-sky-500/60 transition resize-none" />
-            </div>
-            <div className="flex gap-2.5">
-              <button onClick={() => { setReviewOpen(false); setSelectedLog(null); setReviewComment(""); }}
-                className="flex-1 py-2.5 rounded-xl border border-[#1e3a5f] text-sm text-slate-400 hover:text-white transition">
-                Cancel
-              </button>
-              <button onClick={() => handleReviewLog("review")} disabled={saving}
-                className="flex-1 py-2.5 rounded-xl bg-[#1a2e47] hover:bg-[#1e3554] border border-sky-500/20 text-sky-400 text-sm font-semibold transition disabled:opacity-50">
-                Mark Reviewed
-              </button>
-              <button onClick={() => handleReviewLog("approve")} disabled={saving}
-                className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold transition disabled:opacity-50">
-                Approve
-              </button>
-            </div>
-          </div>
-        )}
-      </Modal>
-
-      <AnimatePresence>
-        {toast && <Toast key="toast" message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-      </AnimatePresence>
     </AppLayout>
   );
 };
