@@ -96,6 +96,14 @@ def get_current_user(request):
     serializer = UserSerializer(request.user)
     return Response(serializer.data)
 
+    user = None
+
+    # Try student number first
+    try:
+        user_by_student_number = CustomUser.objects.get(student_number=identifier)
+        user = authenticate(request, username=user_by_student_number.username, password=password)
+    except CustomUser.DoesNotExist:
+        pass
 
 @api_view(['GET', 'POST'])
 def placement_list(request):
