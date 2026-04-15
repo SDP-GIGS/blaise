@@ -26,9 +26,11 @@ export const AuthProvider = ({ children }) => {
     restoreSession();
   }, []);
 
-  const signIn = async (email, password) => {
+  const signIn = async (identifier, password) => {
     try {
-      const data = await apiClient.post('/auth/login/', { email, password }, { requiresAuth: false });
+      
+      const data = await apiClient.post('/auth/login/', { identifier, password });
+      
       setAuthTokens({ access: data.access, refresh: data.refresh });
       setUser(data.user);
       setIsAuthenticated(true);
