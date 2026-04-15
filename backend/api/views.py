@@ -87,18 +87,8 @@ def register(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login(request):
-    email = request.data.get('email')
-    password = request.data.get('password')
-    user = authenticate(request, username=email, password=password)
-    if user is not None:
-        refresh = RefreshToken.for_user(user)
-        return Response({
-            'user': UserSerializer(user).data,
-            'access': str(refresh.access_token),
-            'refresh': str(refresh),
-        })
-    return Response({'error': 'Invalid email or password'}, status=status.HTTP_401_UNAUTHORIZED)
-
+    identifier = request.data.get('identifier', '')
+    password = request.data.get('password', '')
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
