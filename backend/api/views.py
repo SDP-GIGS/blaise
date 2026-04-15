@@ -90,12 +90,6 @@ def login(request):
     identifier = request.data.get('identifier', '')
     password = request.data.get('password', '')
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_current_user(request):
-    serializer = UserSerializer(request.user)
-    return Response(serializer.data)
-
     user = None
 
     # Try student number first
@@ -104,7 +98,7 @@ def get_current_user(request):
         user = authenticate(request, username=user_by_student_number.username, password=password)
     except CustomUser.DoesNotExist:
         pass
-    
+
     # Try email if student number didn't work
     if user is None:
         try:
@@ -118,7 +112,7 @@ def get_current_user(request):
             {'error': 'Invalid credentials'},
             status=status.HTTP_401_UNAUTHORIZED
         )
-    
+
     refresh = RefreshToken.for_user(user)
     return Response({
         'user': UserSerializer(user).data,
@@ -126,6 +120,11 @@ def get_current_user(request):
         'refresh': str(refresh),
     })
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_current_user(request):
+    serializer = UserSerializer(request.user)
+    return Response(serializer.data)
 
 
 @api_view(['GET', 'POST'])
