@@ -27,18 +27,17 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const signIn = async (identifier, password) => {
-    try {
-      
-      const data = await apiClient.post('/auth/login/', { identifier, password });
-      
-      setAuthTokens({ access: data.access, refresh: data.refresh });
-      setUser(data.user);
-      setIsAuthenticated(true);
-      return { success: true, role: data.user.role, user: data.user };
-    } catch (error) {
-      return { success: false, error: error.message || 'Login failed.' };
-    }
-  };
+  try {
+    const data = await apiClient.post('/auth/login/', { identifier, password });
+    setUser(data.user);
+    setIsAuthenticated(true);
+    localStorage.setItem('access_token', data.access);
+    localStorage.setItem('refresh_token', data.refresh);
+    return { success: true, role: data.user.role };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+};
 
  const signUp = async (fullName, email, password, role, studentNumber = null) => {
   try {
