@@ -3,14 +3,14 @@ from django.db import models
 
 class CustomUser(AbstractUser):
     ROLE_CHOICES = [
-        ('student', 'Student Intern'),
+        ('student', 'Student'),
         ('workplace_supervisor', 'Workplace Supervisor'),
         ('academic_supervisor', 'Academic Supervisor'),
-        ('admin', 'Internship Administrator'),
+        ('admin', 'Admin'),
     ]
-
-    email = models.EmailField(unique=True)
     full_name = models.CharField(max_length=255)
+    email = models.EmailField(unique=True)
+    student_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
     role = models.CharField(max_length=30, choices=ROLE_CHOICES, default='student')
 
     USERNAME_FIELD = 'email'
