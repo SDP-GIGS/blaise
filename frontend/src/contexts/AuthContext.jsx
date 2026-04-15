@@ -40,19 +40,27 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const signUp = async (name, email, password, role) => {
-    try {
-      const data = await apiClient.post('/auth/register/', {
-        full_name: name, email, password, role
-      }, { requiresAuth: false });
-      setAuthTokens({ access: data.access, refresh: data.refresh });
-      setUser(data.user);
-      setIsAuthenticated(true);
-      return { success: true, role: data.user.role, user: data.user };
-    } catch (error) {
-      return { success: false, error: error.message || 'Sign up failed.' };
+ const signUp = async (fullName, email, password, role, studentNumber = null) => {
+  try {
+    const payload = {
+      full_name: fullName,
+      email,
+      password,
+      role,
+    };
+    if (role === 'student' && studentNumber) {
+      payload.student_number = studentNumber;
     }
-  };
+    const data = await apiClient.post('/auth/register/', payload);
+    setUser(data.user);
+    setIsAuthenticated(true);
+    localStorage.setItem('access_token', data.access);
+    localStorage.setItem('refresh_token', data.refresh);
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+};
 
   const signOut = () => {
     clearAuthTokens();
