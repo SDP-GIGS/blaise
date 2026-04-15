@@ -3,50 +3,38 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { motion } from "framer-motion";
 import {
-  BookOpen,
-  ArrowRight,
-  Sparkles,
-  Eye,
-  EyeOff,
-  AlertCircle,
+  BookOpen, ArrowRight, Sparkles, Eye, EyeOff, AlertCircle,
 } from "lucide-react";
 
-// Map each role to its dashboard route
 const rolePaths = {
-  student: "/student",
-  workplace_supervisor: "/supervisor/workplace",
-  academic_supervisor: "/supervisor/academic",
-  admin: "/admin",
+  student:               "/student",
+  workplace_supervisor:  "/supervisor/workplace",
+  academic_supervisor:   "/supervisor/academic",
+  admin:                 "/admin",
 };
 
 const Login = () => {
   const { signIn } = useAuth();
   const navigate = useNavigate();
 
-  // Load saved credentials from localStorage if available
-  const [email, setEmail] = useState(
-    () => localStorage.getItem("login_email") || "",
-  );
-  const [password, setPassword] = useState(
-    () => localStorage.getItem("login_password") || "",
-  );
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
 
-    if (!email || !password) {
+    if (!identifier || !password) {
       setError("Please fill in all fields.");
       return;
     }
 
-    // Save credentials to localStorage
-    localStorage.setItem("login_email", email);
-    localStorage.setItem("login_password", password);
-
-    const result = await signIn(email, password);
+    setLoading(true);
+    const result = await signIn(identifier, password);
+    setLoading(false);
 
     if (result.success && result.role && rolePaths[result.role]) {
       navigate(rolePaths[result.role]);
@@ -61,13 +49,9 @@ const Login = () => {
       <div className="pointer-events-none absolute -left-20 top-[18%] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle_at_center,#22c55e_0,transparent_70%)] opacity-10 blur-[120px]" />
       <div className="pointer-events-none absolute -right-[100px] bottom-[15%] h-[600px] w-[600px] rounded-full bg-[radial-gradient(circle_at_center,#3b82f6_0,transparent_70%)] opacity-10 blur-[120px]" />
 
-      <div className="relative z-10 w-full max-w-[420px] lg:max-w-[820px]">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-10 text-center"
-        >
+      <div className="relative z-10 w-full max-w-[420px]">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+          className="mb-10 text-center">
           <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[radial-gradient(circle_at_10%_0,#fef3c7_0,#f59e0b_40%,#854d0e_100%)] shadow-[0_18px_45px_rgba(234,179,8,0.45)]">
             <BookOpen className="h-8 w-8 text-slate-950" />
           </div>
@@ -83,13 +67,10 @@ const Login = () => {
           </p>
         </motion.div>
 
-        <motion.form
-          onSubmit={handleLogin}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.15 }}
-          className="flex flex-col gap-4 rounded-2xl border border-slate-500/45 bg-slate-900/95 p-7 shadow-[0_22px_45px_rgba(15,23,42,0.9)] backdrop-blur-xl lg:p-8"
-        >
+        <motion.form onSubmit={handleLogin}
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }}
+          className="flex flex-col gap-4 rounded-2xl border border-slate-500/45 bg-slate-900/95 p-7 shadow-[0_22px_45px_rgba(15,23,42,0.9)] backdrop-blur-xl">
+
           {error && (
             <div className="flex items-center gap-2 rounded-xl border border-rose-400/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
               <AlertCircle className="h-4 w-4 shrink-0" />
@@ -97,22 +78,24 @@ const Login = () => {
             </div>
           )}
 
+          {/* Identifier field */}
           <div className="flex flex-col gap-1.5">
             <label className="text-[0.7rem] font-bold uppercase tracking-[0.18em] text-slate-400">
-              Email
+              Student Number or Email
             </label>
             <input
-              type="email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                localStorage.setItem("login_email", e.target.value);
-              }}
-              placeholder="you@university.edu"
+              type="text"
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
+              placeholder="24/U/0763 or admin@iles.com"
               className="w-full rounded-xl border border-slate-400/40 bg-slate-950 px-4 py-3 text-sm text-slate-50 outline-none transition focus:-translate-y-px focus:border-yellow-400/90 focus:shadow-[0_0_0_1px_rgba(250,204,21,0.6)]"
             />
+            <p className="text-[10px] text-slate-500">
+              Students use their student number · Supervisors and admins use email
+            </p>
           </div>
 
+          {/* Password field */}
           <div className="flex flex-col gap-1.5">
             <label className="text-[0.7rem] font-bold uppercase tracking-[0.18em] text-slate-400">
               Password
@@ -121,41 +104,26 @@ const Login = () => {
               <input
                 type={showPass ? "text" : "password"}
                 value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  localStorage.setItem("login_password", e.target.value);
-                }}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 className="w-full rounded-xl border border-slate-400/40 bg-slate-950 px-4 py-3 pr-9 text-sm text-slate-50 outline-none transition focus:-translate-y-px focus:border-yellow-400/90 focus:shadow-[0_0_0_1px_rgba(250,204,21,0.6)]"
               />
-              <button
-                type="button"
-                onClick={() => setShowPass(!showPass)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-slate-50"
-              >
-                {showPass ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
+              <button type="button" onClick={() => setShowPass(!showPass)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-slate-50">
+                {showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
           </div>
 
-          <button
-            type="submit"
-            className="mt-1 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500 px-4 py-3 font-semibold text-slate-900 shadow-[0_18px_40px_rgba(234,179,8,0.45)] transition hover:-translate-y-px"
-          >
-            Sign In
+          <button type="submit" disabled={loading}
+            className="mt-1 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500 px-4 py-3 font-semibold text-slate-900 shadow-[0_18px_40px_rgba(234,179,8,0.45)] transition hover:-translate-y-px disabled:opacity-60">
+            {loading ? "Signing in..." : "Sign In"}
             <ArrowRight className="h-4 w-4" />
           </button>
 
           <p className="mt-1 text-center text-sm text-slate-400">
             Don't have an account?{" "}
-            <Link
-              to="/signup"
-              className="font-semibold text-yellow-400 hover:underline"
-            >
+            <Link to="/signup" className="font-semibold text-yellow-400 hover:underline">
               Sign Up
             </Link>
           </p>
@@ -166,5 +134,3 @@ const Login = () => {
 };
 
 export default Login;
-
-
