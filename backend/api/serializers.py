@@ -3,22 +3,29 @@ from django.contrib.auth.password_validation import validate_password
 from .models import CustomUser, InternshipPlacement, WeeklyLog, SupervisorReview, Evaluation, CriteriaScore
 
 class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, validators=[validate_password])
+    password = serializers.CharField(write_only=True)
 
     class Meta:
         model = CustomUser
-        fields = ['full_name', 'email', 'student_number', 'password', 'role']
+        fields = ['full_name', 'email', 'student_number', 'role', 'password']
+
+    def validate(self, data):
+        if data.get('role') == 'student' and not data.get('student_number'):
+            raise serializers.ValidationError({'student_number': 'Student number is required for students.'})
+        return data
 
     def create(self, validated_data):
-        user = CustomUser.objects.create_user(
-            username=validated_data['email'],
-            email=validated_data['email'],
-            full_name=validated_data['full_name'],
-            role=validated_data['role'],
-            password=validated_data['password'],
+        password = validated_data.pop('password')
+        user = CustomUser(
+            username=validated_data.get('email'),
+            full_name=validated_data.get('full_name'),
+            email=validated_data.get('email'),
+            student_number=validated_data.get('student_number'),
+            role=validated_data.get('role', 'student'),
         )
+        user.set_password(password)
+        user.save()
         return user
-
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
