@@ -59,6 +59,14 @@ const SignUp = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const handleRoleSelect = (role) => {
+    setSelectedRole(role);
+
+    if (role !== "student") {
+      setStudentNumber("");
+    }
+  };
+
   const handleSignUp = async (e) => {
     e.preventDefault();
     setError("");
@@ -110,7 +118,7 @@ const SignUp = () => {
             <motion.button key={r.role} type="button"
               initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.25, delay: 0.15 + index * 0.05 }}
-              onClick={() => setSelectedRole(r.role)}
+              onClick={() => handleRoleSelect(r.role)}
               className={`relative flex cursor-pointer items-start gap-3 rounded-2xl border bg-slate-950 px-4 py-3 text-left transition hover:-translate-y-px hover:border-yellow-300/70 hover:shadow-[0_14px_28px_rgba(15,23,42,0.9)] ${
                 selectedRole === r.role
                   ? "border-yellow-300/90 shadow-[0_0_0_1px_rgba(250,204,21,0.7),0_16px_34px_rgba(15,23,42,0.95)]"
@@ -159,19 +167,27 @@ const SignUp = () => {
               className="w-full rounded-xl border border-slate-400/40 bg-slate-950 px-4 py-3 text-sm text-slate-50 outline-none transition focus:-translate-y-px focus:border-yellow-400/90 focus:shadow-[0_0_0_1px_rgba(250,204,21,0.6)]" />
           </div>
 
-          {/* Student Number — only for students */}
-          {selectedRole === "student" && (
-            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
-              className="flex flex-col gap-1.5">
-              <label className="text-[0.7rem] font-bold uppercase tracking-[0.18em] text-slate-400">
-                Student Number <span className="text-yellow-400">*</span>
-              </label>
-              <input type="text" value={studentNumber} onChange={(e) => setStudentNumber(e.target.value)}
-                placeholder="e.g. 24/U/0763"
-                className="w-full rounded-xl border border-slate-400/40 bg-slate-950 px-4 py-3 text-sm text-slate-50 outline-none transition focus:-translate-y-px focus:border-yellow-400/90 focus:shadow-[0_0_0_1px_rgba(250,204,21,0.6)]" />
-              <p className="text-[0.65rem] text-slate-500">This is what you will use to log in.</p>
-            </motion.div>
-          )}
+          {/* Student Number */}
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: selectedRole === "student" ? 1 : 0.5, height: "auto" }}
+            className="flex flex-col gap-1.5"
+          >
+            <label className="text-[0.7rem] font-bold uppercase tracking-[0.18em] text-slate-400">
+              Student Number {selectedRole === "student" && <span className="text-yellow-400">*</span>}
+            </label>
+            <input
+              type="text"
+              value={studentNumber}
+              onChange={(e) => setStudentNumber(e.target.value)}
+              placeholder={selectedRole === "student" ? "e.g. 24/U/0763" : "Required for students"}
+              disabled={selectedRole !== "student"}
+              className="w-full rounded-xl border border-slate-400/40 bg-slate-950 px-4 py-3 text-sm text-slate-50 outline-none transition placeholder:text-slate-600 focus:-translate-y-px focus:border-yellow-400/90 focus:shadow-[0_0_0_1px_rgba(250,204,21,0.6)] disabled:cursor-not-allowed disabled:opacity-60"
+            />
+            <p className="text-[0.65rem] text-slate-500">
+              This is required for student accounts.
+            </p>
+          </motion.div>
 
           {/* Password */}
           <div className="flex flex-col gap-1.5">
