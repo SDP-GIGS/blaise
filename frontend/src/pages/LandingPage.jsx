@@ -11,6 +11,8 @@ import { SplitText } from "gsap/SplitText"; // optional, gracefully skipped if u
 gsap.registerPlugin(ScrollTrigger);
 try { gsap.registerPlugin(SplitText); } catch (_) {}
 
+
+
 /* ─────────────────────────────────────────────
    Design language matches the SplashScreen:
    Obsidian bg · Gold accent · Serif wordmarks
