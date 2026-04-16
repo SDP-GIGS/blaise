@@ -174,7 +174,7 @@ const SignUp = () => {
               animate={{ opacity: 1, height: "auto" }}
               className="flex flex-col gap-1.5"
             >
-              
+
               <label className="text-[0.7rem] font-bold uppercase tracking-[0.18em] text-slate-400">
                 Student Number <span className="text-yellow-400">*</span>
               </label>
@@ -205,6 +205,7 @@ const SignUp = () => {
             </div>
           </div>
 
+
           {/* Confirm Password */}
           <div className="flex flex-col gap-1.5">
             <label className="text-[0.7rem] font-bold uppercase tracking-[0.18em] text-slate-400">Confirm Password</label>
@@ -212,6 +213,7 @@ const SignUp = () => {
               placeholder="Re-enter password"
               className="w-full rounded-xl border border-slate-400/40 bg-slate-950 px-4 py-3 text-sm text-slate-50 outline-none transition focus:-translate-y-px focus:border-yellow-400/90 focus:shadow-[0_0_0_1px_rgba(250,204,21,0.6)]" />
           </div>
+          
 
           <button type="submit" disabled={!selectedRole || loading}
             className="mt-1 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500 px-4 py-3 font-semibold text-slate-900 shadow-[0_18px_40px_rgba(234,179,8,0.45)] transition enabled:hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-50">
