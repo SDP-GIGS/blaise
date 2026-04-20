@@ -10,6 +10,7 @@ const mockNotifications = [
     read: false,
   },
   {
+    
     id: 2,
     title: "Evaluation Due",
     message: "You have an evaluation due for a student.",

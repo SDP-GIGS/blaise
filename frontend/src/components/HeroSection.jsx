@@ -4,13 +4,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const stats = [
-  { label: "Student Interns", value: "500+", sub: "Across all departments" },
-  { label: "Supervisors", value: "120+", sub: "Workplace & academic" },
-  { label: "Evaluations Done", value: "2,400+", sub: "Logged & reviewed" },
-  { label: "Institutions", value: "18", sub: "Partner organisations" },
-];
-
 const pillars = [
   {
     code: "01",
@@ -42,7 +35,6 @@ const HeroSection = () => {
   const headLine3Ref = useRef(null);
   const taglineRef = useRef(null);
   const ctaRef = useRef(null);
-  const statsRef = useRef([]);
   const pillarsRef = useRef([]);
   const scrollIndRef = useRef(null);
   const ring1Ref = useRef(null);
@@ -142,27 +134,6 @@ const HeroSection = () => {
       { opacity: 1, y: 0, duration: 0.6 },
       2.1,
     );
-
-    /* ── Stats: scroll-triggered stagger ── */
-    if (statsRef.current.length) {
-      gsap.fromTo(
-        statsRef.current.filter(Boolean),
-        { opacity: 0, y: 40, scale: 0.9 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.7,
-          ease: "back.out(1.4)",
-          stagger: 0.1,
-          scrollTrigger: {
-            trigger: statsRef.current[0],
-            start: "top 88%",
-            toggleActions: "play none none none",
-          },
-        },
-      );
-    }
 
     /* ── Pillars: scroll-triggered horizontal slide ── */
     if (pillarsRef.current.length) {
@@ -455,7 +426,7 @@ const HeroSection = () => {
             flexWrap: "wrap",
             gap: 14,
             justifyContent: "center",
-            marginBottom: 64,
+            marginBottom: 80,
           }}
         >
           <a
@@ -541,82 +512,6 @@ const HeroSection = () => {
           >
             Create Account
           </a>
-        </div>
-
-        {/* Stats */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-            gap: 1,
-            maxWidth: 760,
-            margin: "0 auto 80px",
-            border: "1px solid rgba(180,140,30,0.15)",
-            borderRadius: 4,
-            overflow: "hidden",
-            background: "rgba(180,140,30,0.06)",
-          }}
-        >
-          {stats.map((s, i) => (
-            <div
-              key={s.label}
-              ref={(el) => (statsRef.current[i] = el)}
-              style={{
-                padding: "28px 20px",
-                textAlign: "center",
-                borderRight:
-                  i < stats.length - 1
-                    ? "1px solid rgba(180,140,30,0.1)"
-                    : "none",
-                background: "rgba(8,12,20,0.6)",
-                backdropFilter: "blur(12px)",
-                transition: "background 0.25s",
-                cursor: "default",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.background = "rgba(180,140,30,0.06)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.background = "rgba(8,12,20,0.6)")
-              }
-            >
-              <div
-                style={{
-                  fontSize: "clamp(26px, 3.5vw, 36px)",
-                  fontWeight: 800,
-                  color: "#c9a227",
-                  fontFamily: "Georgia, serif",
-                  letterSpacing: "-0.01em",
-                  textShadow: "0 0 20px rgba(180,140,30,0.3)",
-                }}
-              >
-                {s.value}
-              </div>
-              <div
-                style={{
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: "rgba(232,223,200,0.75)",
-                  letterSpacing: "0.06em",
-                  textTransform: "uppercase",
-                  marginTop: 4,
-                }}
-              >
-                {s.label}
-              </div>
-              <div
-                style={{
-                  fontSize: 11,
-                  color: "rgba(232,223,200,0.35)",
-                  letterSpacing: "0.05em",
-                  marginTop: 3,
-                  fontStyle: "italic",
-                }}
-              >
-                {s.sub}
-              </div>
-            </div>
-          ))}
         </div>
 
         {/* Workflow pillars */}

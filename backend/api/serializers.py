@@ -10,8 +10,17 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ['full_name', 'email', 'student_number', 'role', 'password']
 
     def validate(self, data):
-        if data.get('role') == 'student' and not data.get('student_number'):
+        role = data.get('role', 'student')
+        student_number = (data.get('student_number') or '').strip()
+
+        if role == 'student' and not student_number:
             raise serializers.ValidationError({'student_number': 'Student number is required for students.'})
+
+        if role != 'student':
+            data['student_number'] = None
+        else:
+            data['student_number'] = student_number
+
         return data
 
     def create(self, validated_data):

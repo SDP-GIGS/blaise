@@ -37,7 +37,7 @@ export const authService = {
     return user;
   },
 
-  async register({ fullName, email, password, role }) {
+  async register({ fullName, email, password, role, studentNumber = null }) {
     const payload = await apiClient.post(
       "/auth/register/",
       {
@@ -45,6 +45,7 @@ export const authService = {
         email,
         password,
         role,
+        ...(role === "student" && studentNumber ? { student_number: studentNumber } : {}),
       },
       { requiresAuth: false },
     );

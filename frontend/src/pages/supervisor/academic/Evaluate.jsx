@@ -307,7 +307,7 @@ const AcademicEvaluate = () => {
                             value={criteriaScores[c.criteria]}
                             onChange={(e) => handleScoreChange(c.criteria, e.target.value, c.max_score)}
                             disabled={alreadyEvaluated}
-                            className="w-14 text-center text-sm font-bold rounded-xl border border-gray-200 bg-gray-50 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-200 disabled:opacity-50" />
+                            className="w-14 text-center text-sm font-bold text-gray-900 rounded-xl border border-gray-200 bg-gray-50 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-200 disabled:opacity-50" />
                         </div>
                         <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden mt-1.5">
                           <div className="h-full rounded-full bg-cyan-500 transition-all duration-300"
@@ -346,7 +346,7 @@ const AcademicEvaluate = () => {
                     onChange={(e) => setComments(e.target.value)}
                     disabled={alreadyEvaluated}
                     placeholder="Provide a comprehensive assessment of the student's academic performance, attitude, and growth during the placement..."
-                    className="w-full text-sm rounded-xl border border-gray-200 px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-cyan-200 bg-gray-50 leading-relaxed disabled:opacity-50" />
+                    className="w-full text-sm text-gray-900 placeholder:text-gray-500 rounded-xl border border-gray-200 px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-cyan-200 bg-gray-50 leading-relaxed disabled:opacity-50" />
                   <p className="text-right text-xs text-gray-300 mt-1">{comments.length} characters</p>
                 </div>
               </div>
