@@ -4,9 +4,8 @@ import AppLayout from "@/components/AppLayout";
 import { apiClient } from "@/lib/apiClient";
 import { Bell, AlertCircle, Loader } from "lucide-react";
 
+// Fallback mock data for development
 const mockNotifications = [
-  // Fallback mock data for development
-  const mockNotifications = [
   {
     id: 1,
     title: "Weekly Logbook Submitted",
@@ -93,7 +92,8 @@ const Notifications = () => {
     </div>
   </AppLayout>
 };
-);
+  );
+};
 
 export default Notifications;
 
