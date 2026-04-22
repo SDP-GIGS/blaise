@@ -26,6 +26,27 @@ const mockNotifications = [
 ];
 
 const Notifications = () => (
+const Notifications = () => {
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const data = await apiClient.get("/notifications/");
+        setNotifications(Array.isArray(data) ? data : mockNotifications);
+      } catch (err) {
+        setNotifications(mockNotifications);
+        setError(err?.message || "Failed to load notifications");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchNotifications();
+  }, []);
+
+  return (
   <AppLayout>
     <div className="max-w-2xl mx-auto mt-10">
       <div className="flex items-center gap-3 mb-6">
@@ -33,7 +54,11 @@ const Notifications = () => (
         <h1 className="text-2xl font-bold text-cyan-700">Notifications</h1>
       </div>
       <div className="space-y-4">
-        {mockNotifications.length === 0 ? (
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader className="w-6 h-6 text-cyan-600 animate-spin" />
+          </div>
+        ) : notifications.length === 0 ? (
           <div className="text-gray-500 text-center py-12">
             No notifications yet.
           </div>
@@ -62,6 +87,7 @@ const Notifications = () => (
       </div>
     </div>
   </AppLayout>
+};
 );
 
 export default Notifications;
