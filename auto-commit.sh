@@ -6,5 +6,5 @@ do
     git commit -m "changes"
     git push
     echo "Committed & pushed at $(date)"
-    sleep 10
+    sleep 08
 done
