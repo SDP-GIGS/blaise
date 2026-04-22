@@ -17,7 +17,7 @@ import StudentNotifications from "./pages/student/Notifications.jsx";
 
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminEvaluations from "./pages/admin/adminEvaluations";
-import AdminReports from "./pages/admin/Adminreports";
+import AdminReports from "./pages/admin/adminReports";
 import AdminPlacementManagement from "./pages/admin/AdminPlacementManagement";
 import AdminUsers from "./pages/admin/AdminUsers";
 
