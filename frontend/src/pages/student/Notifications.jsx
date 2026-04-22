@@ -1,10 +1,6 @@
 import AppLayout from "@/components/AppLayout";
-import { useEffect, useState } from "react";
-import AppLayout from "@/components/AppLayout";
-import { apiClient } from "@/lib/apiClient";
-import { Bell, AlertCircle, Loader } from "lucide-react";
+import { Bell } from "lucide-react";
 
-// Fallback mock data for development
 const mockStudentNotifications = [
   {
     id: 1,
@@ -32,27 +28,6 @@ const mockStudentNotifications = [
 ];
 
 const StudentNotifications = () => (
-const StudentNotifications = () => {
-  const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const data = await apiClient.get("/notifications/");
-        setNotifications(Array.isArray(data) ? data : mockStudentNotifications);
-      } catch (err) {
-        setNotifications(mockStudentNotifications);
-        setError(err?.message || "Failed to load notifications");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchNotifications();
-  }, []);
-
-  return (
   <AppLayout>
     <div className="max-w-2xl mx-auto mt-10">
       <div className="flex items-center gap-3 mb-6">
@@ -60,16 +35,12 @@ const StudentNotifications = () => {
         <h1 className="text-2xl font-bold text-yellow-700">Notifications</h1>
       </div>
       <div className="space-y-4">
-        {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader className="w-6 h-6 text-yellow-500 animate-spin" />
-          </div>
-        ) : notifications.length === 0 ? (
+        {mockStudentNotifications.length === 0 ? (
           <div className="text-gray-500 text-center py-12">
             No notifications yet.
           </div>
         ) : (
-          notifications.map((n) => (
+          mockStudentNotifications.map((n) => (
             <div
               key={n.id}
               className={`rounded-xl p-4 shadow bg-white/90 dark:bg-gray-900/80 border-l-4 ${
@@ -93,9 +64,7 @@ const StudentNotifications = () => {
       </div>
     </div>
   </AppLayout>
-};
-  );
-};
+);
 
 export default StudentNotifications;
 
