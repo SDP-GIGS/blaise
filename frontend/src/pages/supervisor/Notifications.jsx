@@ -4,9 +4,8 @@ import AppLayout from "@/components/AppLayout";
 import { apiClient } from "@/lib/apiClient";
 import { Bell, AlertCircle, Loader } from "lucide-react";
 
+// Fallback mock data for development
 const mockNotifications = [
-  // Fallback mock data for development
-  const mockNotifications = [
   {
     id: 1,
     title: "Weekly Logbook Submitted",
@@ -69,7 +68,7 @@ const SupervisorNotifications = () => {
             No notifications yet.
           </div>
         ) : (
-          mockNotifications.map((n) => (
+          notifications.map((n) => (
             <div
               key={n.id}
               className={`rounded-xl p-4 shadow bg-white/90 dark:bg-gray-900/80 border-l-4 ${
@@ -94,6 +93,7 @@ const SupervisorNotifications = () => {
     </div>
   </AppLayout>
 };
-);
+  );
+};
 
 export default SupervisorNotifications;

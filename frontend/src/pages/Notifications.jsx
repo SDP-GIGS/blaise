@@ -67,7 +67,7 @@ const Notifications = () => {
             No notifications yet.
           </div>
         ) : (
-          mockNotifications.map((n) => (
+          notifications.map((n) => (
             <div
               key={n.id}
               className={`rounded-xl p-4 shadow bg-white/90 dark:bg-gray-900/80 border-l-4 ${
