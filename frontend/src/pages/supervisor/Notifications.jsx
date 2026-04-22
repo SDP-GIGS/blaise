@@ -1,7 +1,12 @@
 import AppLayout from "@/components/AppLayout";
-import { Bell } from "lucide-react";
+import { useEffect, useState } from "react";
+import AppLayout from "@/components/AppLayout";
+import { apiClient } from "@/lib/apiClient";
+import { Bell, AlertCircle, Loader } from "lucide-react";
 
 const mockNotifications = [
+  // Fallback mock data for development
+  const mockNotifications = [
   {
     id: 1,
     title: "Weekly Logbook Submitted",
