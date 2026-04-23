@@ -3,6 +3,8 @@ import AppLayout from "@/components/AppLayout";
 import { apiClient } from "@/lib/apiClient";
 import { Bell, AlertCircle, Loader } from "lucide-react";
 
+const SUPERVISOR_NOTIFICATIONS_KEY = "supervisor_notifications_unread";
+
 const mockNotifications = [
   {
     id: 1,
@@ -78,6 +80,7 @@ const SupervisorNotifications = () => {
     };
 
     fetchNotifications();
+    localStorage.setItem(SUPERVISOR_NOTIFICATIONS_KEY, "0");
   }, []);
 
   return (
