@@ -245,31 +245,40 @@ const AcademicReviewLogs = () => {
                 <div className="space-y-4">
                   {/* Student Header */}
                   {selectedStudent && (
-                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-5 flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-full bg-gradient-to-br from-cyan-400 to-emerald-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+                    <div className="bg-gradient-to-br from-white to-cyan-50 rounded-2xl border border-cyan-200 shadow-sm px-6 py-5 flex items-center gap-4">
+                      <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-cyan-400 to-emerald-500 flex items-center justify-center text-white font-bold flex-shrink-0 shadow-sm ring-2 ring-white">
                         {(selectedStudent.student_name ?? "?").split(" ").map((n) => n[0]).join("").slice(0, 2)}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h2 className="text-xl font-extrabold text-gray-900">{selectedStudent.student_name}</h2>
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
-                          <span className="flex items-center gap-1 text-xs text-gray-500">
+                        <p className="text-[11px] font-bold uppercase tracking-wider text-cyan-700">Selected Student</p>
+                        <h2 className="text-2xl font-extrabold text-slate-900 leading-tight">{selectedStudent.student_name}</h2>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          <span className="inline-flex items-center gap-1 text-xs text-slate-700 bg-white border border-cyan-200 rounded-lg px-2.5 py-1">
                             <Building2 size={11} /> {selectedStudent.company}
                           </span>
                           {selectedStudent.start_date && selectedStudent.end_date && (
-                            <span className="flex items-center gap-1 text-xs text-gray-500">
+                            <span className="inline-flex items-center gap-1 text-xs text-slate-700 bg-white border border-cyan-200 rounded-lg px-2.5 py-1">
                               <BookOpen size={11} /> {selectedStudent.start_date} → {selectedStudent.end_date}
                             </span>
                           )}
                           {selectedStudent.student_number && (
-                            <span className="text-xs text-gray-500">#{selectedStudent.student_number}</span>
+                            <span className="inline-flex items-center text-xs text-slate-700 bg-white border border-cyan-200 rounded-lg px-2.5 py-1">
+                              #{selectedStudent.student_number}
+                            </span>
                           )}
                         </div>
+                      </div>
+                      <div className="hidden sm:flex flex-col items-end gap-1 text-right">
+                        <span className="text-[11px] uppercase tracking-wider text-slate-500 font-semibold">Current Filter</span>
+                        <span className="inline-flex items-center rounded-lg px-2.5 py-1 text-xs font-bold bg-cyan-600 text-white">
+                          {filterStatus === "all" ? "All Logs" : filterStatus.charAt(0).toUpperCase() + filterStatus.slice(1)}
+                        </span>
                       </div>
                     </div>
                   )}
 
                   {/* Filter Bar */}
-                  <div className="flex items-center gap-2 flex-wrap">
+                  <div className="flex items-center gap-2 flex-wrap bg-white/70 border border-cyan-100 rounded-xl px-4 py-2.5">
                     <Filter size={13} className="text-gray-400" />
                     {["all", "submitted", "approved", "reviewed", "rejected"].map((f) => (
                       <button key={f} onClick={() => setFilterStatus(f)}
