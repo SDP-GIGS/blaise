@@ -19,13 +19,13 @@ const statusColor = (status) => {
 };
 
 const StatCard = ({ icon: Icon, value, label, accent }) => (
-  <div className="relative overflow-hidden rounded-2xl bg-white border border-gray-100 shadow-sm p-6 flex flex-col gap-1 hover:shadow-md transition-shadow"
+  <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white to-slate-100 border border-slate-300 shadow-sm p-6 flex flex-col gap-1 hover:shadow-md transition-shadow"
     style={{ borderTop: `3px solid ${accent}` }}>
     <div className="absolute top-4 right-4 h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: `${accent}18` }}>
       <Icon size={20} style={{ color: accent }} />
     </div>
-    <span className="text-3xl font-bold text-gray-900 mt-1">{value}</span>
-    <span className="text-sm text-gray-500 font-medium">{label}</span>
+    <span className="text-3xl font-extrabold text-slate-950 mt-1">{value}</span>
+    <span className="text-sm text-slate-700 font-semibold">{label}</span>
   </div>
 );
 
@@ -33,15 +33,15 @@ const SectionHeader = ({ title, subtitle, accent = "#0891b2" }) => (
   <div className="flex items-center gap-3 mb-5">
     <div className="h-7 w-1 rounded-full" style={{ background: accent }} />
     <div>
-      <h2 className="text-base font-bold text-gray-800 tracking-tight">{title}</h2>
-      {subtitle && <p className="text-xs text-gray-400 mt-0.5">{subtitle}</p>}
+      <h2 className="text-base font-extrabold text-slate-900 tracking-tight">{title}</h2>
+      {subtitle && <p className="text-xs text-slate-600 mt-0.5 font-medium">{subtitle}</p>}
     </div>
   </div>
 );
 
 const EmptyRow = ({ cols, message }) => (
   <tr>
-    <td colSpan={cols} className="px-4 py-10 text-center text-sm text-gray-400 italic">{message}</td>
+    <td colSpan={cols} className="px-4 py-10 text-center text-sm text-slate-600 italic font-medium">{message}</td>
   </tr>
 );
 
@@ -101,11 +101,11 @@ const AcademicSupervisorDashboard = () => {
 
   return (
     <AppLayout>
-      <div className="min-h-screen" style={{ background: "linear-gradient(135deg, #f0fdf4 0%, #ecfeff 50%, #f8fafc 100%)", fontFamily: "'DM Sans', system-ui, sans-serif" }}>
+      <div className="min-h-screen" style={{ background: "linear-gradient(135deg, #dff3ef 0%, #e2eeff 52%, #edf3ff 100%)", fontFamily: "'DM Sans', system-ui, sans-serif" }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 space-y-8">
 
           {/* Profile Header */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="bg-gradient-to-br from-white to-cyan-50 rounded-2xl shadow-sm border border-cyan-200/80 overflow-hidden">
             <div className="h-24 w-full" style={{ background: "linear-gradient(120deg, #0891b2 0%, #059669 60%, #0d9488 100%)" }} />
             <div className="px-8 pb-7 -mt-10 flex flex-col sm:flex-row sm:items-end gap-4">
               <div className="relative shrink-0">
@@ -118,12 +118,12 @@ const AcademicSupervisorDashboard = () => {
                 </span>
               </div>
               <div className="flex-1 min-w-0 mt-2 sm:mt-0">
-                <h1 className="text-2xl font-extrabold text-gray-900">{user?.full_name ?? "Academic Supervisor"}</h1>
+                <h1 className="text-2xl font-extrabold text-slate-950">{user?.full_name ?? "Academic Supervisor"}</h1>
                 <div className="flex flex-wrap gap-3 mt-1">
-                  <span className="flex items-center gap-1 text-sm text-gray-500">
+                  <span className="flex items-center gap-1 text-sm text-slate-700 font-medium">
                     <GraduationCap size={14} className="text-cyan-600" /> Academic Supervisor
                   </span>
-                  <span className="flex items-center gap-1 text-sm text-gray-500">
+                  <span className="flex items-center gap-1 text-sm text-slate-700 font-medium">
                     <Mail size={14} className="text-cyan-600" /> {user?.email}
                   </span>
                 </div>
@@ -141,45 +141,61 @@ const AcademicSupervisorDashboard = () => {
           </div>
 
           {/* Chart */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-6 py-6">
+          <div className="bg-gradient-to-br from-white to-emerald-50 rounded-2xl shadow-sm border border-emerald-200 px-6 py-6">
             <div className="flex items-center gap-2 mb-4">
-              <BarChart3 className="w-5 h-5 text-emerald-400" />
-              <span className="font-semibold text-emerald-700 text-sm">Weekly Log Submissions</span>
+              <BarChart3 className="w-5 h-5 text-emerald-600" />
+              <span className="font-bold text-emerald-800 text-sm">Weekly Log Submissions</span>
             </div>
-            <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="colorLogs" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.8} />
-                    <stop offset="95%" stopColor="#06b6d4" stopOpacity={0.1} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="week" stroke="#94a3b8" fontSize={12} />
-                <YAxis stroke="#94a3b8" fontSize={12} width={30} />
-                <Tooltip contentStyle={{ fontSize: 13 }} />
-                <Area type="monotone" dataKey="logs" stroke="#06b6d4" fillOpacity={1} fill="url(#colorLogs)" name="Logs" />
-              </AreaChart>
-            </ResponsiveContainer>
+            <div className="h-[220px] rounded-xl border border-emerald-300 bg-white px-2 py-1">
+              {chartData.length === 0 ? (
+                <div className="h-full w-full flex items-center justify-center text-sm text-slate-700 font-medium">
+                  No weekly log submissions yet.
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="colorLogs" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.85} />
+                        <stop offset="95%" stopColor="#06b6d4" stopOpacity={0.15} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#94a3b8" />
+                    <XAxis dataKey="week" stroke="#334155" fontSize={12} />
+                    <YAxis stroke="#334155" fontSize={12} width={30} />
+                    <Tooltip
+                      contentStyle={{
+                        fontSize: 13,
+                        borderRadius: 10,
+                        border: "1px solid #94a3b8",
+                        backgroundColor: "#ffffff",
+                        color: "#020617",
+                      }}
+                    />
+                    <Area type="monotone" dataKey="logs" stroke="#0f766e" strokeWidth={2.5} fillOpacity={1} fill="url(#colorLogs)" name="Logs" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              )}
+            </div>
           </div>
 
           {/* Placements Table */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="bg-gradient-to-br from-white to-sky-50 rounded-2xl shadow-sm border border-sky-200 overflow-hidden">
             <div className="px-6 pt-6 pb-2 flex flex-col gap-2">
               <SectionHeader title="Assigned Students" subtitle={`${placements.length} student(s) under your supervision`} accent="#0891b2" />
               <input type="text"
-                className="w-full max-w-xs rounded-lg border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-200"
+                className="w-full max-w-xs rounded-lg border border-sky-300 bg-white px-3 py-1.5 text-sm text-slate-800 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-300"
                 placeholder="Search students or company..." value={search} onChange={(e) => setSearch(e.target.value)} />
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm border-collapse">
                 <thead>
-                  <tr className="border-y border-gray-100 bg-gray-50">
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">#</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Student</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Company</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Start Date</th>
+                  <tr className="border-y border-sky-200 bg-sky-100/80">
+                    <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 uppercase">#</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 uppercase">Student</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 uppercase">Company</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 uppercase">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 uppercase">Start Date</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -188,19 +204,19 @@ const AcademicSupervisorDashboard = () => {
                   ) : filteredPlacements.length === 0 ? (
                     <EmptyRow cols={5} message="No students assigned yet." />
                   ) : filteredPlacements.map((p, i) => (
-                    <tr key={p.id} className="border-b border-gray-50 hover:bg-cyan-50/30 transition-colors">
-                      <td className="px-6 py-4 text-gray-300 font-mono text-xs">{String(i + 1).padStart(2, "0")}</td>
+                    <tr key={p.id} className="border-b border-slate-300/60 hover:bg-sky-100/60 transition-colors">
+                      <td className="px-6 py-4 text-slate-500 font-mono text-xs">{String(i + 1).padStart(2, "0")}</td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2.5">
                           <div className="h-8 w-8 rounded-full bg-gradient-to-br from-cyan-400 to-emerald-500 flex items-center justify-center text-white text-xs font-bold shrink-0">
                             {(p.student_name ?? "?").charAt(0)}
                           </div>
-                          <span className="font-semibold text-gray-800">{p.student_name}</span>
+                          <span className="font-semibold text-slate-900">{p.student_name}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-gray-600">
+                      <td className="px-6 py-4 text-slate-800">
                         <div className="flex items-center gap-1.5">
-                          <Building2 size={13} className="text-gray-300 shrink-0" />{p.company}
+                          <Building2 size={13} className="text-slate-400 shrink-0" />{p.company}
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -208,7 +224,7 @@ const AcademicSupervisorDashboard = () => {
                           {p.status.charAt(0).toUpperCase() + p.status.slice(1)}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-gray-500 text-xs font-mono">{p.start_date ?? "—"}</td>
+                      <td className="px-6 py-4 text-slate-700 text-xs font-mono">{p.start_date ?? "—"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -217,38 +233,38 @@ const AcademicSupervisorDashboard = () => {
           </div>
 
           {/* Pending Reviews — Read Only */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="bg-gradient-to-br from-white to-amber-50 rounded-2xl shadow-sm border border-amber-200 overflow-hidden">
             <div className="px-6 pt-6 pb-2">
               <SectionHeader title="Pending Log Reviews" subtitle="Logs awaiting review by the workplace supervisor" accent="#f59e0b" />
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm border-collapse">
                 <thead>
-                  <tr className="border-y border-gray-100 bg-gray-50">
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">#</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Student</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Week</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Submitted</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Note</th>
+                  <tr className="border-y border-amber-200 bg-amber-100/70">
+                    <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 uppercase">#</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 uppercase">Student</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 uppercase">Week</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 uppercase">Submitted</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 uppercase">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 uppercase">Note</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredLogs.length === 0 ? (
                     <EmptyRow cols={6} message="No pending logs." />
                   ) : filteredLogs.map((log, i) => (
-                    <tr key={log.id} className="border-b border-gray-50 hover:bg-amber-50/30 transition-colors">
-                      <td className="px-6 py-4 text-gray-300 font-mono text-xs">{String(i + 1).padStart(2, "0")}</td>
+                    <tr key={log.id} className="border-b border-slate-300/60 hover:bg-amber-100/60 transition-colors">
+                      <td className="px-6 py-4 text-slate-500 font-mono text-xs">{String(i + 1).padStart(2, "0")}</td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2.5">
                           <div className="h-8 w-8 rounded-full bg-gradient-to-br from-amber-400 to-orange-400 flex items-center justify-center text-white text-xs font-bold shrink-0">
                             {(log.student_name ?? "?").charAt(0)}
                           </div>
-                          <span className="font-semibold text-gray-800">{log.student_name}</span>
+                          <span className="font-semibold text-slate-900">{log.student_name}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-gray-600">Week {log.week_number}</td>
-                      <td className="px-6 py-4 text-gray-500 text-xs font-mono">
+                      <td className="px-6 py-4 text-slate-800">Week {log.week_number}</td>
+                      <td className="px-6 py-4 text-slate-700 text-xs font-mono">
                         {log.submitted_at ? new Date(log.submitted_at).toLocaleDateString("en-GB") : "—"}
                       </td>
                       <td className="px-6 py-4">
@@ -256,7 +272,7 @@ const AcademicSupervisorDashboard = () => {
                           Submitted
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-xs text-gray-400 italic">
+                      <td className="px-6 py-4 text-xs text-slate-600 italic">
                         Reviewed by workplace supervisor
                       </td>
                     </tr>
@@ -267,33 +283,33 @@ const AcademicSupervisorDashboard = () => {
           </div>
 
           {/* Evaluations Table */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="bg-gradient-to-br from-white to-emerald-50 rounded-2xl shadow-sm border border-emerald-200 overflow-hidden">
             <div className="px-6 pt-6 pb-2">
               <SectionHeader title="Academic Evaluations" subtitle="Scores you have submitted" accent="#059669" />
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm border-collapse">
                 <thead>
-                  <tr className="border-y border-gray-100 bg-gray-50">
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">#</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Student</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Score</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Date</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Comments</th>
+                  <tr className="border-y border-emerald-200 bg-emerald-100/70">
+                    <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 uppercase">#</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 uppercase">Student</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 uppercase">Score</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 uppercase">Date</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 uppercase">Comments</th>
                   </tr>
                 </thead>
                 <tbody>
                   {academicEvals.length === 0 ? (
                     <EmptyRow cols={5} message="No evaluations recorded yet." />
                   ) : academicEvals.map((e, i) => (
-                    <tr key={e.id} className="border-b border-gray-50 hover:bg-emerald-50/30 transition-colors">
-                      <td className="px-6 py-4 text-gray-300 font-mono text-xs">{String(i + 1).padStart(2, "0")}</td>
+                    <tr key={e.id} className="border-b border-slate-300/60 hover:bg-emerald-100/50 transition-colors">
+                      <td className="px-6 py-4 text-slate-500 font-mono text-xs">{String(i + 1).padStart(2, "0")}</td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2.5">
                           <div className="h-8 w-8 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white text-xs font-bold shrink-0">
                             {(e.student_name ?? "?").charAt(0)}
                           </div>
-                          <span className="font-semibold text-gray-800">{e.student_name}</span>
+                          <span className="font-semibold text-slate-900">{e.student_name}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -301,9 +317,9 @@ const AcademicSupervisorDashboard = () => {
                           <Star size={10} /> {e.total_score}/100
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-gray-500 text-xs font-mono">{e.date ?? "—"}</td>
-                      <td className="px-6 py-4 text-gray-500 max-w-xs truncate">
-                        {e.comments ?? <span className="italic text-gray-300">No comments</span>}
+                      <td className="px-6 py-4 text-slate-700 text-xs font-mono">{e.date ?? "—"}</td>
+                      <td className="px-6 py-4 text-slate-700 max-w-xs truncate">
+                        {e.comments ?? <span className="italic text-slate-400">No comments</span>}
                       </td>
                     </tr>
                   ))}

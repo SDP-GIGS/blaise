@@ -10,6 +10,9 @@ urlpatterns = [
     path('auth/me/', views.get_current_user, name='current_user'),
     path('auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
+    # Notifications
+    path('notifications/', views.notifications_list, name='notifications_list'),
+
     # Internship Placements
     path('placements/', views.placement_list, name='placement_list'),
     path('placements/<int:pk>/', views.placement_detail, name='placement_detail'),

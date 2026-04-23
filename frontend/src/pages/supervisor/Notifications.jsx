@@ -27,6 +27,32 @@ const mockNotifications = [
   },
 ];
 
+const getNotificationTone = (type) => {
+  switch (type) {
+    case "success":
+      return {
+        container: "border-emerald-300 bg-emerald-50",
+        title: "text-emerald-950",
+        message: "text-emerald-900/80",
+        time: "text-emerald-700",
+      };
+    case "warning":
+      return {
+        container: "border-amber-300 bg-amber-50",
+        title: "text-amber-950",
+        message: "text-amber-900/80",
+        time: "text-amber-700",
+      };
+    default:
+      return {
+        container: "border-cyan-300 bg-cyan-50",
+        title: "text-cyan-950",
+        message: "text-cyan-900/80",
+        time: "text-cyan-700",
+      };
+  }
+};
+
 const SupervisorNotifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,7 +67,11 @@ const SupervisorNotifications = () => {
         setNotifications(Array.isArray(data) ? data : mockNotifications);
       } catch (err) {
         setNotifications(mockNotifications);
-        setError(err?.message || "Failed to load notifications");
+        setError(
+          err?.status === 404
+            ? "Notifications endpoint is not available yet, so sample notifications are shown instead."
+            : "Failed to load notifications",
+        );
       } finally {
         setLoading(false);
       }
@@ -75,26 +105,26 @@ const SupervisorNotifications = () => {
               No notifications yet.
             </div>
           ) : (
-            notifications.map((n) => (
+            notifications.map((n) => {
+              const tone = getNotificationTone(n.type);
+
+              return (
               <div
                 key={n.id}
-                className={`rounded-xl p-4 shadow bg-white/90 dark:bg-gray-900/80 border-l-4 ${
-                  n.read
-                    ? "border-gray-200 dark:border-gray-700"
-                    : "border-cyan-400 dark:border-cyan-600"
-                }`}
+                className={`rounded-xl p-4 shadow-sm border-l-4 border ${tone.container} ${n.read ? "opacity-80" : ""}`}
               >
                 <div className="flex items-center justify-between">
-                  <div className="font-semibold text-gray-900 dark:text-white">
+                  <div className={`font-semibold ${tone.title}`}>
                     {n.title}
                   </div>
-                  <span className="text-xs text-gray-400">{n.time}</span>
+                  <span className={`text-xs ${tone.time}`}>{n.time}</span>
                 </div>
-                <div className="text-gray-700 dark:text-gray-200 mt-1">
+                <div className={`mt-1 ${tone.message}`}>
                   {n.message}
                 </div>
               </div>
-            ))
+              );
+            })
           )}
         </div>
       </div>

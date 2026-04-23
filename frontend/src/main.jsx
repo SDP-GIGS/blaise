@@ -6,6 +6,8 @@ import App from "./App.jsx";
 import { AuthProvider } from "./contexts/AuthContext";
 import { useState } from "react";
 import SplashScreen from "./components/SplashScreen";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import ThemeToggle from "./components/ThemeToggle";
 
 function Root() {
   const [showSplash, setShowSplash] = useState(true);
@@ -13,9 +15,12 @@ function Root() {
     <>
       {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
       {!showSplash && (
-        <AuthProvider>
-          <App />
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <App />
+            <ThemeToggle />
+          </AuthProvider>
+        </ThemeProvider>
       )}
     </>
   );
