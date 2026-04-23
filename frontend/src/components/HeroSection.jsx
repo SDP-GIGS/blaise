@@ -411,11 +411,7 @@ const HeroSection = () => {
             letterSpacing: "0.01em",
           }}
         >
-          ILES is a full-stack workflow platform built for Makerere University's
-          internship programme. It connects students with their supervisors and
-          academic coordinators — enabling structured logbook submissions,
-          real-time review, and transparent grade computation across every
-          placement cycle.
+
         </p>
 
         {/* CTA */}
