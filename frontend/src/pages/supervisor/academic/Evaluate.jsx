@@ -164,7 +164,7 @@ const AcademicEvaluate = () => {
 
   return (
     <AppLayout>
-      <div className="min-h-screen" style={{ background: "linear-gradient(135deg, #f0fdf4 0%, #ecfeff 50%, #f8fafc 100%)", fontFamily: "'DM Sans', system-ui, sans-serif" }}>
+      <div className="min-h-screen" style={{ background: "linear-gradient(135deg, #dff3ef 0%, #e1efff 52%, #eef3ff 100%)", fontFamily: "'DM Sans', system-ui, sans-serif" }}>
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 space-y-6">
 
           {/* Header */}
@@ -173,24 +173,24 @@ const AcademicEvaluate = () => {
               <ClipboardCheck size={18} className="text-cyan-600" />
               <p className="text-xs font-bold text-cyan-600 uppercase tracking-widest">Academic Supervisor</p>
             </div>
-            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Academic Evaluation</h1>
-            <p className="text-gray-500 text-sm mt-1">Review the student's logs then score each criterion to submit an academic evaluation.</p>
+            <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Academic Evaluation</h1>
+            <p className="text-slate-600 text-sm mt-1 font-medium">Review the student's logs then score each criterion to submit an academic evaluation.</p>
           </div>
 
           {/* Success State */}
           {submitted ? (
-            <div className="bg-white rounded-2xl border border-emerald-200 shadow-sm px-8 py-12 flex flex-col items-center text-center gap-4">
+            <div className="bg-gradient-to-br from-white to-emerald-50 rounded-2xl border border-emerald-300 shadow-sm px-8 py-12 flex flex-col items-center text-center gap-4">
               <div className="h-16 w-16 rounded-full bg-emerald-100 flex items-center justify-center">
                 <CheckCircle2 size={32} className="text-emerald-500" />
               </div>
               <div>
-                <h2 className="text-xl font-extrabold text-gray-900">Evaluation Submitted</h2>
-                <p className="text-sm text-gray-500 mt-1">{selectedPlacement?.student_name}'s evaluation has been recorded.</p>
+                <h2 className="text-xl font-extrabold text-slate-900">Evaluation Submitted</h2>
+                <p className="text-sm text-slate-600 mt-1">{selectedPlacement?.student_name}'s evaluation has been recorded.</p>
               </div>
               <div className="w-full max-w-sm rounded-2xl px-6 py-5 flex flex-col items-center gap-1 mt-2" style={{ background: grade.bg }}>
                 <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: grade.color }}>Final Grade</p>
                 <p className="text-5xl font-extrabold" style={{ color: grade.color }}>{grade.label}</p>
-                <p className="text-sm font-bold text-gray-700">{totalScore} / {maxTotal} · {pct}%</p>
+                <p className="text-sm font-bold text-slate-700">{totalScore} / {maxTotal} · {pct}%</p>
               </div>
               <button onClick={() => { setSelectedStudentId(""); handleReset(); }}
                 className="mt-4 flex items-center gap-2 px-5 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-semibold transition">
@@ -200,17 +200,17 @@ const AcademicEvaluate = () => {
           ) : (
             <>
               {/* Student Selector */}
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden" style={{ borderTop: "3px solid #0891b2" }}>
+              <div className="bg-gradient-to-br from-white to-sky-50 rounded-2xl border border-sky-200 shadow-sm overflow-hidden" style={{ borderTop: "3px solid #0891b2" }}>
                 <div className="px-6 py-5">
                   <div className="flex items-center gap-2 mb-4">
                     <User size={15} className="text-cyan-600" />
-                    <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wider">Student</h2>
+                    <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wider">Student</h2>
                   </div>
                   <div className="relative">
                     <select value={selectedStudentId}
                       onChange={(e) => { setSelectedStudentId(e.target.value); handleReset(); }}
                       disabled={loading}
-                      className="w-full appearance-none pr-10 pl-4 py-3 text-sm rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:border-cyan-400 transition font-medium text-black disabled:opacity-50">
+                      className="w-full appearance-none pr-10 pl-4 py-3 text-sm rounded-xl border border-sky-300 bg-white focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:border-cyan-500 transition font-semibold text-slate-900 disabled:opacity-50">
                       <option value="">— Select a student —</option>
                       {placements.map((p) => (
                         <option key={p.id} value={String(p.student)}>
@@ -218,18 +218,18 @@ const AcademicEvaluate = () => {
                         </option>
                       ))}
                     </select>
-                    <ChevronDown size={15} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    <ChevronDown size={15} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
                   </div>
 
                   {selectedPlacement && (
-                    <div className="mt-4 flex items-center gap-4 bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
+                    <div className="mt-4 flex items-center gap-4 bg-white/80 rounded-xl px-4 py-3 border border-sky-200">
                       <div className="h-12 w-12 rounded-full bg-gradient-to-br from-cyan-400 to-emerald-500 flex items-center justify-center text-white font-bold flex-shrink-0">
                         {(selectedPlacement.student_name ?? "?").split(" ").map((n) => n[0]).join("").slice(0, 2)}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-extrabold text-gray-900">{selectedPlacement.student_name}</p>
+                        <p className="font-extrabold text-slate-900">{selectedPlacement.student_name}</p>
                         <div className="flex flex-wrap gap-x-4 gap-y-0.5 mt-0.5">
-                          <span className="flex items-center gap-1 text-xs text-gray-400">
+                          <span className="flex items-center gap-1 text-xs text-slate-600 font-medium">
                             <Building2 size={10} /> {selectedPlacement.company}
                           </span>
                         </div>
@@ -246,29 +246,29 @@ const AcademicEvaluate = () => {
 
               {/* Student Logs — Read Only */}
               {selectedStudentId && studentLogs.length > 0 && (
-                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden" style={{ borderTop: "3px solid #f59e0b" }}>
+                <div className="bg-gradient-to-br from-white to-amber-50 rounded-2xl border border-amber-200 shadow-sm overflow-hidden" style={{ borderTop: "3px solid #f59e0b" }}>
                   <button onClick={() => setShowLogs(!showLogs)}
                     className="w-full px-6 py-4 flex items-center justify-between text-left">
                     <div className="flex items-center gap-2">
                       <BookOpen size={15} className="text-amber-500" />
-                      <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wider">Student Logs ({studentLogs.length})</h2>
-                      <span className="text-xs text-gray-400">— read only, for reference</span>
+                      <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wider">Student Logs ({studentLogs.length})</h2>
+                      <span className="text-xs text-slate-600">— read only, for reference</span>
                     </div>
-                    <ChevronDown size={15} className={`text-gray-400 transition-transform ${showLogs ? "rotate-180" : ""}`} />
+                    <ChevronDown size={15} className={`text-slate-500 transition-transform ${showLogs ? "rotate-180" : ""}`} />
                   </button>
                   {showLogs && (
                     <div className="px-6 pb-5 space-y-3">
                       {studentLogs.map((log) => (
-                        <div key={log.id} className="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                        <div key={log.id} className="rounded-xl border border-amber-200 bg-white/80 p-4">
                           <div className="flex items-center justify-between mb-2">
-                            <p className="text-sm font-bold text-gray-800">Week {log.week_number}</p>
+                            <p className="text-sm font-bold text-slate-800">Week {log.week_number}</p>
                             <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${getLogStatusStyle(log.status)}`}>
                               {log.status}
                             </span>
                           </div>
-                          <p className="text-xs text-gray-500 mb-1"><span className="font-semibold">Activities:</span> {log.activities}</p>
-                          <p className="text-xs text-gray-500 mb-1"><span className="font-semibold">Learnings:</span> {log.learnings}</p>
-                          <p className="text-xs text-gray-500"><span className="font-semibold">Challenges:</span> {log.challenges}</p>
+                          <p className="text-xs text-slate-700 mb-1"><span className="font-semibold">Activities:</span> {log.activities}</p>
+                          <p className="text-xs text-slate-700 mb-1"><span className="font-semibold">Learnings:</span> {log.learnings}</p>
+                          <p className="text-xs text-slate-700"><span className="font-semibold">Challenges:</span> {log.challenges}</p>
                         </div>
                       ))}
                     </div>
@@ -277,14 +277,14 @@ const AcademicEvaluate = () => {
               )}
 
               {/* Criteria Scores */}
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden" style={{ borderTop: "3px solid #7c3aed" }}>
+              <div className="bg-gradient-to-br from-white to-violet-50 rounded-2xl border border-violet-200 shadow-sm overflow-hidden" style={{ borderTop: "3px solid #7c3aed" }}>
                 <div className="px-6 py-5">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                       <Star size={15} className="text-violet-500" />
-                      <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wider">Scoring Rubric</h2>
+                      <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wider">Scoring Rubric</h2>
                     </div>
-                    <span className="text-xs text-gray-400">Each criterion out of 20 pts</span>
+                    <span className="text-xs text-slate-600">Each criterion out of 20 pts</span>
                   </div>
 
                   <div className="space-y-5">
@@ -292,10 +292,10 @@ const AcademicEvaluate = () => {
                       <div key={c.criteria}>
                         <div className="flex items-start justify-between mb-1">
                           <div>
-                            <p className="text-sm font-bold text-gray-800">{c.label}</p>
-                            <p className="text-xs text-gray-400 mt-0.5">{c.description}</p>
+                            <p className="text-sm font-bold text-slate-800">{c.label}</p>
+                            <p className="text-xs text-slate-600 mt-0.5">{c.description}</p>
                           </div>
-                          <span className="text-xs text-gray-400 ml-4 flex-shrink-0">{criteriaScores[c.criteria]}/{c.max_score}</span>
+                          <span className="text-xs text-slate-600 ml-4 flex-shrink-0">{criteriaScores[c.criteria]}/{c.max_score}</span>
                         </div>
                         <div className="flex items-center gap-3 mt-2">
                           <input type="range" min={0} max={c.max_score}
@@ -307,9 +307,9 @@ const AcademicEvaluate = () => {
                             value={criteriaScores[c.criteria]}
                             onChange={(e) => handleScoreChange(c.criteria, e.target.value, c.max_score)}
                             disabled={alreadyEvaluated}
-                            className="w-14 text-center text-sm font-bold text-gray-900 rounded-xl border border-gray-200 bg-gray-50 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-200 disabled:opacity-50" />
+                            className="w-14 text-center text-sm font-bold text-slate-900 rounded-xl border border-violet-200 bg-white py-2 focus:outline-none focus:ring-2 focus:ring-cyan-200 disabled:opacity-50" />
                         </div>
-                        <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden mt-1.5">
+                        <div className="h-1.5 rounded-full bg-slate-200 overflow-hidden mt-1.5">
                           <div className="h-full rounded-full bg-cyan-500 transition-all duration-300"
                             style={{ width: `${(criteriaScores[c.criteria] / c.max_score) * 100}%` }} />
                         </div>
@@ -327,7 +327,7 @@ const AcademicEvaluate = () => {
                     </div>
                     <div className="text-right flex-shrink-0">
                       <p className="text-3xl font-extrabold" style={{ color: grade.color }}>
-                        {totalScore}<span className="text-base font-medium text-gray-500"> / {maxTotal}</span>
+                        {totalScore}<span className="text-base font-medium text-slate-600"> / {maxTotal}</span>
                       </p>
                       <p className="text-xs font-bold" style={{ color: grade.color }}>{pct}% · Grade {grade.label}</p>
                     </div>
@@ -336,37 +336,37 @@ const AcademicEvaluate = () => {
               </div>
 
               {/* Comments */}
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden" style={{ borderTop: "3px solid #059669" }}>
+              <div className="bg-gradient-to-br from-white to-emerald-50 rounded-2xl border border-emerald-200 shadow-sm overflow-hidden" style={{ borderTop: "3px solid #059669" }}>
                 <div className="px-6 py-5">
                   <div className="flex items-center gap-2 mb-4">
                     <ClipboardCheck size={15} className="text-emerald-600" />
-                    <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wider">Overall Comment</h2>
+                    <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wider">Overall Comment</h2>
                   </div>
                   <textarea rows={5} value={comments}
                     onChange={(e) => setComments(e.target.value)}
                     disabled={alreadyEvaluated}
                     placeholder="Provide a comprehensive assessment of the student's academic performance, attitude, and growth during the placement..."
-                    className="w-full text-sm text-gray-900 placeholder:text-gray-500 rounded-xl border border-gray-200 px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-cyan-200 bg-gray-50 leading-relaxed disabled:opacity-50" />
-                  <p className="text-right text-xs text-gray-300 mt-1">{comments.length} characters</p>
+                    className="w-full text-sm text-slate-900 placeholder:text-slate-500 rounded-xl border border-emerald-200 px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-cyan-200 bg-white leading-relaxed disabled:opacity-50" />
+                  <p className="text-right text-xs text-slate-500 mt-1">{comments.length} characters</p>
                 </div>
               </div>
 
               {/* Submit Bar */}
               {!alreadyEvaluated && (
-                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-4 flex flex-col sm:flex-row items-center gap-4">
+                <div className="bg-gradient-to-br from-white to-cyan-50 rounded-2xl border border-cyan-200 shadow-sm px-6 py-4 flex flex-col sm:flex-row items-center gap-4">
                   <div className="flex-1 min-w-0">
                     {selectedPlacement ? (
-                      <p className="text-sm font-semibold text-gray-800">
+                      <p className="text-sm font-semibold text-slate-800">
                         Submitting evaluation for <span className="text-cyan-700">{selectedPlacement.student_name}</span>
                       </p>
                     ) : (
-                      <p className="text-sm text-gray-400 italic">No student selected.</p>
+                      <p className="text-sm text-slate-500 italic">No student selected.</p>
                     )}
-                    <p className="text-xs text-gray-400 mt-0.5">Score: {totalScore}/{maxTotal} · Grade {grade.label} · {pct}%</p>
+                    <p className="text-xs text-slate-600 mt-0.5">Score: {totalScore}/{maxTotal} · Grade {grade.label} · {pct}%</p>
                   </div>
                   <div className="flex gap-2 flex-shrink-0">
                     <button onClick={handleReset}
-                      className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-600 text-sm font-semibold hover:bg-gray-50 transition">
+                      className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-700 text-sm font-semibold hover:bg-slate-100 transition">
                       <RotateCcw size={13} /> Reset
                     </button>
                     <button onClick={handleSubmit} disabled={submitting || !selectedStudentId}
