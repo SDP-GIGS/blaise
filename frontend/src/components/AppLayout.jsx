@@ -21,6 +21,16 @@ import {
   Bell,
 } from "lucide-react";
 
+const SUPERVISOR_NOTIFICATIONS_KEY = "supervisor_notifications_unread";
+
+const getSupervisorNotificationCount = () => {
+  const storedCount = Number(localStorage.getItem(SUPERVISOR_NOTIFICATIONS_KEY));
+  if (Number.isNaN(storedCount)) {
+    return 3;
+  }
+  return storedCount;
+};
+
 const navByRole = {
   student: [
     { label: "Dashboard", path: "/student", icon: LayoutDashboard },
@@ -73,6 +83,7 @@ const AppLayout = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const supervisorNotificationCount = getSupervisorNotificationCount();
 
   // Allow open navigation: do not redirect if not logged in
   const navItems = user ? navByRole[user.role] || [] : [];
@@ -172,10 +183,11 @@ const AppLayout = ({ children }) => {
               className={`w-4 h-4 transition-colors ${location.pathname === "/supervisor/notifications" ? "text-yellow-700" : "group-hover:text-gray-900 dark:group-hover:text-white"}`}
             />
             Notifications
-            {/* Notification badge */}
-            <span className="ml-auto inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-bold bg-red-500 text-white animate-pulse">
-              3
-            </span>
+            {supervisorNotificationCount > 0 && (
+              <span className="ml-auto inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-bold bg-red-500 text-white animate-pulse">
+                {supervisorNotificationCount}
+              </span>
+            )}
           </Link>
         )}
       </nav>
@@ -224,8 +236,11 @@ const AppLayout = ({ children }) => {
             className="relative group p-2 rounded-full hover:bg-cyan-100 dark:hover:bg-cyan-900 transition-colors"
           >
             <Bell className="w-6 h-6 text-cyan-600 dark:text-cyan-300" />
-            {/* Notification dot (optional): */}
-            <span className="absolute top-1 right-1 w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
+            {supervisorNotificationCount > 0 && (
+              <span className="absolute top-1 right-1 min-w-4 h-4 px-1 rounded-full bg-cyan-500 text-white text-[10px] font-bold flex items-center justify-center animate-pulse">
+                {supervisorNotificationCount}
+              </span>
+            )}
           </Link>
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
