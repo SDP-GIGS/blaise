@@ -264,6 +264,18 @@ def get_current_user(request):
     return Response(serializer.data)
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def student_list(request):
+    # Supervisors and admins can fetch student records for evaluation workflows.
+    if request.user.role not in ['academic_supervisor', 'workplace_supervisor', 'admin']:
+        return Response({'error': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
+
+    students = CustomUser.objects.filter(role='student').order_by('full_name')
+    serializer = UserSerializer(students, many=True)
+    return Response(serializer.data)
+
+
 @api_view(['GET', 'POST'])
 def placement_list(request):
     if request.method == 'GET':
