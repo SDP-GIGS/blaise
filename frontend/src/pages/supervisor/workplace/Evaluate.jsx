@@ -125,37 +125,37 @@ const WorkplaceEvaluate = () => {
   
   return (
     <AppLayout>
-      <div className="min-h-screen bg-[#07101f] text-white">
+      <div className="min-h-screen bg-gradient-to-br from-slate-100 via-sky-50 to-cyan-50 text-slate-900 dark:bg-[#07101f] dark:text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
 
           {/* Header */}
           <motion.div initial={{ opacity: 0, y: -14 }} animate={{ opacity: 1, y: 0 }}
-            className="relative rounded-2xl overflow-hidden border border-[#1a3050] bg-[#0d1926]">
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-sky-500/50 to-transparent" />
+            className="relative rounded-2xl overflow-hidden border border-sky-200 bg-white dark:border-[#1a3050] dark:bg-[#0d1926]">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-sky-500/40 to-transparent dark:via-sky-500/50" />
             <div className="relative px-7 py-6 flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-sky-500/10 border border-sky-500/20">
+              <div className="p-3 rounded-xl bg-sky-100 border border-sky-200 dark:bg-sky-500/10 dark:border-sky-500/20">
                 <ClipboardCheck className="w-6 h-6 text-sky-400" />
               </div>
               <div>
                 <p className="text-xs font-medium tracking-widest text-sky-400 uppercase mb-1">Workplace Assessment</p>
-                <h1 className="text-2xl font-bold text-white">Evaluate Student</h1>
-                <p className="text-sm text-slate-400 mt-0.5">Score each criterion to submit a workplace evaluation.</p>
+                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Evaluate Student</h1>
+                <p className="text-sm text-slate-600 mt-0.5 dark:text-slate-400">Score each criterion to submit a workplace evaluation.</p>
               </div>
             </div>
           </motion.div>
 
           {/* Student Selector */}
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-            className="rounded-2xl bg-[#0d1926] border border-[#1a3050] p-5">
-            <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-3">
+            className="rounded-2xl bg-white border border-sky-200 p-5 dark:bg-[#0d1926] dark:border-[#1a3050]">
+            <label className="block text-xs font-medium text-slate-600 uppercase tracking-wider mb-3 dark:text-slate-500">
               Student Being Evaluated
             </label>
             <div className="relative">
-              <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+              <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 dark:text-slate-500" />
               <select value={selectedStudentId}
                 onChange={(e) => { setSelectedStudentId(e.target.value); }}
                 disabled={loading}
-                className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-[#0b1523] border border-[#1e3a5f] text-sm text-white appearance-none focus:outline-none focus:border-sky-500/50 transition disabled:opacity-50">
+                className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-sm text-slate-900 appearance-none focus:outline-none focus:border-sky-500/50 focus:ring-2 focus:ring-sky-200 transition disabled:opacity-50 dark:bg-[#0b1523] dark:border-[#1e3a5f] dark:text-white dark:focus:ring-0">
                 <option value="">Select a student…</option>
                 {placements.map((p) => (
                   <option key={p.id} value={String(p.student)}>
@@ -174,9 +174,9 @@ const WorkplaceEvaluate = () => {
 
           {/* Criteria Scores */}
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-            className="rounded-2xl bg-[#0d1926] border border-[#1a3050] p-5 space-y-5">
+            className="rounded-2xl bg-white border border-violet-200 p-5 space-y-5 dark:bg-[#0d1926] dark:border-[#1a3050]">
             <div className="flex items-center justify-between">
-              <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Evaluation Criteria</p>
+              <p className="text-xs font-medium text-slate-600 uppercase tracking-wider dark:text-slate-500">Evaluation Criteria</p>
               <span className={`text-sm font-bold ${getGradeColor(percentage)}`}>
                 {totalScore}/{maxTotal} ({percentage}%)
               </span>
@@ -185,8 +185,8 @@ const WorkplaceEvaluate = () => {
             {WORKPLACE_CRITERIA.map((c, i) => (
               <div key={c.criteria}>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="text-sm font-medium text-white">{c.label}</label>
-                  <span className="text-xs text-slate-500">{criteriaScores[c.criteria]}/{c.max_score}</span>
+                  <label className="text-sm font-medium text-slate-900 dark:text-white">{c.label}</label>
+                  <span className="text-xs text-slate-600 dark:text-slate-500">{criteriaScores[c.criteria]}/{c.max_score}</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <input type="range" min={0} max={c.max_score}
@@ -198,9 +198,9 @@ const WorkplaceEvaluate = () => {
                     value={criteriaScores[c.criteria]}
                     onChange={(e) => handleScoreChange(c.criteria, e.target.value, c.max_score)}
                     disabled={alreadyEvaluated}
-                    className="w-16 px-2 py-1.5 rounded-lg bg-[#0b1523] border border-[#1e3a5f] text-white text-center text-sm focus:outline-none focus:border-sky-500/50 disabled:opacity-50" />
+                    className="w-16 px-2 py-1.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-center text-sm focus:outline-none focus:border-sky-500/50 focus:ring-2 focus:ring-sky-200 disabled:opacity-50 dark:bg-[#0b1523] dark:border-[#1e3a5f] dark:text-white dark:focus:ring-0" />
                 </div>
-                <div className="h-1.5 rounded-full bg-[#1a3050] overflow-hidden mt-1.5">
+                <div className="h-1.5 rounded-full bg-slate-200 overflow-hidden mt-1.5 dark:bg-[#1a3050]">
                   <div className="h-full rounded-full bg-sky-500 transition-all duration-300"
                     style={{ width: `${(criteriaScores[c.criteria] / c.max_score) * 100}%` }} />
                 </div>
@@ -210,34 +210,34 @@ const WorkplaceEvaluate = () => {
 
           {/* Comments */}
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
-            className="rounded-2xl bg-[#0d1926] border border-[#1a3050] p-5">
-            <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-3">Comments</label>
+            className="rounded-2xl bg-white border border-emerald-200 p-5 dark:bg-[#0d1926] dark:border-[#1a3050]">
+            <label className="block text-xs font-medium text-slate-600 uppercase tracking-wider mb-3 dark:text-slate-500">Comments</label>
             <textarea rows={4}
               placeholder="Summarise the student's overall performance, strengths, and areas for improvement…"
               value={comments} onChange={(e) => setComments(e.target.value)}
               disabled={alreadyEvaluated}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#0b1523] border border-[#1e3a5f] text-sm text-white placeholder-slate-600 focus:outline-none focus:border-sky-500/40 transition resize-none disabled:opacity-50" />
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:border-sky-500/40 focus:ring-2 focus:ring-sky-200 transition resize-none disabled:opacity-50 dark:bg-[#0b1523] dark:border-[#1e3a5f] dark:text-white dark:placeholder-slate-600 dark:focus:ring-0" />
           </motion.div>
 
           {/* Score Summary */}
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-            className="rounded-2xl bg-[#0d1926] border border-[#1a3050] p-5">
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-3">Score Summary</p>
+            className="rounded-2xl bg-white border border-amber-200 p-5 dark:bg-[#0d1926] dark:border-[#1a3050]">
+            <p className="text-xs font-medium text-slate-600 uppercase tracking-wider mb-3 dark:text-slate-500">Score Summary</p>
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
                 <p className={`text-3xl font-bold ${getGradeColor(percentage)}`}>{totalScore}</p>
-                <p className="text-xs text-slate-500 mt-0.5">Total Score</p>
+                <p className="text-xs text-slate-600 mt-0.5 dark:text-slate-500">Total Score</p>
               </div>
               <div>
-                <p className="text-3xl font-bold text-slate-400">{maxTotal}</p>
-                <p className="text-xs text-slate-500 mt-0.5">Out of</p>
+                <p className="text-3xl font-bold text-slate-500 dark:text-slate-400">{maxTotal}</p>
+                <p className="text-xs text-slate-600 mt-0.5 dark:text-slate-500">Out of</p>
               </div>
               <div>
                 <p className={`text-3xl font-bold ${getGradeColor(percentage)}`}>{percentage}%</p>
-                <p className="text-xs text-slate-500 mt-0.5">Percentage</p>
+                <p className="text-xs text-slate-600 mt-0.5 dark:text-slate-500">Percentage</p>
               </div>
             </div>
-            <div className="h-2 rounded-full bg-[#1a3050] overflow-hidden mt-4">
+            <div className="h-2 rounded-full bg-slate-200 overflow-hidden mt-4 dark:bg-[#1a3050]">
               <div className={`h-full rounded-full transition-all duration-500 ${percentage >= 80 ? "bg-emerald-500" : percentage >= 60 ? "bg-sky-500" : percentage >= 50 ? "bg-amber-500" : "bg-red-500"}`}
                 style={{ width: `${percentage}%` }} />
             </div>
