@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation, Link, Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { roleLabels } from "@/data/mockData";
@@ -83,7 +83,23 @@ const AppLayout = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const supervisorNotificationCount = getSupervisorNotificationCount();
+  const [supervisorNotificationCount, setSupervisorNotificationCount] = useState(
+    getSupervisorNotificationCount,
+  );
+
+  useEffect(() => {
+    const isNotificationsRoute =
+      location.pathname === "/supervisor/notifications" ||
+      location.pathname === "/notifications";
+
+    if (isNotificationsRoute) {
+      localStorage.setItem(SUPERVISOR_NOTIFICATIONS_KEY, "0");
+      setSupervisorNotificationCount(0);
+      return;
+    }
+
+    setSupervisorNotificationCount(getSupervisorNotificationCount());
+  }, [location.pathname]);
 
   // Allow open navigation: do not redirect if not logged in
   const navItems = user ? navByRole[user.role] || [] : [];
