@@ -89,10 +89,8 @@ const ConfirmModal = ({ open, title, description, onConfirm, onClose }) => (
               <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-[#1e3a5f] text-sm text-slate-400 hover:text-white transition">
                 Cancel
               </button>
-              <button
-                onClick={() => { onConfirm(); onClose(); }}
-                className="flex-1 py-2.5 rounded-xl text-white text-sm font-bold transition bg-red-600 hover:bg-red-500"
-              >
+              <button onClick={() => { onConfirm(); onClose(); }}
+                className="flex-1 py-2.5 rounded-xl text-white text-sm font-bold transition bg-red-600 hover:bg-red-500">
                 Confirm
               </button>
             </div>
@@ -105,17 +103,27 @@ const ConfirmModal = ({ open, title, description, onConfirm, onClose }) => (
 
 const UserModal = ({ open, onClose, onSave, editUser }) => {
   const isEdit = !!editUser;
-  const [form, setForm] = useState({ full_name: "", email: "", password: "", role: "student" });
+  const [form, setForm] = useState({
+    full_name: "", email: "", password: "", role: "student", student_number: ""
+  });
 
   useEffect(() => {
     if (editUser) {
-      setForm({ full_name: editUser.full_name, email: editUser.email, password: "", role: editUser.role });
+      setForm({
+        full_name: editUser.full_name,
+        email: editUser.email,
+        password: "",
+        role: editUser.role,
+        student_number: editUser.student_number ?? "",
+      });
     } else {
-      setForm({ full_name: "", email: "", password: "", role: "student" });
+      setForm({ full_name: "", email: "", password: "", role: "student", student_number: "" });
     }
   }, [editUser, open]);
 
-  const valid = form.full_name.trim() && form.email.trim() && (isEdit || form.password.trim());
+  const valid = form.full_name.trim() && form.email.trim() &&
+    (isEdit || form.password.trim()) &&
+    (form.role !== "student" || form.student_number.trim());
 
   return (
     <AnimatePresence>
@@ -145,59 +153,76 @@ const UserModal = ({ open, onClose, onSave, editUser }) => {
             </div>
 
             <div className="px-6 py-5 space-y-4">
+
+              {/* Full Name */}
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1.5">Full Name <span className="text-red-400">*</span></label>
-                <input
-                  value={form.full_name}
+                <label className="block text-xs font-medium text-slate-500 mb-1.5">
+                  Full Name <span className="text-red-400">*</span>
+                </label>
+                <input value={form.full_name}
                   onChange={(e) => setForm((f) => ({ ...f, full_name: e.target.value }))}
                   placeholder="e.g. Jane Doe"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#0b1523] border border-[#1e3a5f] text-sm text-white placeholder-slate-600 focus:outline-none focus:border-sky-500/50 transition"
-                />
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#0b1523] border border-[#1e3a5f] text-sm text-white placeholder-slate-600 focus:outline-none focus:border-sky-500/50 transition" />
               </div>
+
+              {/* Email */}
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1.5">Email Address <span className="text-red-400">*</span></label>
-                <input
-                  type="email"
-                  value={form.email}
+                <label className="block text-xs font-medium text-slate-500 mb-1.5">
+                  Email Address <span className="text-red-400">*</span>
+                </label>
+                <input type="email" value={form.email}
                   onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
                   placeholder="jane@university.ac.ug"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#0b1523] border border-[#1e3a5f] text-sm text-white placeholder-slate-600 focus:outline-none focus:border-sky-500/50 transition"
-                />
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#0b1523] border border-[#1e3a5f] text-sm text-white placeholder-slate-600 focus:outline-none focus:border-sky-500/50 transition" />
               </div>
-              {!isEdit && (
-                <div>
-                  <label className="block text-xs font-medium text-slate-500 mb-1.5">Password <span className="text-red-400">*</span></label>
-                  <input
-                    type="password"
-                    value={form.password}
-                    onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
-                    placeholder="Min. 8 characters"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#0b1523] border border-[#1e3a5f] text-sm text-white placeholder-slate-600 focus:outline-none focus:border-sky-500/50 transition"
-                  />
-                </div>
-              )}
+
+              {/* Role */}
               <div>
                 <label className="block text-xs font-medium text-slate-500 mb-1.5">Role</label>
-                <select
-                  value={form.role}
-                  onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#0b1523] border border-[#1e3a5f] text-sm text-white appearance-none focus:outline-none focus:border-sky-500/50 transition"
-                >
+                <select value={form.role}
+                  onChange={(e) => setForm((f) => ({ ...f, role: e.target.value, student_number: "" }))}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#0b1523] border border-[#1e3a5f] text-sm text-white appearance-none focus:outline-none focus:border-sky-500/50 transition">
                   {ROLES.map((r) => (
                     <option key={r} value={r}>{ROLE_META[r].label}</option>
                   ))}
                 </select>
               </div>
 
+              {/* Student Number — only for students */}
+              {form.role === "student" && (
+                <div>
+                  <label className="block text-xs font-medium text-slate-500 mb-1.5">
+                    Student Number <span className="text-red-400">*</span>
+                  </label>
+                  <input value={form.student_number}
+                    onChange={(e) => setForm((f) => ({ ...f, student_number: e.target.value }))}
+                    placeholder="e.g. 24/U/0763"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#0b1523] border border-[#1e3a5f] text-sm text-white placeholder-slate-600 focus:outline-none focus:border-sky-500/50 transition" />
+                  <p className="text-[10px] text-slate-500 mt-1">Student will use this to log in.</p>
+                </div>
+              )}
+
+              {/* Password */}
+              {!isEdit && (
+                <div>
+                  <label className="block text-xs font-medium text-slate-500 mb-1.5">
+                    Password <span className="text-red-400">*</span>
+                  </label>
+                  <input type="password" value={form.password}
+                    onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
+                    placeholder="Min. 8 characters"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#0b1523] border border-[#1e3a5f] text-sm text-white placeholder-slate-600 focus:outline-none focus:border-sky-500/50 transition" />
+                </div>
+              )}
+
               <div className="flex gap-3 pt-1">
-                <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-[#1e3a5f] text-sm text-slate-400 hover:text-white transition">
+                <button onClick={onClose}
+                  className="flex-1 py-2.5 rounded-xl border border-[#1e3a5f] text-sm text-slate-400 hover:text-white transition">
                   Cancel
                 </button>
-                <button
-                  disabled={!valid}
+                <button disabled={!valid}
                   onClick={() => { onSave(form); onClose(); }}
-                  className="flex-1 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold transition"
-                >
+                  className="flex-1 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold transition">
                   {isEdit ? "Save Changes" : "Add User"}
                 </button>
               </div>
@@ -227,14 +252,11 @@ const ActionMenu = ({ user, onEdit, onDelete }) => {
               className="absolute right-0 top-8 z-20 w-36 rounded-xl bg-[#0d1926] border border-[#1e3a5f] shadow-2xl overflow-hidden"
             >
               {[
-                { icon: Edit2, label: "Edit", action: onEdit, cls: "text-slate-300 hover:text-white" },
+                { icon: Edit2,  label: "Edit",   action: onEdit,   cls: "text-slate-300 hover:text-white" },
                 { icon: Trash2, label: "Delete", action: onDelete, cls: "text-red-400 hover:text-red-300" },
               ].map(({ icon: Icon, label, action, cls }) => (
-                <button
-                  key={label}
-                  onClick={() => { action(); setOpen(false); }}
-                  className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium transition-colors hover:bg-white/[0.04] ${cls}`}
-                >
+                <button key={label} onClick={() => { action(); setOpen(false); }}
+                  className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium transition-colors hover:bg-white/[0.04] ${cls}`}>
                   <Icon className="w-3.5 h-3.5 flex-shrink-0" /> {label}
                 </button>
               ))}
@@ -279,7 +301,16 @@ const AdminUsers = () => {
 
   const handleAdd = async (form) => {
     try {
-      const newUser = await apiClient.post('/auth/register/', form);
+      const payload = {
+        full_name: form.full_name,
+        email: form.email,
+        password: form.password,
+        role: form.role,
+      };
+      if (form.role === 'student' && form.student_number) {
+        payload.student_number = form.student_number;
+      }
+      const newUser = await apiClient.post('/auth/register/', payload, { requiresAuth: false });
       setUsers((prev) => [...prev, newUser.user]);
       showToast(`${form.full_name} added successfully.`);
     } catch (err) {
@@ -308,8 +339,15 @@ const AdminUsers = () => {
   };
 
   const handleExport = () => {
-    const rows = [["Name", "Email", "Role"],
-      ...users.map((u) => [u.full_name, u.email, ROLE_META[u.role]?.label ?? u.role])];
+    const rows = [
+      ["Name", "Email", "Student Number", "Role"],
+      ...users.map((u) => [
+        u.full_name,
+        u.email,
+        u.student_number ?? "—",
+        ROLE_META[u.role]?.label ?? u.role,
+      ])
+    ];
     const csv = rows.map((r) => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -323,7 +361,8 @@ const AdminUsers = () => {
       const q = search.toLowerCase();
       const matchSearch = !q ||
         (u.full_name ?? "").toLowerCase().includes(q) ||
-        (u.email ?? "").toLowerCase().includes(q);
+        (u.email ?? "").toLowerCase().includes(q) ||
+        (u.student_number ?? "").toLowerCase().includes(q);
       const matchRole = roleFilter === "all" || u.role === roleFilter;
       return matchSearch && matchRole;
     });
@@ -366,7 +405,8 @@ const AdminUsers = () => {
                 </div>
               </div>
               <div className="flex items-center gap-2.5">
-                <button onClick={handleExport} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1a2e47] hover:bg-[#1e3554] border border-[#1e3a5f] text-slate-300 hover:text-white text-sm font-medium transition">
+                <button onClick={handleExport}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1a2e47] hover:bg-[#1e3554] border border-[#1e3a5f] text-slate-300 hover:text-white text-sm font-medium transition">
                   <Download className="w-4 h-4" /> Export
                 </button>
                 <button onClick={() => { setEditUser(null); setModalOpen(true); }}
@@ -377,6 +417,7 @@ const AdminUsers = () => {
             </div>
           </motion.div>
 
+          {/* Stat Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {stats.map((s, i) => (
               <motion.button key={s.role}
@@ -395,11 +436,12 @@ const AdminUsers = () => {
             ))}
           </div>
 
+          {/* Filters */}
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
               <input value={search} onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search by name or email…"
+                placeholder="Search by name, email or student number…"
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0d1926] border border-[#1a3050] text-sm text-white placeholder-slate-600 focus:outline-none focus:border-sky-500/50 transition" />
               {search && (
                 <button onClick={() => setSearch("")} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white">
@@ -421,15 +463,19 @@ const AdminUsers = () => {
             <div className="rounded-xl border border-red-300/30 bg-red-500/15 px-4 py-3 text-sm text-red-100">{error}</div>
           )}
 
+          {/* Users Table */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
             className="rounded-2xl bg-[#0d1926] border border-[#1a3050] overflow-hidden">
-            <div className="grid grid-cols-[1fr_1fr_auto_auto] gap-4 items-center px-6 py-3 border-b border-[#1a3050] bg-[#0b1523]">
-              <button onClick={() => toggleSort("full_name")} className="flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-300 transition text-left">
+            <div className="grid grid-cols-[1fr_1fr_auto_auto_auto] gap-4 items-center px-6 py-3 border-b border-[#1a3050] bg-[#0b1523]">
+              <button onClick={() => toggleSort("full_name")}
+                className="flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-300 transition text-left">
                 Name <ArrowUpDown className={`w-3 h-3 ${sortField === "full_name" ? "text-sky-400" : ""}`} />
               </button>
-              <button onClick={() => toggleSort("email")} className="hidden sm:flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-300 transition text-left">
+              <button onClick={() => toggleSort("email")}
+                className="hidden sm:flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-300 transition text-left">
                 Email <ArrowUpDown className={`w-3 h-3 ${sortField === "email" ? "text-sky-400" : ""}`} />
               </button>
+              <span className="text-xs font-medium text-slate-500 hidden md:block">Student No.</span>
               <span className="text-xs font-medium text-slate-500">Role</span>
               <span />
             </div>
@@ -442,42 +488,45 @@ const AdminUsers = () => {
                   <Users className="w-8 h-8 text-slate-700 mx-auto mb-3" />
                   <p className="text-sm text-slate-500">No users found.</p>
                 </div>
-              ) : (
-                filtered.map((u, i) => {
-                  const meta = ROLE_META[u.role] ?? ROLE_META.student;
-                  return (
-                    <motion.div key={u.id}
-                      initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.025 }}
-                      className="grid grid-cols-[1fr_1fr_auto_auto] gap-4 items-center px-6 py-3.5 hover:bg-white/[0.02] transition-colors">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className={`w-9 h-9 rounded-full border flex items-center justify-center text-xs font-bold flex-shrink-0 ${meta.avatar}`}>
-                          {(u.full_name ?? "?").split(" ").map((n) => n[0]).join("").slice(0, 2)}
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-sm font-semibold text-white truncate">{u.full_name}</p>
-                          <p className="text-xs text-slate-500 truncate sm:hidden">{u.email}</p>
-                        </div>
+              ) : filtered.map((u, i) => {
+                const meta = ROLE_META[u.role] ?? ROLE_META.student;
+                return (
+                  <motion.div key={u.id}
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.025 }}
+                    className="grid grid-cols-[1fr_1fr_auto_auto_auto] gap-4 items-center px-6 py-3.5 hover:bg-white/[0.02] transition-colors">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className={`w-9 h-9 rounded-full border flex items-center justify-center text-xs font-bold flex-shrink-0 ${meta.avatar}`}>
+                        {(u.full_name ?? "?").split(" ").map((n) => n[0]).join("").slice(0, 2)}
                       </div>
-                      <div className="hidden sm:flex items-center gap-1.5 min-w-0">
-                        <Mail className="w-3.5 h-3.5 text-slate-600 flex-shrink-0" />
-                        <span className="text-sm text-slate-400 truncate">{u.email}</span>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-white truncate">{u.full_name}</p>
+                        <p className="text-xs text-slate-500 truncate sm:hidden">{u.email}</p>
                       </div>
-                      <span className={`inline-flex items-center text-xs px-2.5 py-1 rounded-full font-medium border whitespace-nowrap ${meta.badge}`}>
-                        {meta.label}
+                    </div>
+                    <div className="hidden sm:flex items-center gap-1.5 min-w-0">
+                      <Mail className="w-3.5 h-3.5 text-slate-600 flex-shrink-0" />
+                      <span className="text-sm text-slate-400 truncate">{u.email}</span>
+                    </div>
+                    <div className="hidden md:block">
+                      <span className="text-xs text-slate-400 font-mono">
+                        {u.student_number ?? <span className="text-slate-600 italic">—</span>}
                       </span>
-                      <ActionMenu
-                        user={u}
-                        onEdit={() => { setEditUser(u); setModalOpen(true); }}
-                        onDelete={() => setConfirm({
-                          title: `Delete "${u.full_name}"?`,
-                          description: "This user will be permanently removed.",
-                          onConfirm: () => handleDelete(u.id),
-                        })}
-                      />
-                    </motion.div>
-                  );
-                })
-              )}
+                    </div>
+                    <span className={`inline-flex items-center text-xs px-2.5 py-1 rounded-full font-medium border whitespace-nowrap ${meta.badge}`}>
+                      {meta.label}
+                    </span>
+                    <ActionMenu
+                      user={u}
+                      onEdit={() => { setEditUser(u); setModalOpen(true); }}
+                      onDelete={() => setConfirm({
+                        title: `Delete "${u.full_name}"?`,
+                        description: "This user will be permanently removed.",
+                        onConfirm: () => handleDelete(u.id),
+                      })}
+                    />
+                  </motion.div>
+                );
+              })}
             </div>
 
             <div className="flex items-center justify-between px-6 py-3 border-t border-[#1a3050] bg-[#0b1523]">
@@ -487,6 +536,7 @@ const AdminUsers = () => {
               </p>
             </div>
           </motion.div>
+
         </div>
       </div>
 
