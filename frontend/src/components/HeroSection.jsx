@@ -426,35 +426,6 @@ const HeroSection = () => {
           }}
         >
           <a
-            href="/login"
-            style={{
-              padding: "15px 38px",
-              background: "#c9a227",
-              color: "#080c14",
-              fontWeight: 700,
-              fontSize: 14,
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              textDecoration: "none",
-              borderRadius: 2,
-              fontFamily: "Georgia, serif",
-              boxShadow: "0 4px 24px rgba(180,140,30,0.35)",
-              transition: "all 0.22s ease",
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.background = "#e8c84a";
-              e.target.style.transform = "translateY(-2px)";
-              e.target.style.boxShadow = "0 8px 32px rgba(180,140,30,0.5)";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.background = "#c9a227";
-              e.target.style.transform = "translateY(0)";
-              e.target.style.boxShadow = "0 4px 24px rgba(180,140,30,0.35)";
-            }}
-          >
-            Get Started
-          </a>
-          <a
             href="#modules"
             style={{
               padding: "15px 38px",
