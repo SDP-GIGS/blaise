@@ -271,7 +271,19 @@ def student_list(request):
     if request.user.role not in ['academic_supervisor', 'workplace_supervisor', 'admin']:
         return Response({'error': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
 
-    students = CustomUser.objects.filter(role='student').order_by('full_name')
+    if request.user.role == 'academic_supervisor':
+        assigned_student_ids = InternshipPlacement.objects.filter(
+            academic_supervisor=request.user
+        ).values_list('student_id', flat=True)
+        students = CustomUser.objects.filter(id__in=assigned_student_ids, role='student').order_by('full_name')
+    elif request.user.role == 'workplace_supervisor':
+        assigned_student_ids = InternshipPlacement.objects.filter(
+            workplace_supervisor=request.user
+        ).values_list('student_id', flat=True)
+        students = CustomUser.objects.filter(id__in=assigned_student_ids, role='student').order_by('full_name')
+    else:
+        students = CustomUser.objects.filter(role='student').order_by('full_name')
+
     serializer = UserSerializer(students, many=True)
     return Response(serializer.data)
 
@@ -482,8 +494,39 @@ def evaluation_list(request):
                 status=status.HTTP_403_FORBIDDEN
             )
 
+        student_id = request.data.get('student')
+        if not student_id:
+            return Response({'error': 'Student is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            student = CustomUser.objects.get(pk=student_id, role='student')
+        except CustomUser.DoesNotExist:
+            return Response({'error': 'Student not found'}, status=status.HTTP_404_NOT_FOUND)
+
         # Set evaluation type based on role
         evaluation_type = 'workplace' if request.user.role == 'workplace_supervisor' else 'academic'
+
+        # Enforce that supervisors can only evaluate students assigned to them.
+        if request.user.role == 'workplace_supervisor':
+            is_assigned = InternshipPlacement.objects.filter(
+                workplace_supervisor=request.user,
+                student=student,
+            ).exists()
+            if not is_assigned:
+                return Response(
+                    {'error': 'You can only evaluate students assigned to your workplace.'},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+        elif request.user.role == 'academic_supervisor':
+            is_assigned = InternshipPlacement.objects.filter(
+                academic_supervisor=request.user,
+                student=student,
+            ).exists()
+            if not is_assigned:
+                return Response(
+                    {'error': 'You can only evaluate students assigned to you.'},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
 
         # Expected criteria based on type
         WORKPLACE_CRITERIA = [
