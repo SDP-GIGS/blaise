@@ -8,7 +8,7 @@ const toPlacementModel = (placement) => ({
 
 const toLogModel = (log) => ({
   ...log,
-  weekNumber: log.week_number,
+  weekNumber: log.week_number,  
 });
 
 const toEvaluationModel = (evaluation) => ({
