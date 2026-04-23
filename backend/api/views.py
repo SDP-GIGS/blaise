@@ -12,6 +12,143 @@ from .serializers import (
     SupervisorReviewSerializer, EvaluationSerializer, CriteriaScoreSerializer
 )
 
+
+def _format_relative_time(dt):
+    if not dt:
+        return "Just now"
+
+    delta = timezone.now() - dt
+
+    if delta.days > 0:
+        return f"{delta.days} day{'s' if delta.days != 1 else ''} ago"
+
+    hours = delta.seconds // 3600
+    if hours > 0:
+        return f"{hours} hour{'s' if hours != 1 else ''} ago"
+
+    minutes = (delta.seconds % 3600) // 60
+    if minutes > 0:
+        return f"{minutes} minute{'s' if minutes != 1 else ''} ago"
+
+    return "Just now"
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def notifications_list(request):
+    user = request.user
+    notifications = []
+    next_id = 1
+
+    def add_notification(title, message, created_at=None, read=False, notification_type="info"):
+        nonlocal next_id
+        notifications.append({
+            'id': next_id,
+            'title': title,
+            'message': message,
+            'time': _format_relative_time(created_at),
+            'read': read,
+            'type': notification_type,
+        })
+        next_id += 1
+
+    if user.role == 'student':
+        recent_reviews = SupervisorReview.objects.filter(log__student=user).select_related('supervisor', 'log').order_by('-reviewed_at')[:5]
+        for review in recent_reviews:
+            add_notification(
+                title=f"Weekly log {review.status}",
+                message=f"Your Week {review.log.week_number} logbook was {review.status} by {review.supervisor.full_name}.",
+                created_at=review.reviewed_at,
+                read=review.status != 'reviewed',
+                notification_type='success' if review.status == 'approved' else 'warning' if review.status == 'rejected' else 'info',
+            )
+
+        recent_evaluations = Evaluation.objects.filter(student=user).select_related('evaluator').order_by('-date')[:5]
+        for evaluation in recent_evaluations:
+            add_notification(
+                title=f"{evaluation.evaluation_type.title()} evaluation submitted",
+                message=f"{evaluation.evaluator.full_name} submitted a {evaluation.evaluation_type} evaluation for you.",
+                created_at=evaluation.date,
+                read=True,
+                notification_type='success',
+            )
+
+    elif user.role in ['academic_supervisor', 'workplace_supervisor']:
+        placement_filter = {
+            'academic_supervisor': 'academic_supervisor',
+            'workplace_supervisor': 'workplace_supervisor',
+        }[user.role]
+        assigned_placements = InternshipPlacement.objects.filter(**{placement_filter: user}).select_related('student').order_by('-created_at')
+        assigned_student_ids = list(assigned_placements.values_list('student_id', flat=True))
+
+        submitted_logs = WeeklyLog.objects.filter(student_id__in=assigned_student_ids, status='submitted').select_related('student', 'placement').order_by('-submitted_at')[:10]
+        for log in submitted_logs:
+            add_notification(
+                title="Weekly logbook submitted",
+                message=f"{log.student.full_name} submitted Week {log.week_number} for {log.placement.company}.",
+                created_at=log.submitted_at,
+                read=False,
+                notification_type='info',
+            )
+
+        if user.role == 'academic_supervisor':
+            pending_evaluations = []
+            for placement in assigned_placements:
+                has_evaluation = Evaluation.objects.filter(student=placement.student, evaluator=user, evaluation_type='academic').exists()
+                if not has_evaluation:
+                    pending_evaluations.append(placement)
+
+            for placement in pending_evaluations[:10]:
+                add_notification(
+                    title="Academic evaluation due",
+                    message=f"Evaluation is due for {placement.student.full_name} at {placement.company}.",
+                    created_at=placement.created_at,
+                    read=False,
+                    notification_type='warning',
+                )
+
+        recent_placements = assigned_placements[:5]
+        for placement in recent_placements:
+            add_notification(
+                title="Placement assigned",
+                message=f"{placement.student.full_name} is assigned to {placement.company}.",
+                created_at=placement.created_at,
+                read=True,
+                notification_type='success',
+            )
+
+    elif user.role == 'admin':
+        recent_placements = InternshipPlacement.objects.select_related('student').order_by('-created_at')[:5]
+        for placement in recent_placements:
+            add_notification(
+                title="Placement activity",
+                message=f"{placement.student.full_name} has a placement at {placement.company}.",
+                created_at=placement.created_at,
+                read=True,
+                notification_type='info',
+            )
+
+        recent_logs = WeeklyLog.objects.select_related('student').order_by('-submitted_at', '-created_at')[:5]
+        for log in recent_logs:
+            add_notification(
+                title="Logbook activity",
+                message=f"{log.student.full_name} logbook week {log.week_number} is {log.status}.",
+                created_at=log.submitted_at or log.created_at,
+                read=log.status != 'submitted',
+                notification_type='warning' if log.status == 'submitted' else 'info',
+            )
+
+    if not notifications:
+        add_notification(
+            title="No notifications",
+            message="You are all caught up for now.",
+            created_at=timezone.now(),
+            read=True,
+            notification_type='info',
+        )
+
+    return Response(notifications)
+
 @api_view(['GET'])
 def dashboard(request):
     user = request.user
@@ -124,6 +261,30 @@ def login(request):
 @permission_classes([IsAuthenticated])
 def get_current_user(request):
     serializer = UserSerializer(request.user)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def student_list(request):
+    # Supervisors and admins can fetch student records for evaluation workflows.
+    if request.user.role not in ['academic_supervisor', 'workplace_supervisor', 'admin']:
+        return Response({'error': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
+
+    if request.user.role == 'academic_supervisor':
+        assigned_student_ids = InternshipPlacement.objects.filter(
+            academic_supervisor=request.user
+        ).values_list('student_id', flat=True)
+        students = CustomUser.objects.filter(id__in=assigned_student_ids, role='student').order_by('full_name')
+    elif request.user.role == 'workplace_supervisor':
+        assigned_student_ids = InternshipPlacement.objects.filter(
+            workplace_supervisor=request.user
+        ).values_list('student_id', flat=True)
+        students = CustomUser.objects.filter(id__in=assigned_student_ids, role='student').order_by('full_name')
+    else:
+        students = CustomUser.objects.filter(role='student').order_by('full_name')
+
+    serializer = UserSerializer(students, many=True)
     return Response(serializer.data)
 
 
@@ -333,8 +494,39 @@ def evaluation_list(request):
                 status=status.HTTP_403_FORBIDDEN
             )
 
+        student_id = request.data.get('student')
+        if not student_id:
+            return Response({'error': 'Student is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            student = CustomUser.objects.get(pk=student_id, role='student')
+        except CustomUser.DoesNotExist:
+            return Response({'error': 'Student not found'}, status=status.HTTP_404_NOT_FOUND)
+
         # Set evaluation type based on role
         evaluation_type = 'workplace' if request.user.role == 'workplace_supervisor' else 'academic'
+
+        # Enforce that supervisors can only evaluate students assigned to them.
+        if request.user.role == 'workplace_supervisor':
+            is_assigned = InternshipPlacement.objects.filter(
+                workplace_supervisor=request.user,
+                student=student,
+            ).exists()
+            if not is_assigned:
+                return Response(
+                    {'error': 'You can only evaluate students assigned to your workplace.'},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+        elif request.user.role == 'academic_supervisor':
+            is_assigned = InternshipPlacement.objects.filter(
+                academic_supervisor=request.user,
+                student=student,
+            ).exists()
+            if not is_assigned:
+                return Response(
+                    {'error': 'You can only evaluate students assigned to you.'},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
 
         # Expected criteria based on type
         WORKPLACE_CRITERIA = [

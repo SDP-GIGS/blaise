@@ -20,7 +20,7 @@ const TOOLTIP_STYLE = {
 };
 
 const AXIS_PROPS = {
-  tick: { fontSize: 11, fill: "#475569" },
+  tick: { fontSize: 11, fill: "#94a3b8" },
   axisLine: false, tickLine: false,
 };
 
@@ -146,11 +146,44 @@ const AdminReports = () => {
       return { ...u, logCount: uLogs.length, approved, rate };
     }), [students, logs]);
 
-  const evalScores = useMemo(() =>
-    evaluations.map((e) => ({
-      name: (e.student_name ?? "").split(" ")[0],
-      score: e.score,
-    })), [evaluations]);
+  const evalScores = useMemo(() => {
+    const grouped = new Map();
+
+    evaluations.forEach((e) => {
+      const studentName = (e.student_name ?? "Unknown Student").trim();
+      const shortName = studentName.split(" ")[0] || "Student";
+
+      const criteria = Array.isArray(e.criteria_scores) ? e.criteria_scores : [];
+      const rawTotal = Number.isFinite(Number(e.total_score))
+        ? Number(e.total_score)
+        : Number.isFinite(Number(e.score))
+          ? Number(e.score)
+          : criteria.reduce((sum, c) => sum + (Number(c.score) || 0), 0);
+
+      const maxScore = criteria.length > 0
+        ? criteria.reduce((sum, c) => sum + (Number(c.max_score) || 0), 0)
+        : 50;
+
+      const score = maxScore > 0
+        ? Math.max(0, Math.min(100, Math.round((rawTotal / maxScore) * 100)))
+        : 0;
+
+      if (!grouped.has(shortName)) {
+        grouped.set(shortName, { name: shortName, total: 0, count: 0 });
+      }
+
+      const current = grouped.get(shortName);
+      current.total += score;
+      current.count += 1;
+    });
+
+    return Array.from(grouped.values())
+      .map((entry) => ({
+        name: entry.name,
+        score: Math.round(entry.total / entry.count),
+      }))
+      .sort((a, b) => b.score - a.score);
+  }, [evaluations]);
 
   const approvalRate = logs.length
     ? Math.round((logs.filter((l) => l.status === "approved").length / logs.length) * 100) : 0;
@@ -282,7 +315,7 @@ const AdminReports = () => {
                 <BarChart data={evalScores} layout="vertical" margin={{ top: 0, right: 32, left: 8, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#1a3050" horizontal={false} />
                   <XAxis type="number" domain={[0, 100]} {...AXIS_PROPS} tickFormatter={(v) => `${v}%`} />
-                  <YAxis type="category" dataKey="name" {...AXIS_PROPS} width={52} />
+                  <YAxis type="category" dataKey="name" {...AXIS_PROPS} width={90} />
                   <Tooltip {...TOOLTIP_STYLE} formatter={(v) => [`${v}`, "Score"]} />
                   <Bar dataKey="score" radius={[0, 6, 6, 0]}>
                     {evalScores.map((d, i) => (

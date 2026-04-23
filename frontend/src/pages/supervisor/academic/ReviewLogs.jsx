@@ -71,9 +71,10 @@ const LogDetailPanel = ({ log, onClose }) => (
 
 const AcademicReviewLogs = () => {
   const [placements, setPlacements] = useState([]);
+  const [students, setStudents] = useState([]);
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedStudentId, setSelectedStudentId] = useState(null);
+  const [selectedStudentId, setSelectedStudentId] = useState("");
   const [selectedLog, setSelectedLog] = useState(null);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
@@ -81,12 +82,22 @@ const AcademicReviewLogs = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [placementsData, logsData] = await Promise.all([
+        const [placementsData, studentsData, logsData] = await Promise.all([
           apiClient.get('/placements/'),
+          apiClient.get('/students/'),
           apiClient.get('/logs/'),
         ]);
-        setPlacements(Array.isArray(placementsData) ? placementsData : []);
+        const normalizedPlacements = Array.isArray(placementsData) ? placementsData : [];
+        const normalizedStudents = Array.isArray(studentsData) ? studentsData : [];
+        setPlacements(normalizedPlacements);
+        setStudents(normalizedStudents);
         setLogs(Array.isArray(logsData) ? logsData : []);
+
+        if (normalizedStudents.length > 0) {
+          setSelectedStudentId(String(normalizedStudents[0].id));
+        } else if (normalizedPlacements.length > 0) {
+          setSelectedStudentId(String(normalizedPlacements[0].student));
+        }
       } catch (err) {
         console.error(err);
       } finally {
@@ -96,21 +107,48 @@ const AcademicReviewLogs = () => {
     loadData();
   }, []);
 
-  const filteredPlacements = placements.filter((p) => {
+  const placementByStudentId = Object.fromEntries(
+    placements.map((placement) => [String(placement.student), placement]),
+  );
+
+  const studentOptions = students.length
+    ? students.map((student) => ({
+        id: String(student.id),
+        student_name: student.full_name,
+        company: placementByStudentId[String(student.id)]?.company ?? "No placement assigned",
+        start_date: placementByStudentId[String(student.id)]?.start_date,
+        end_date: placementByStudentId[String(student.id)]?.end_date,
+        student_number: student.student_number,
+      }))
+    : placements.map((placement) => ({
+        id: String(placement.student),
+        student_name: placement.student_name,
+        company: placement.company,
+        start_date: placement.start_date,
+        end_date: placement.end_date,
+        student_number: null,
+      }));
+
+  const filteredStudents = studentOptions.filter((student) => {
     const q = search.toLowerCase();
-    return !q || (p.student_name ?? "").toLowerCase().includes(q) || (p.company ?? "").toLowerCase().includes(q);
+    return (
+      !q ||
+      (student.student_name ?? "").toLowerCase().includes(q) ||
+      (student.company ?? "").toLowerCase().includes(q) ||
+      (student.student_number ?? "").toLowerCase().includes(q)
+    );
   });
 
-  const selectedPlacement = placements.find((p) => p.student === selectedStudentId);
+  const selectedStudent = studentOptions.find((student) => String(student.id) === String(selectedStudentId));
 
   const studentLogs = logs.filter((l) => {
-    const matchStudent = l.student === selectedStudentId;
+    const matchStudent = String(l.student) === String(selectedStudentId);
     const matchStatus = filterStatus === "all" || l.status === filterStatus;
     return matchStudent && matchStatus;
   });
 
   const getStudentLogStats = (studentId) => {
-    const sl = logs.filter((l) => l.student === studentId);
+    const sl = logs.filter((l) => String(l.student) === String(studentId));
     return {
       total: sl.length,
       approved: sl.filter((l) => l.status === "approved").length,
@@ -137,38 +175,38 @@ const AcademicReviewLogs = () => {
             {/* Student List */}
             <div className="w-full lg:w-72 flex-shrink-0 space-y-4">
               <div className="relative">
-                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
                 <input type="text" placeholder="Search students..."
                   value={search} onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border border-gray-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-200 transition" />
+                  className="w-full pl-9 pr-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-500 rounded-xl border border-sky-300 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-300 transition" />
               </div>
 
               {loading ? (
                 <p className="text-sm text-gray-400 text-center py-6">Loading...</p>
-              ) : filteredPlacements.length === 0 ? (
-                <p className="text-sm text-gray-400 text-center py-6 italic">No students assigned yet.</p>
+              ) : filteredStudents.length === 0 ? (
+                <p className="text-sm text-slate-500 text-center py-6 italic">No students match your search.</p>
               ) : (
                 <div className="space-y-2">
-                  {filteredPlacements.map((p) => {
-                    const stats = getStudentLogStats(p.student);
+                  {filteredStudents.map((student) => {
+                    const stats = getStudentLogStats(student.id);
                     return (
-                      <button key={p.id} onClick={() => setSelectedStudentId(p.student)}
+                      <button key={student.id} onClick={() => setSelectedStudentId(String(student.id))}
                         className={`w-full text-left rounded-2xl border p-4 transition-all ${
-                          selectedStudentId === p.student
+                          String(selectedStudentId) === String(student.id)
                             ? "bg-white border-cyan-300 shadow-md ring-2 ring-cyan-100"
                             : "bg-white/70 border-gray-100 hover:border-gray-200 hover:shadow-sm"
                         }`}>
                         <div className="flex items-center gap-3 mb-2">
                           <div className="h-10 w-10 rounded-full bg-gradient-to-br from-cyan-400 to-emerald-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                            {(p.student_name ?? "?").split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                            {(student.student_name ?? "?").split(" ").map((n) => n[0]).join("").slice(0, 2)}
                           </div>
                           <div className="min-w-0">
-                            <p className="font-bold text-gray-900 text-sm truncate">{p.student_name}</p>
-                            <p className="text-xs text-gray-400 truncate flex items-center gap-1">
-                              <Building2 size={10} /> {p.company}
+                            <p className="font-bold text-gray-900 text-sm truncate">{student.student_name}</p>
+                            <p className="text-xs text-gray-500 truncate flex items-center gap-1">
+                              <Building2 size={10} /> {student.company}
                             </p>
                           </div>
-                          {selectedStudentId === p.student && (
+                          {String(selectedStudentId) === String(student.id) && (
                             <ChevronRight size={14} className="text-cyan-500 ml-auto flex-shrink-0" />
                           )}
                         </div>
@@ -206,27 +244,41 @@ const AcademicReviewLogs = () => {
               ) : (
                 <div className="space-y-4">
                   {/* Student Header */}
-                  {selectedPlacement && (
-                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-5 flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-full bg-gradient-to-br from-cyan-400 to-emerald-500 flex items-center justify-center text-white font-bold flex-shrink-0">
-                        {(selectedPlacement.student_name ?? "?").split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                  {selectedStudent && (
+                    <div className="bg-gradient-to-br from-white to-cyan-50 rounded-2xl border border-cyan-200 shadow-sm px-6 py-5 flex items-center gap-4">
+                      <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-cyan-400 to-emerald-500 flex items-center justify-center text-white font-bold flex-shrink-0 shadow-sm ring-2 ring-white">
+                        {(selectedStudent.student_name ?? "?").split(" ").map((n) => n[0]).join("").slice(0, 2)}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h2 className="text-xl font-extrabold text-gray-900">{selectedPlacement.student_name}</h2>
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
-                          <span className="flex items-center gap-1 text-xs text-gray-400">
-                            <Building2 size={11} /> {selectedPlacement.company}
+                        <p className="text-[11px] font-bold uppercase tracking-wider text-cyan-700">Selected Student</p>
+                        <h2 className="text-2xl font-extrabold text-slate-900 leading-tight">{selectedStudent.student_name}</h2>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          <span className="inline-flex items-center gap-1 text-xs text-slate-700 bg-white border border-cyan-200 rounded-lg px-2.5 py-1">
+                            <Building2 size={11} /> {selectedStudent.company}
                           </span>
-                          <span className="flex items-center gap-1 text-xs text-gray-400">
-                            <BookOpen size={11} /> {selectedPlacement.start_date} → {selectedPlacement.end_date}
-                          </span>
+                          {selectedStudent.start_date && selectedStudent.end_date && (
+                            <span className="inline-flex items-center gap-1 text-xs text-slate-700 bg-white border border-cyan-200 rounded-lg px-2.5 py-1">
+                              <BookOpen size={11} /> {selectedStudent.start_date} → {selectedStudent.end_date}
+                            </span>
+                          )}
+                          {selectedStudent.student_number && (
+                            <span className="inline-flex items-center text-xs text-slate-700 bg-white border border-cyan-200 rounded-lg px-2.5 py-1">
+                              #{selectedStudent.student_number}
+                            </span>
+                          )}
                         </div>
+                      </div>
+                      <div className="hidden sm:flex flex-col items-end gap-1 text-right">
+                        <span className="text-[11px] uppercase tracking-wider text-slate-500 font-semibold">Current Filter</span>
+                        <span className="inline-flex items-center rounded-lg px-2.5 py-1 text-xs font-bold bg-cyan-600 text-white">
+                          {filterStatus === "all" ? "All Logs" : filterStatus.charAt(0).toUpperCase() + filterStatus.slice(1)}
+                        </span>
                       </div>
                     </div>
                   )}
 
                   {/* Filter Bar */}
-                  <div className="flex items-center gap-2 flex-wrap">
+                  <div className="flex items-center gap-2 flex-wrap bg-white/70 border border-cyan-100 rounded-xl px-4 py-2.5">
                     <Filter size={13} className="text-gray-400" />
                     {["all", "submitted", "approved", "reviewed", "rejected"].map((f) => (
                       <button key={f} onClick={() => setFilterStatus(f)}

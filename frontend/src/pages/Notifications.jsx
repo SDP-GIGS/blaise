@@ -1,20 +1,24 @@
+import { useEffect, useState } from "react";
 import AppLayout from "@/components/AppLayout";
-import { Bell } from "lucide-react";
+import { apiClient } from "@/lib/apiClient";
+import { Bell, AlertCircle, Loader } from "lucide-react";
 
-const mockNotifications = [
+const fallbackNotifications = [
   {
     id: 1,
     title: "Weekly Logbook Submitted",
-    message: "John Student has submitted their weekly logbook for review.",
+    message: "A student has submitted their weekly logbook for review.",
     time: "2 hours ago",
     read: false,
+    type: "info",
   },
   {
     id: 2,
     title: "Evaluation Due",
-    message: "You have an evaluation due for Jane Student.",
+    message: "You have an evaluation due for a student.",
     time: "1 day ago",
     read: true,
+    type: "warning",
   },
   {
     id: 3,
@@ -22,54 +26,109 @@ const mockNotifications = [
     message: "A new placement has been approved for your student.",
     time: "3 days ago",
     read: true,
+    type: "success",
   },
 ];
 
-const Notifications = () => (
-  <AppLayout>
-    <div className="max-w-2xl mx-auto mt-10">
-      <div className="flex items-center gap-3 mb-6">
-        <Bell className="w-8 h-8 text-cyan-600" />
-        <h1 className="text-2xl font-bold text-cyan-700">Notifications</h1>
-      </div>
-      <div className="space-y-4">
-        {mockNotifications.length === 0 ? (
-          <div className="text-gray-500 text-center py-12">
-            No notifications yet.
+const getNotificationTone = (type) => {
+  switch (type) {
+    case "success":
+      return {
+        container: "border-emerald-300 bg-emerald-50",
+        title: "text-emerald-950",
+        message: "text-emerald-900/80",
+        time: "text-emerald-700",
+      };
+    case "warning":
+      return {
+        container: "border-amber-300 bg-amber-50",
+        title: "text-amber-950",
+        message: "text-amber-900/80",
+        time: "text-amber-700",
+      };
+    default:
+      return {
+        container: "border-cyan-300 bg-cyan-50",
+        title: "text-cyan-950",
+        message: "text-cyan-900/80",
+        time: "text-cyan-700",
+      };
+  }
+};
+
+const Notifications = () => {
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const loadNotifications = async () => {
+      try {
+        setLoading(true);
+        setError("");
+        const data = await apiClient.get("/notifications/");
+        setNotifications(Array.isArray(data) ? data : fallbackNotifications);
+      } catch (err) {
+        setNotifications(fallbackNotifications);
+        setError("Notifications are temporarily unavailable. Showing sample items.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadNotifications();
+  }, []);
+
+  return (
+    <AppLayout>
+      <div className="max-w-2xl mx-auto mt-10">
+        <div className="flex items-center gap-3 mb-6">
+          <Bell className="w-8 h-8 text-cyan-600" />
+          <h1 className="text-2xl font-bold text-cyan-700">Notifications</h1>
+        </div>
+
+        {error && (
+          <div className="mb-4 rounded-lg border border-amber-400/30 bg-amber-500/10 px-4 py-3 flex items-start gap-2 text-sm text-amber-100">
+            <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+            <span>{error}</span>
           </div>
-        ) : (
-          mockNotifications.map((n) => (
-            <div
-              key={n.id}
-              className={`rounded-xl p-4 shadow bg-white/90 dark:bg-gray-900/80 border-l-4 ${
-                n.read
-                  ? "border-gray-200 dark:border-gray-700"
-                  : "border-cyan-400 dark:border-cyan-600"
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <div className="font-semibold text-gray-900 dark:text-white">
-                  {n.title}
-                </div>
-                <span className="text-xs text-gray-400">{n.time}</span>
-              </div>
-              <div className="text-gray-700 dark:text-gray-200 mt-1">
-                {n.message}
-              </div>
-            </div>
-          ))
         )}
+
+        <div className="space-y-4">
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader className="w-6 h-6 text-cyan-600 animate-spin" />
+            </div>
+          ) : notifications.length === 0 ? (
+            <div className="text-gray-500 text-center py-12">
+              No notifications yet.
+            </div>
+          ) : (
+            notifications.map((notification) => {
+              const tone = getNotificationTone(notification.type);
+
+              return (
+                <div
+                  key={notification.id}
+                  className={`rounded-xl p-4 shadow-sm border-l-4 border ${tone.container} ${notification.read ? "opacity-80" : ""}`}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <div className={`font-semibold ${tone.title}`}>
+                      {notification.title}
+                    </div>
+                    <span className={`text-xs ${tone.time}`}>{notification.time}</span>
+                  </div>
+                  <div className={`mt-1 ${tone.message}`}>
+                    {notification.message}
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
       </div>
-    </div>
-  </AppLayout>
-);
+    </AppLayout>
+  );
+};
 
 export default Notifications;
-
-
-
-
-
-
-
-
