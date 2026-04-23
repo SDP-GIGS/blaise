@@ -138,15 +138,6 @@ const AppLayout = ({ children }) => {
           <p className="text-sm font-semibold text-gray-900 dark:text-white mt-0.5">
             {user.name}
           </p>
-          <div className="mt-2 h-1 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
-            <motion.div
-              className="h-full bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full"
-              initial={{ width: 0 }}
-              animate={{ width: "75%" }}
-              transition={{ duration: 1.5, delay: 0.5 }}
-            />
-          </div>
-          <p className="text-[10px] text-gray-400 mt-1">75% profile complete</p>
         </div>
       </div>
 
