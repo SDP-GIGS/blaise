@@ -9,6 +9,7 @@ urlpatterns = [
     path('auth/login/', views.login, name='login'),
     path('auth/me/', views.get_current_user, name='current_user'),
     path('auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('students/', views.student_list, name='student_list'),
 
     # Notifications
     path('notifications/', views.notifications_list, name='notifications_list'),
