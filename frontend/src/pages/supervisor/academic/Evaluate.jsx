@@ -48,6 +48,7 @@ const Toast = ({ message, type, onClose }) => (
 
 const AcademicEvaluate = () => {
   const [placements, setPlacements] = useState([]);
+  const [students, setStudents] = useState([]);
   const [existingEvals, setExistingEvals] = useState([]);
   const [studentLogs, setStudentLogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -69,14 +70,21 @@ const AcademicEvaluate = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [placementsData, evalsData] = await Promise.all([
+        const [placementsData, studentsData, evalsData] = await Promise.all([
           apiClient.get('/placements/'),
+          apiClient.get('/students/'),
           apiClient.get('/evaluations/'),
         ]);
-        setPlacements(Array.isArray(placementsData) ? placementsData : []);
+        const normalizedPlacements = Array.isArray(placementsData) ? placementsData : [];
+        const normalizedStudents = Array.isArray(studentsData) ? studentsData : [];
+        setPlacements(normalizedPlacements);
+        setStudents(normalizedStudents);
         setExistingEvals(Array.isArray(evalsData) ? evalsData : []);
-        if (placementsData.length > 0) {
-          setSelectedStudentId(String(placementsData[0].student));
+
+        if (normalizedStudents.length > 0) {
+          setSelectedStudentId(String(normalizedStudents[0].id));
+        } else if (normalizedPlacements.length > 0) {
+          setSelectedStudentId(String(normalizedPlacements[0].student));
         }
       } catch (err) {
         showToast(err.message || 'Failed to load data.', 'error');
@@ -104,7 +112,25 @@ const AcademicEvaluate = () => {
     loadLogs();
   }, [selectedStudentId]);
 
-  const selectedPlacement = placements.find((p) => String(p.student) === String(selectedStudentId));
+  const placementByStudentId = Object.fromEntries(
+    placements.map((placement) => [String(placement.student), placement]),
+  );
+
+  const studentOptions = students.length
+    ? students.map((student) => ({
+        id: String(student.id),
+        student_name: student.full_name,
+        student_number: student.student_number,
+        company: placementByStudentId[String(student.id)]?.company ?? "No placement assigned",
+      }))
+    : placements.map((placement) => ({
+        id: String(placement.student),
+        student_name: placement.student_name,
+        student_number: null,
+        company: placement.company,
+      }));
+
+  const selectedPlacement = studentOptions.find((s) => s.id === String(selectedStudentId));
 
   const alreadyEvaluated = existingEvals.some(
     (e) => String(e.student) === String(selectedStudentId) && e.evaluation_type === 'academic'
@@ -212,9 +238,9 @@ const AcademicEvaluate = () => {
                       disabled={loading}
                       className="w-full appearance-none pr-10 pl-4 py-3 text-sm rounded-xl border border-sky-300 bg-white focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:border-cyan-500 transition font-semibold text-slate-900 disabled:opacity-50">
                       <option value="">— Select a student —</option>
-                      {placements.map((p) => (
-                        <option key={p.id} value={String(p.student)}>
-                          {p.student_name} — {p.company}
+                      {studentOptions.map((student) => (
+                        <option key={student.id} value={student.id}>
+                          {student.student_name} — {student.company}
                         </option>
                       ))}
                     </select>
@@ -232,6 +258,11 @@ const AcademicEvaluate = () => {
                           <span className="flex items-center gap-1 text-xs text-slate-600 font-medium">
                             <Building2 size={10} /> {selectedPlacement.company}
                           </span>
+                          {selectedPlacement.student_number && (
+                            <span className="text-xs text-slate-600 font-medium">
+                              #{selectedPlacement.student_number}
+                            </span>
+                          )}
                         </div>
                       </div>
                       {alreadyEvaluated && (
