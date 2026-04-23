@@ -485,33 +485,6 @@ const HeroSection = () => {
           >
             Explore System
           </a>
-          <a
-            href="/signup"
-            style={{
-              padding: "15px 38px",
-              background: "transparent",
-              color: "rgba(232,223,200,0.5)",
-              fontWeight: 500,
-              fontSize: 14,
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              textDecoration: "none",
-              borderRadius: 2,
-              border: "1px solid rgba(232,223,200,0.1)",
-              fontFamily: "Georgia, serif",
-              transition: "all 0.22s ease",
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.color = "#e8dfc8";
-              e.target.style.borderColor = "rgba(232,223,200,0.28)";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.color = "rgba(232,223,200,0.5)";
-              e.target.style.borderColor = "rgba(232,223,200,0.1)";
-            }}
-          >
-            Create Account
-          </a>
         </div>
 
         {/* Workflow pillars */}
