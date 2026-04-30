@@ -426,6 +426,7 @@ const HeroSection = () => {
             marginBottom: 80,
           }}
         >
+          
           <Link
             to="/signup"
             style={{
