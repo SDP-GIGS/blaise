@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -425,8 +426,8 @@ const HeroSection = () => {
             marginBottom: 80,
           }}
         >
-          <a
-            href="#modules"
+          <Link
+            to="/signup"
             style={{
               padding: "15px 38px",
               background: "transparent",
@@ -450,8 +451,8 @@ const HeroSection = () => {
               e.target.style.transform = "translateY(0)";
             }}
           >
-            Explore System
-          </a>
+            Get Started
+          </Link>
         </div>
 
         {/* Workflow pillars */}
