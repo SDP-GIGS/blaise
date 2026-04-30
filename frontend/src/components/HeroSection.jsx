@@ -444,12 +444,12 @@ const HeroSection = () => {
               transition: "all 0.22s ease",
             }}
             onMouseEnter={(e) => {
-              e.target.style.background = "rgba(180,140,30,0.08)";
-              e.target.style.transform = "translateY(-2px)";
+              e.currentTarget.style.background = "rgba(180,140,30,0.08)";
+              e.currentTarget.style.transform = "translateY(-2px)";
             }}
             onMouseLeave={(e) => {
-              e.target.style.background = "transparent";
-              e.target.style.transform = "translateY(0)";
+              e.currentTarget.style.background = "transparent";
+              e.currentTarget.style.transform = "translateY(0)";
             }}
           >
             Get Started
