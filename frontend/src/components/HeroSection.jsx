@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -411,11 +412,7 @@ const HeroSection = () => {
             letterSpacing: "0.01em",
           }}
         >
-          ILES is a full-stack workflow platform built for Makerere University's
-          internship programme. It connects students with their supervisors and
-          academic coordinators — enabling structured logbook submissions,
-          real-time review, and transparent grade computation across every
-          placement cycle.
+
         </p>
 
         {/* CTA */}
@@ -429,37 +426,9 @@ const HeroSection = () => {
             marginBottom: 80,
           }}
         >
-          <a
-            href="/login"
-            style={{
-              padding: "15px 38px",
-              background: "#c9a227",
-              color: "#080c14",
-              fontWeight: 700,
-              fontSize: 14,
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              textDecoration: "none",
-              borderRadius: 2,
-              fontFamily: "Georgia, serif",
-              boxShadow: "0 4px 24px rgba(180,140,30,0.35)",
-              transition: "all 0.22s ease",
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.background = "#e8c84a";
-              e.target.style.transform = "translateY(-2px)";
-              e.target.style.boxShadow = "0 8px 32px rgba(180,140,30,0.5)";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.background = "#c9a227";
-              e.target.style.transform = "translateY(0)";
-              e.target.style.boxShadow = "0 4px 24px rgba(180,140,30,0.35)";
-            }}
-          >
-            Get Started
-          </a>
-          <a
-            href="#modules"
+          
+          <Link
+            to="/signup"
             style={{
               padding: "15px 38px",
               background: "transparent",
@@ -475,43 +444,16 @@ const HeroSection = () => {
               transition: "all 0.22s ease",
             }}
             onMouseEnter={(e) => {
-              e.target.style.background = "rgba(180,140,30,0.08)";
-              e.target.style.transform = "translateY(-2px)";
+              e.currentTarget.style.background = "rgba(180,140,30,0.08)";
+              e.currentTarget.style.transform = "translateY(-2px)";
             }}
             onMouseLeave={(e) => {
-              e.target.style.background = "transparent";
-              e.target.style.transform = "translateY(0)";
+              e.currentTarget.style.background = "transparent";
+              e.currentTarget.style.transform = "translateY(0)";
             }}
           >
-            Explore System
-          </a>
-          <a
-            href="/signup"
-            style={{
-              padding: "15px 38px",
-              background: "transparent",
-              color: "rgba(232,223,200,0.5)",
-              fontWeight: 500,
-              fontSize: 14,
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              textDecoration: "none",
-              borderRadius: 2,
-              border: "1px solid rgba(232,223,200,0.1)",
-              fontFamily: "Georgia, serif",
-              transition: "all 0.22s ease",
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.color = "#e8dfc8";
-              e.target.style.borderColor = "rgba(232,223,200,0.28)";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.color = "rgba(232,223,200,0.5)";
-              e.target.style.borderColor = "rgba(232,223,200,0.1)";
-            }}
-          >
-            Create Account
-          </a>
+            Get Started
+          </Link>
         </div>
 
         {/* Workflow pillars */}
