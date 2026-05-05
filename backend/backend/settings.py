@@ -43,8 +43,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -120,9 +120,6 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-CORS_ALLOWS_CREDENTIALS = True
-
-
 AUTH_USER_MODEL = 'api.CustomUser'
 
 REST_FRAMEWORK = {
@@ -139,6 +136,9 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
+CORS_ALLOW_CREDENTIALS = True
+
+
 CORS_ALLOWED_ORIGINS = [
         'http://localhost:5173',
         'http://localhost:3000',
@@ -146,6 +146,19 @@ CORS_ALLOWED_ORIGINS = [
         "http://127.0.0.1:5173",
         "https://blaise.tagooledavid.com",
         ]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
 
 CSRF_TRUSTED_ORIGINS = [
     "https://iles-platform.netlify.app",
