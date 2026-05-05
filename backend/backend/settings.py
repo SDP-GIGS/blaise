@@ -159,6 +159,14 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
 ]
 
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://iles-platform.netlify.app",
