@@ -36,8 +36,15 @@ const Login = () => {
     const result = await signIn(identifier, password);
     setLoading(false);
 
-    if (result.success && result.role && rolePaths[result.role]) {
-      navigate(rolePaths[result.role]);
+    if (result.success && result.role) {
+      // Check if user was trying to access a specific page
+      const intendedPath = sessionStorage.getItem('intendedPath');
+      if (intendedPath) {
+        sessionStorage.removeItem('intendedPath');
+        navigate(intendedPath);
+      } else if (rolePaths[result.role]) {
+        navigate(rolePaths[result.role]);
+      }
     } else {
       setError(result.error || "Login failed.");
     }
