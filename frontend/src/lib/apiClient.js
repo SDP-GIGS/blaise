@@ -67,6 +67,7 @@ const refreshAccessToken = async () => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ refresh }),
+    credentials: "include",
   });
 
   const data = await parseResponseBody(response);
@@ -121,6 +122,7 @@ export const request = async (endpoint, options = {}) => {
     method,
     headers: requestHeaders,
     body: body !== undefined ? JSON.stringify(body) : undefined,
+    credentials: "include",
   });
 
   const data = await parseResponseBody(response);
