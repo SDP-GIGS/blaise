@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
 import { BarChart2, Users, Briefcase, Bell, CheckCircle2 } from "lucide-react";
 import { apiClient } from "@/lib/apiClient";
@@ -76,15 +77,15 @@ export default function AdminDashboard() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-              <a href="/admin/users" className="rounded-xl bg-cyan-800/80 hover:bg-cyan-700/90 transition text-white font-semibold flex items-center gap-3 px-6 py-5 shadow-lg">
+              <Link to="/admin/users" className="rounded-xl bg-cyan-800/80 hover:bg-cyan-700/90 transition text-white font-semibold flex items-center gap-3 px-6 py-5 shadow-lg">
                 <Users className="w-6 h-6" /> Manage Users
-              </a>
-              <a href="/admin/placements" className="rounded-xl bg-emerald-800/80 hover:bg-emerald-700/90 transition text-white font-semibold flex items-center gap-3 px-6 py-5 shadow-lg">
+              </Link>
+              <Link to="/admin/placements" className="rounded-xl bg-emerald-800/80 hover:bg-emerald-700/90 transition text-white font-semibold flex items-center gap-3 px-6 py-5 shadow-lg">
                 <Briefcase className="w-6 h-6" /> Manage Placements
-              </a>
-              <a href="/admin/evaluations" className="rounded-xl bg-yellow-700/80 hover:bg-yellow-600/90 transition text-white font-semibold flex items-center gap-3 px-6 py-5 shadow-lg">
+              </Link>
+              <Link to="/admin/evaluations" className="rounded-xl bg-yellow-700/80 hover:bg-yellow-600/90 transition text-white font-semibold flex items-center gap-3 px-6 py-5 shadow-lg">
                 <CheckCircle2 className="w-6 h-6" /> Manage Evaluations
-              </a>
+              </Link>
             </div>
 
             <div className="rounded-3xl bg-[#0d1926] border border-cyan-900/30 p-8 shadow-xl">
