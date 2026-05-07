@@ -7,6 +7,7 @@ import {
   Calculator,
   BarChart3,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const modules = [
   {
@@ -101,12 +102,12 @@ const ModulesSection = () => {
           <p className="text-yellow-700/60 dark:text-yellow-300/60 text-sm mb-3">
             Ready to get started?
           </p>
-          <a
-            href="/login"
+          <Link
+            to="/login"
             className="px-6 py-2.5 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-600 text-blue-900 font-bold text-sm hover:opacity-90 transition-opacity shadow-lg"
           >
             Sign In
-          </a>
+          </Link>
         </div>
       </div>
     </section>

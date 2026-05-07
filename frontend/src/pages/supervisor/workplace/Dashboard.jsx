@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { apiClient } from "@/lib/apiClient";
@@ -92,10 +93,10 @@ const StudentRow = ({ placement, logs, index }) => {
             </div>
           )}
           <div className="px-6 py-3 border-t border-[#1a3050]">
-            <a href="/supervisor/workplace/review"
+            <Link to="/supervisor/workplace/review"
               className="text-xs text-sky-400 hover:underline font-medium">
               Go to Review Logs →
-            </a>
+            </Link>
           </div>
         </div>
       )}
@@ -196,10 +197,10 @@ const WorkplaceSupervisorDashboard = () => {
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1a2e47] hover:bg-[#1e3554] border border-[#1e3a5f] text-slate-200 hover:text-white text-sm font-semibold transition">
                   <Download className="w-4 h-4" /> Export
                 </button>
-                <a href="/supervisor/workplace/review"
+                <Link to="/supervisor/workplace/review"
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-sky-500 hover:bg-sky-400 text-white text-sm font-semibold transition">
                   <ClipboardCheck className="w-4 h-4" /> Review Logs
-                </a>
+                </Link>
               </div>
             </div>
           </motion.div>
@@ -290,10 +291,10 @@ const WorkplaceSupervisorDashboard = () => {
                     <ClipboardCheck className="w-4 h-4 text-amber-400" />
                     <h2 className="text-sm font-semibold text-white">Pending Logs</h2>
                   </div>
-                  <a href="/supervisor/workplace/review"
+                  <Link to="/supervisor/workplace/review"
                     className="text-xs text-sky-400 hover:underline font-medium">
                     Review all →
-                  </a>
+                  </Link>
                 </div>
                 <div className="divide-y divide-[#122030] overflow-y-auto max-h-80">
                   {pendingLogs.length === 0 ? (
