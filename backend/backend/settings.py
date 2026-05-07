@@ -7,7 +7,7 @@ SECRET_KEY = 'django-insecure-kmx7z4a1lrc2&_ae@=_ym_u2t7rci#7bg9m^%$vwchj463vxp4
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "blaise.tagooledavid.com", "tagooledavid.com", "*"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "blaise-api.tagooledavid.com", "tagooledavid.com"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -22,7 +22,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'corsheaders.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -88,7 +88,12 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS=[
+    'https://iles-platform.netlify.app',
+    'https://blaise-api.tagooledavid.com',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+]
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_HEADERS = [
@@ -114,7 +119,7 @@ CORS_ALLOW_METHODS = [
 
 CSRF_TRUSTED_ORIGINS = [
     "https://iles-platform.netlify.app",
-    "https://blaise.tagooledavid.com",
+    "https://blaise-api.tagooledavid.com",
     "http://127.0.0.1:5173",
 ]
 
