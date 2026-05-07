@@ -182,7 +182,7 @@ const SignUp = () => {
                 type="text"
                 value={studentNumber}
                 onChange={(e) => setStudentNumber(e.target.value)}
-                placeholder="e.g. 24007007001"
+                placeholder="e.g. 2400700701"
                 className="w-full rounded-xl border border-slate-400/40 bg-slate-950 px-4 py-3 text-sm text-slate-50 outline-none transition placeholder:text-slate-600 focus:-translate-y-px focus:border-yellow-400/90 focus:shadow-[0_0_0_1px_rgba(250,204,21,0.6)]"
               />
               <p className="text-[0.65rem] text-slate-500">
