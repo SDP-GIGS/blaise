@@ -1,6 +1,7 @@
 ﻿from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from .models import CustomUser, InternshipPlacement, WeeklyLog, SupervisorReview, Evaluation, CriteriaScore
+from django.utils import timezone
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -42,6 +43,8 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'full_name', 'email', 'student_number', 'role']
         read_only_fields = ['email']
 
+
+
 class InternshipPlacementSerializer(serializers.ModelSerializer):
     student_name = serializers.CharField(source='student.full_name', read_only=True)
     academic_supervisor_name = serializers.CharField(source='academic_supervisor.full_name', read_only=True)
@@ -56,6 +59,22 @@ class InternshipPlacementSerializer(serializers.ModelSerializer):
             'company', 'start_date', 'end_date', 'status', 'created_at'
         ]
         read_only_fields = ['created_at']
+
+    def validate(self, data):
+        today = timezone.now().date()
+        start_date = data.get('start_date')
+        end_date = data.get('end_date')
+
+        if start_date and start_date < today:
+            raise serializers.ValidationError({'start_date': 'Start date cannot be in the past.'})
+
+        if end_date and end_date <= today:
+            raise serializers.ValidationError({'end_date': 'End date must be in the future.'})
+
+        if start_date and end_date and end_date <= start_date:
+            raise serializers.ValidationError({'end_date': 'End date must be after start date.'})
+
+        return data
 
 class WeeklyLogSerializer(serializers.ModelSerializer):
     student_name = serializers.CharField(source='student.full_name', read_only=True)
