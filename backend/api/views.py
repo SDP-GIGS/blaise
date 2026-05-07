@@ -369,9 +369,16 @@ def log_list(request):
     if request.method == 'POST':
         serializer = WeeklyLogSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(student=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                serializer.save(student=request.user)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                return Response(
+                    {'error': 'A log for this week already exists. Please use a different week number.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET', 'PUT'])
 def log_detail(request, pk):
