@@ -297,6 +297,7 @@ const PlacementModal = ({
                       type="date"
                       value={form.start_date}
                       onChange={f("start_date")}
+                      min={new Date().toISOString().split('T')[0]}
                       className={`${inputCls} pl-10`}
                     />
                   </div>
@@ -312,6 +313,7 @@ const PlacementModal = ({
                       type="date"
                       value={form.end_date}
                       onChange={f("end_date")}
+                      min={new Date().toISOString().split('T')[0]}
                       className={`${inputCls} pl-10`}
                     />
                   </div>
