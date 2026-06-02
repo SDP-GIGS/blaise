@@ -13,29 +13,6 @@ from .serializers import (
     SupervisorReviewSerializer, EvaluationSerializer, CriteriaScoreSerializer
 )
 
-
-def _format_relative_time(dt):
-    if not dt:
-        return "Just now"
-
-    if isinstance(dt, datetime.date) and not isinstance(dt, datetime.datetime):
-        dt = timezone.make_aware(datetime.datetime.combine(dt, datetime.time.min))
-
-    delta = timezone.now() - dt
-
-    if delta.days > 0:
-        return f"{delta.days} day{'s' if delta.days != 1 else ''} ago"
-
-    hours = delta.seconds // 3600
-    if hours > 0:
-        return f"{hours} hour{'s' if hours != 1 else ''} ago"
-
-    minutes = (delta.seconds % 3600) // 60
-    if minutes > 0:
-        return f"{minutes} minute{'s' if minutes != 1 else ''} ago"
-
-    return "Just now"
-
 @api_view(['GET'])
 def dashboard(request):
     user = request.user
