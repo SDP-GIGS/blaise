@@ -1,4 +1,5 @@
-﻿from django.contrib.auth import authenticate
+﻿import datetime
+from django.contrib.auth import authenticate
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -16,6 +17,9 @@ from .serializers import (
 def _format_relative_time(dt):
     if not dt:
         return "Just now"
+
+    if isinstance(dt, datetime.date) and not isinstance(dt, datetime.datetime):
+        dt = timezone.make_aware(datetime.datetime.combine(dt, datetime.time.min))
 
     delta = timezone.now() - dt
 
