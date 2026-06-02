@@ -1,80 +1,39 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useLocation, Link, Navigate } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { apiClient } from "@/lib/apiClient";
 import { roleLabels } from "@/data/mockData";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  BookOpen,
-  LayoutDashboard,
-  NotebookPen,
-  ClipboardCheck,
-  Users,
-  Building2,
-  BarChart3,
-  Calculator,
-  Award,
-  LogOut,
-  ChevronLeft,
-  Menu,
-  X,
-  Sparkles,
-  Bell,
+  BookOpen, LayoutDashboard, NotebookPen, ClipboardCheck,
+  Users, Building2, BarChart3, Calculator, Award, LogOut,
+  ChevronLeft, Menu, X, Sparkles, Bell, Check, CheckCheck,
 } from "lucide-react";
-
-const SUPERVISOR_NOTIFICATIONS_KEY = "supervisor_notifications_unread";
-
-const getSupervisorNotificationCount = () => {
-  const storedCount = Number(localStorage.getItem(SUPERVISOR_NOTIFICATIONS_KEY));
-  if (Number.isNaN(storedCount)) {
-    return 3;
-  }
-  return storedCount;
-};
 
 const navByRole = {
   student: [
-    { label: "Dashboard", path: "/student", icon: LayoutDashboard },
-    { label: "Weekly Logbook", path: "/student/logbook", icon: NotebookPen },
-    { label: "My Placement", path: "/student/placement", icon: Building2 },
-    { label: "My Scores", path: "/student/scores", icon: Award },
-    { label: "Profile & Settings", path: "/student/profile", icon: Users },
+    { label: "Dashboard",      path: "/student",           icon: LayoutDashboard },
+    { label: "Weekly Logbook", path: "/student/logbook",   icon: NotebookPen     },
+    { label: "My Placement",   path: "/student/placement", icon: Building2       },
+    { label: "My Scores",      path: "/student/scores",    icon: Award           },
+    { label: "Profile & Settings", path: "/student/profile", icon: Users         },
   ],
   workplace_supervisor: [
-    {
-      label: "Dashboard",
-      path: "/supervisor/workplace",
-      icon: LayoutDashboard,
-    },
-    {
-      label: "Review Logs",
-      path: "/supervisor/workplace/review",
-      icon: ClipboardCheck,
-    },
-    {
-      label: "Evaluate",
-      path: "/supervisor/workplace/evaluate",
-      icon: Calculator,
-    },
+    { label: "Dashboard",   path: "/supervisor/workplace",          icon: LayoutDashboard },
+    { label: "Review Logs", path: "/supervisor/workplace/review",   icon: ClipboardCheck  },
+    { label: "Evaluate",    path: "/supervisor/workplace/evaluate", icon: Calculator      },
   ],
   academic_supervisor: [
-    { label: "Dashboard", path: "/supervisor/academic", icon: LayoutDashboard },
-    {
-      label: "Review Logs",
-      path: "/supervisor/academic/review",
-      icon: ClipboardCheck,
-    },
-    {
-      label: "Evaluate",
-      path: "/supervisor/academic/evaluate",
-      icon: Calculator,
-    },
+    { label: "Dashboard",   path: "/supervisor/academic",          icon: LayoutDashboard },
+    { label: "Review Logs", path: "/supervisor/academic/review",   icon: ClipboardCheck  },
+    { label: "Evaluate",    path: "/supervisor/academic/evaluate", icon: Calculator      },
   ],
   admin: [
-    { label: "Dashboard", path: "/admin", icon: LayoutDashboard },
-    { label: "Placements", path: "/admin/placements", icon: Building2 },
-    { label: "Users", path: "/admin/users", icon: Users },
-    { label: "Evaluations", path: "/admin/evaluations", icon: Award },
-    { label: "Reports", path: "/admin/reports", icon: BarChart3 },
+    { label: "Dashboard",   path: "/admin",             icon: LayoutDashboard },
+    { label: "Placements",  path: "/admin/placements",  icon: Building2       },
+    { label: "Users",       path: "/admin/users",       icon: Users           },
+    { label: "Evaluations", path: "/admin/evaluations", icon: Award           },
+    { label: "Reports",     path: "/admin/reports",     icon: BarChart3       },
   ],
 };
 
@@ -83,31 +42,172 @@ const AppLayout = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [supervisorNotificationCount, setSupervisorNotificationCount] = useState(
-    getSupervisorNotificationCount,
-  );
+  const [notifications, setNotifications] = useState([]);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const notifRef = useRef(null);
+
+  const unreadCount = notifications.filter((n) => !n.is_read).length;
+
+  // Fetch notifications
+  const fetchNotifications = async () => {
+    try {
+      const data = await apiClient.get('/notifications/');
+      setNotifications(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
-    const isNotificationsRoute =
-      location.pathname === "/supervisor/notifications" ||
-      location.pathname === "/notifications";
-
-    if (isNotificationsRoute) {
-      localStorage.setItem(SUPERVISOR_NOTIFICATIONS_KEY, "0");
-      setSupervisorNotificationCount(0);
-      return;
+    if (user) {
+      fetchNotifications();
+      // Poll every 30 seconds for new notifications
+      const interval = setInterval(fetchNotifications, 30000);
+      return () => clearInterval(interval);
     }
+  }, [user]);
 
-    setSupervisorNotificationCount(getSupervisorNotificationCount());
-  }, [location.pathname]);
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (notifRef.current && !notifRef.current.contains(e.target)) {
+        setNotifOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
-  // Allow open navigation: do not redirect if not logged in
+  const markAsRead = async (id) => {
+    try {
+      await apiClient.post(`/notifications/${id}/read/`);
+      setNotifications((prev) =>
+        prev.map((n) => n.id === id ? { ...n, is_read: true } : n)
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const markAllAsRead = async () => {
+    try {
+      await apiClient.post('/notifications/read-all/');
+      setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const navItems = user ? navByRole[user.role] || [] : [];
 
   const handleLogout = () => {
     signOut();
     navigate("/login");
   };
+
+  const timeAgo = (dateStr) => {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'just now';
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    return `${Math.floor(hrs / 24)}d ago`;
+  };
+
+  // Notification Bell Component
+  const NotificationBell = () => (
+    <div className="relative" ref={notifRef}>
+      <button onClick={() => setNotifOpen((v) => !v)}
+        className="relative p-2 rounded-full hover:bg-yellow-100 dark:hover:bg-yellow-900/30 transition-colors">
+        <Bell className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+        {unreadCount > 0 && (
+          <span className="absolute top-1 right-1 min-w-4 h-4 px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center animate-pulse">
+            {unreadCount}
+          </span>
+        )}
+      </button>
+
+      <AnimatePresence>
+        {notifOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.95 }}
+            transition={{ duration: 0.15 }}
+            className="absolute right-0 top-10 w-80 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+              <div className="flex items-center gap-2">
+                <Bell className="w-4 h-4 text-yellow-500" />
+                <span className="text-sm font-bold text-gray-800 dark:text-white">
+                  Notifications
+                </span>
+                {unreadCount > 0 && (
+                  <span className="px-1.5 py-0.5 rounded-full bg-red-100 text-red-600 text-xs font-bold">
+                    {unreadCount}
+                  </span>
+                )}
+              </div>
+              {unreadCount > 0 && (
+                <button onClick={markAllAsRead}
+                  className="flex items-center gap-1 text-xs text-yellow-600 hover:text-yellow-800 font-medium transition-colors">
+                  <CheckCheck className="w-3.5 h-3.5" /> Mark all read
+                </button>
+              )}
+            </div>
+
+            {/* Notification List */}
+            <div className="max-h-80 overflow-y-auto">
+              {notifications.length === 0 ? (
+                <div className="py-10 text-center">
+                  <Bell className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                  <p className="text-sm text-gray-400">No notifications yet</p>
+                </div>
+              ) : (
+                notifications.map((n) => (
+                  <div key={n.id}
+                    onClick={() => markAsRead(n.id)}
+                    className={`flex items-start gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b border-gray-50 dark:border-gray-800 ${
+                      !n.is_read ? 'bg-yellow-50/50 dark:bg-yellow-900/10' : ''
+                    }`}>
+                    <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
+                      !n.is_read ? 'bg-yellow-500' : 'bg-gray-200 dark:bg-gray-600'
+                    }`} />
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-xs leading-relaxed ${
+                        !n.is_read
+                          ? 'text-gray-800 dark:text-white font-medium'
+                          : 'text-gray-500 dark:text-gray-400'
+                      }`}>
+                        {n.message}
+                      </p>
+                      <p className="text-[10px] text-gray-400 mt-0.5">
+                        {timeAgo(n.created_at)}
+                      </p>
+                    </div>
+                    {!n.is_read && (
+                      <Check className="w-3.5 h-3.5 text-yellow-500 flex-shrink-0 mt-1" />
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Footer */}
+            {notifications.length > 0 && (
+              <div className="px-4 py-2 border-t border-gray-100 dark:border-gray-700 text-center">
+                <p className="text-xs text-gray-400">
+                  {notifications.length} notification{notifications.length !== 1 ? 's' : ''}
+                </p>
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 
   const SidebarContent = () => (
     <>
@@ -118,9 +218,7 @@ const AppLayout = ({ children }) => {
             <BookOpen className="w-5 h-5 text-white" />
           </div>
           <div>
-            <span className="text-lg font-bold font-display text-foreground tracking-tight">
-              ILES
-            </span>
+            <span className="text-lg font-bold font-display text-foreground tracking-tight">ILES</span>
             <div className="flex items-center gap-1">
               <Sparkles className="w-2.5 h-2.5 text-accent" />
               <span className="text-[10px] text-accent font-medium">PRO</span>
@@ -133,88 +231,47 @@ const AppLayout = ({ children }) => {
       <div className="px-5 py-4">
         <div className="rounded-xl bg-white/80 dark:bg-gray-900/80 shadow p-3">
           <p className="text-[10px] font-bold text-yellow-600 uppercase tracking-widest">
-            {roleLabels[user.role]}
+            {roleLabels[user?.role]}
           </p>
           <p className="text-sm font-semibold text-gray-900 dark:text-white mt-0.5">
-            {user.name}
+            {user?.full_name}
           </p>
         </div>
       </div>
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-2 space-y-1">
-        <p className="px-3 mb-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-          Navigation
-        </p>
+        <p className="px-3 mb-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Navigation</p>
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
-            <Link
-              key={item.path}
-              to={item.path}
-              onClick={() => setMobileOpen(false)}
+            <Link key={item.path} to={item.path} onClick={() => setMobileOpen(false)}
               className={`relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
                 isActive
                   ? "text-yellow-700 bg-yellow-100 dark:bg-yellow-900/20"
                   : "text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-800"
-              }`}
-            >
+              }`}>
               {isActive && (
-                <motion.div
-                  layoutId="activeNav"
-                  className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full gradient-gold"
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                />
+                <motion.div layoutId="activeNav"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-yellow-500"
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }} />
               )}
-              <item.icon
-                className={`w-4 h-4 transition-colors ${isActive ? "text-yellow-700" : "group-hover:text-gray-900 dark:group-hover:text-white"}`}
-              />
+              <item.icon className={`w-4 h-4 transition-colors ${isActive ? "text-yellow-700" : "group-hover:text-gray-900 dark:group-hover:text-white"}`} />
               {item.label}
             </Link>
           );
         })}
-
-        {/* Notifications row for supervisors */}
-        {(user?.role === "workplace_supervisor" ||
-          user?.role === "academic_supervisor") && (
-          <Link
-            to="/supervisor/notifications"
-            onClick={() => setMobileOpen(false)}
-            className={`relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
-              location.pathname === "/supervisor/notifications"
-                ? "text-yellow-700 bg-yellow-100 dark:bg-yellow-900/20"
-                : "text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-800"
-            }`}
-          >
-            <Bell
-              className={`w-4 h-4 transition-colors ${location.pathname === "/supervisor/notifications" ? "text-yellow-700" : "group-hover:text-gray-900 dark:group-hover:text-white"}`}
-            />
-            Notifications
-            {supervisorNotificationCount > 0 && (
-              <span className="ml-auto inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-bold bg-red-500 text-white animate-pulse">
-                {supervisorNotificationCount}
-              </span>
-            )}
-          </Link>
-        )}
       </nav>
 
       {/* Footer */}
       <div className="p-3 border-t border-gray-200 dark:border-gray-700 space-y-1">
-        <Link
-          to="/"
-          onClick={() => setMobileOpen(false)}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:hover:text-white dark:hover:bg-gray-800 transition-all duration-200"
-        >
-          <ChevronLeft className="w-4 h-4" />
-          Back to Home
+        <Link to="/" onClick={() => setMobileOpen(false)}
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:hover:text-white dark:hover:bg-gray-800 transition-all duration-200">
+          <ChevronLeft className="w-4 h-4" /> Back to Home
         </Link>
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-red-500 hover:bg-red-100 hover:text-red-700 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-all duration-200"
-        >
-          <LogOut className="w-4 h-4" />
-          Sign Out
+        <button onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-red-500 hover:bg-red-100 hover:text-red-700 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-all duration-200">
+          <LogOut className="w-4 h-4" /> Sign Out
         </button>
       </div>
     </>
@@ -231,33 +288,15 @@ const AppLayout = ({ children }) => {
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-white/80 dark:bg-gray-900/80 shadow flex items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center shadow-lg">
-            <BookOpen className="w-4 h-4 text-background" />
+            <BookOpen className="w-4 h-4 text-white" />
           </div>
-          <span className="text-base font-bold font-display text-gray-900 dark:text-white">
-            ILES
-          </span>
+          <span className="text-base font-bold font-display text-gray-900 dark:text-white">ILES</span>
         </Link>
         <div className="flex items-center gap-2">
-          <Link
-            to="/notifications"
-            className="relative group p-2 rounded-full hover:bg-cyan-100 dark:hover:bg-cyan-900 transition-colors"
-          >
-            <Bell className="w-6 h-6 text-cyan-600 dark:text-cyan-300" />
-            {supervisorNotificationCount > 0 && (
-              <span className="absolute top-1 right-1 min-w-4 h-4 px-1 rounded-full bg-cyan-500 text-white text-[10px] font-bold flex items-center justify-center animate-pulse">
-                {supervisorNotificationCount}
-              </span>
-            )}
-          </Link>
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-          >
-            {mobileOpen ? (
-              <X className="w-5 h-5 text-foreground" />
-            ) : (
-              <Menu className="w-5 h-5 text-foreground" />
-            )}
+          <NotificationBell />
+          <button onClick={() => setMobileOpen(!mobileOpen)}
+            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </div>
@@ -266,20 +305,12 @@ const AppLayout = ({ children }) => {
       <AnimatePresence>
         {mobileOpen && (
           <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               onClick={() => setMobileOpen(false)}
-              className="lg:hidden fixed inset-0 z-40 bg-gray-900/80 backdrop-blur-sm"
-            />
-            <motion.aside
-              initial={{ x: -280 }}
-              animate={{ x: 0 }}
-              exit={{ x: -280 }}
+              className="lg:hidden fixed inset-0 z-40 bg-gray-900/80 backdrop-blur-sm" />
+            <motion.aside initial={{ x: -280 }} animate={{ x: 0 }} exit={{ x: -280 }}
               transition={{ type: "spring", damping: 25 }}
-              className="lg:hidden fixed top-0 left-0 z-50 w-[260px] h-screen bg-gradient-to-b from-yellow-50 to-yellow-100 dark:from-yellow-900 dark:to-yellow-950 border-r border-gray-200 dark:border-gray-700 flex flex-col"
-            >
+              className="lg:hidden fixed top-0 left-0 z-50 w-[260px] h-screen bg-gradient-to-b from-yellow-50 to-yellow-100 dark:from-yellow-900 dark:to-yellow-950 border-r border-gray-200 dark:border-gray-700 flex flex-col">
               <SidebarContent />
             </motion.aside>
           </>
@@ -289,18 +320,17 @@ const AppLayout = ({ children }) => {
       {/* Main content */}
       <main className="flex-1 overflow-auto lg:pt-0 pt-14 flex flex-col">
         <div className="relative flex-1 min-h-full">
-          {/* Subtle grid background */}
           <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(0,0,0,0.03)_1px,transparent_1px)] [background-size:20px_20px] opacity-30 pointer-events-none" />
-          {/* Ambient glow orbs */}
           <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-yellow-100/60 dark:bg-yellow-900/20 blur-[120px] pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-blue-100/60 dark:bg-blue-900/20 blur-[100px] pointer-events-none" />
 
+          {/* Desktop notification bell top right */}
+          <div className="hidden lg:flex absolute top-4 right-6 z-20">
+            <NotificationBell />
+          </div>
+
           <div className="relative z-10 p-4 sm:p-6 lg:p-8">
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-            >
+            <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
               {children}
             </motion.div>
           </div>
@@ -311,5 +341,3 @@ const AppLayout = ({ children }) => {
 };
 
 export default AppLayout;
-
-
