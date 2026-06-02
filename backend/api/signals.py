@@ -17,3 +17,12 @@ def notify_on_log_submit(sender, instance, created, **kwargs):
                 )
         except Exception:
             pass
+
+# Notify student when their log is approved or rejected
+@receiver(post_save, sender=WeeklyLog)
+def notify_on_log_review(sender, instance, created, **kwargs):
+    if not created and instance.status in ['approved', 'rejected']:
+        Notification.objects.create(
+            recipient=instance.student,
+            message=f"Your Week {instance.week_number} log has been {instance.status}."
+        )
