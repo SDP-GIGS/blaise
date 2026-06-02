@@ -48,3 +48,15 @@ def notify_on_placement_assigned(sender, instance, created, **kwargs):
             recipient=instance.student,
             message=f"You have been assigned to {instance.company}. Your internship starts on {instance.start_date}."
         )
+
+# Notify admin when a new user registers
+@receiver(post_save, sender=CustomUser)
+def notify_admin_on_register(sender, instance, created, **kwargs):
+    if created and instance.role != 'admin':
+        # Notify all admins
+        admins = CustomUser.objects.filter(role='admin')
+        for admin in admins:
+            Notification.objects.create(
+                recipient=admin,
+                message=f"New {instance.role} registered: {instance.full_name} ({instance.email})."
+            )
