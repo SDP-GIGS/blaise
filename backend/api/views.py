@@ -705,7 +705,7 @@ def notification_list(request):
             'id': n.id,
             'message': n.message,
             'is_read': n.is_read,
-            'created_at': n.created_at,
+            'created_at': n.created_at.isoformat(),  # FIX: serialize to string
         }
         for n in notifications
     ]

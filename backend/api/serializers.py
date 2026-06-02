@@ -61,7 +61,7 @@ class InternshipPlacementSerializer(serializers.ModelSerializer):
         read_only_fields = ['created_at']
 
     def validate(self, data):
-        today = timezone.now().date()
+        today = timezone.now().date()  
         start_date = data.get('start_date')
         end_date = data.get('end_date')
 
