@@ -5,7 +5,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils import timezone
-from .models import CustomUser, InternshipPlacement, WeeklyLog, SupervisorReview, Evaluation, CriteriaScore
+from .models import CustomUser, InternshipPlacement, WeeklyLog, SupervisorReview, Evaluation, CriteriaScore, Notification
 from .serializers import (
     RegisterSerializer, UserSerializer,
     InternshipPlacementSerializer, WeeklyLogSerializer,
@@ -696,3 +696,34 @@ def student_score(request, student_id):
         'final_score': final_score,
         'final_score_out_of': 100,
     })
+
+@api_view(['GET'])
+def notification_list(request):
+    notifications = Notification.objects.filter(recipient=request.user)
+    data = [
+        {
+            'id': n.id,
+            'message': n.message,
+            'is_read': n.is_read,
+            'created_at': n.created_at,
+        }
+        for n in notifications
+    ]
+    return Response(data)
+
+
+@api_view(['POST'])
+def mark_notification_read(request, pk):
+    try:
+        notification = Notification.objects.get(pk=pk, recipient=request.user)
+        notification.is_read = True
+        notification.save()
+        return Response({'status': 'marked as read'})
+    except Notification.DoesNotExist:
+        return Response({'error': 'Not found'}, status=404)
+
+
+@api_view(['POST'])
+def mark_all_notifications_read(request):
+    Notification.objects.filter(recipient=request.user, is_read=False).update(is_read=True)
+    return Response({'status': 'all marked as read'})
