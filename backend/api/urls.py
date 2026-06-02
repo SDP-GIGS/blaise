@@ -38,6 +38,10 @@ path('users/role/<str:role>/', views.users_by_role, name='users_by_role'),
 
 path('scores/<int:student_id>/', views.student_score, name='student_score'),
 
+path('notifications/', views.notification_list, name='notifications'),
+path('notifications/<int:pk>/read/', views.mark_notification_read, name='notification_read'),
+path('notifications/read-all/', views.mark_all_notifications_read, name='notifications_read_all'),
+
 ]
 
 
