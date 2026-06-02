@@ -26,3 +26,25 @@ def notify_on_log_review(sender, instance, created, **kwargs):
             recipient=instance.student,
             message=f"Your Week {instance.week_number} log has been {instance.status}."
         )
+
+# Notify academic supervisor when a student is assigned to them
+@receiver(post_save, sender=InternshipPlacement)
+def notify_on_placement_assigned(sender, instance, created, **kwargs):
+    if created:
+        # Notify academic supervisor
+        if instance.academic_supervisor:
+            Notification.objects.create(
+                recipient=instance.academic_supervisor,
+                message=f"{instance.student.full_name} has been assigned to you at {instance.company}."
+            )
+        # Notify workplace supervisor
+        if instance.workplace_supervisor:
+            Notification.objects.create(
+                recipient=instance.workplace_supervisor,
+                message=f"{instance.student.full_name} has been assigned to you at {instance.company}."
+            )
+        # Notify the student
+        Notification.objects.create(
+            recipient=instance.student,
+            message=f"You have been assigned to {instance.company}. Your internship starts on {instance.start_date}."
+        )
