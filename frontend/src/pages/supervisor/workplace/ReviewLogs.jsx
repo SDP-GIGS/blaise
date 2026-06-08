@@ -436,6 +436,7 @@ const StudentRow = ({ placement, logs, onReview, index }) => {
 };
 
 const WorkplaceReviewLogs = () => {
+  const [students, setStudents] = useState([]);
   const [placements, setPlacements] = useState([]);
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -453,10 +454,12 @@ const WorkplaceReviewLogs = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [placementsData, logsData] = await Promise.all([
+        const [studentsData, placementsData, logsData] = await Promise.all([
+          apiClient.get('/students/'),
           apiClient.get("/placements/"),
           apiClient.get("/logs/"),
         ]);
+        setStudents(Array.isArray(studentsData) ? studentsData : []);
         setPlacements(Array.isArray(placementsData) ? placementsData : []);
         setLogs(Array.isArray(logsData) ? logsData : []);
       } catch (err) {
@@ -467,6 +470,22 @@ const WorkplaceReviewLogs = () => {
     };
     loadData();
   }, []);
+
+  const placementByStudentId = Object.fromEntries(
+    placements.map((placement) => [String(placement.student), placement]),
+  );
+
+  const studentOptions = students.length
+    ? students.map((student) => ({
+        id: String(student.id),
+        student_name: student.full_name,
+        company: placementByStudentId[String(student.id)]?.company ?? "No placement assigned",
+      }))
+    : placements.map((placement) => ({
+        id: String(placement.student),
+        student_name: placement.student_name,
+        company: placement.company,
+      }));
 
   const handleReviewSubmit = async (log, status, comment, criteriaScores) => {
     setSaving(true);
@@ -497,7 +516,7 @@ const WorkplaceReviewLogs = () => {
     }
   };
 
-  const filteredPlacements = placements.filter((p) => {
+  const filteredPlacements = studentOptions.filter((p) => {
     const q = search.toLowerCase();
     return (
       !q ||
@@ -630,7 +649,7 @@ const WorkplaceReviewLogs = () => {
                 <StudentRow
                   key={placement.id}
                   placement={placement}
-                  logs={logsForStudent(placement.student)}
+                  logs={logsForStudent(placement.id)}
                   onReview={setActiveLog}
                   index={i}
                 />

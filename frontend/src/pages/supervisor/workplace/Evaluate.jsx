@@ -35,6 +35,7 @@ const Toast = ({ message, type, onClose }) => (
 );
 
 const WorkplaceEvaluate = () => {
+  const [students, setStudents] = useState([]);
   const [placements, setPlacements] = useState([]);
   const [existingEvals, setExistingEvals] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -54,13 +55,17 @@ const WorkplaceEvaluate = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [placementsData, evalsData] = await Promise.all([
+        const [studentsData, placementsData, evalsData] = await Promise.all([
+          apiClient.get('/students/'),
           apiClient.get('/placements/'),
           apiClient.get('/evaluations/'),
         ]);
+        setStudents(Array.isArray(studentsData) ? studentsData : []);
         setPlacements(Array.isArray(placementsData) ? placementsData : []);
         setExistingEvals(Array.isArray(evalsData) ? evalsData : []);
-        if (placementsData.length > 0) {
+        if (Array.isArray(studentsData) && studentsData.length > 0) {
+          setSelectedStudentId(String(studentsData[0].id));
+        } else if (Array.isArray(placementsData) && placementsData.length > 0) {
           setSelectedStudentId(String(placementsData[0].student));
         }
       } catch (err) {
@@ -71,6 +76,22 @@ const WorkplaceEvaluate = () => {
     };
     loadData();
   }, []);
+
+  const placementByStudentId = Object.fromEntries(
+    placements.map((placement) => [String(placement.student), placement]),
+  );
+
+  const studentOptions = students.length
+    ? students.map((student) => ({
+        id: String(student.id),
+        student_name: student.full_name,
+        company: placementByStudentId[String(student.id)]?.company ?? "No placement assigned",
+      }))
+    : placements.map((placement) => ({
+        id: String(placement.student),
+        student_name: placement.student_name,
+        company: placement.company,
+      }));
 
   const selectedPlacement = placements.find((p) => String(p.student) === String(selectedStudentId));
 
@@ -157,9 +178,9 @@ const WorkplaceEvaluate = () => {
                 disabled={loading}
                 className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-sm text-slate-900 appearance-none focus:outline-none focus:border-sky-500/50 focus:ring-2 focus:ring-sky-200 transition disabled:opacity-50 dark:bg-[#0b1523] dark:border-[#1e3a5f] dark:text-white dark:focus:ring-0">
                 <option value="">Select a student…</option>
-                {placements.map((p) => (
-                  <option key={p.id} value={String(p.student)}>
-                    {p.student_name} — {p.company}
+                {studentOptions.map((student) => (
+                  <option key={student.id} value={student.id}>
+                    {student.student_name} — {student.company}
                   </option>
                 ))}
               </select>

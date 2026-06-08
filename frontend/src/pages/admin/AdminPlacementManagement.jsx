@@ -454,7 +454,7 @@ const PlacementManagement = () => {
       const [placementsData, studentsData, academicData, workplaceData] =
         await Promise.all([
           apiClient.get("/placements/"),
-          apiClient.get("/users/role/student/"),
+          apiClient.get("/students/"),
           apiClient.get("/users/role/academic_supervisor/"),
           apiClient.get("/users/role/workplace_supervisor/"),
         ]);
