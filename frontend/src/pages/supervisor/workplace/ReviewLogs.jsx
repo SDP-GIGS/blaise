@@ -526,11 +526,11 @@ const WorkplaceReviewLogs = () => {
   });
 
   const logsForStudent = (studentId) => {
-    let sl = logs.filter((l) => l.student === studentId);
+    let sl = logs.filter((l) => Number(l.student) === Number(studentId));
     if (statusFilter !== "all")
-      sl = sl.filter((l) => l.status === statusFilter);
+        sl = sl.filter((l) => l.status === statusFilter);
     return sl;
-  };
+};
 
   const totalPending = logs.filter((l) => l.status === "submitted").length;
   const totalApproved = logs.filter((l) => l.status === "approved").length;
