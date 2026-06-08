@@ -218,7 +218,7 @@ const AdminEvaluations = () => {
     const loadData = async () => {
       try {
         const [studentsData, evalsData] = await Promise.all([
-          apiClient.get('/users/role/student/'),
+          apiClient.get('/students/'),
           apiClient.get('/evaluations/'),
         ]);
         const studentList = Array.isArray(studentsData) ? studentsData : [];
