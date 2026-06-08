@@ -95,6 +95,7 @@ const Login = () => {
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
               placeholder="2400700701 or admin@iles.com"
+              autoComplete="username"
               className="w-full rounded-xl border border-slate-400/40 bg-slate-950 px-4 py-3 text-sm text-slate-50 outline-none transition focus:-translate-y-px focus:border-yellow-400/90 focus:shadow-[0_0_0_1px_rgba(250,204,21,0.6)]"
             />
             <p className="text-[10px] text-slate-500">
@@ -113,6 +114,7 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
+                autoComplete="current-password"
                 className="w-full rounded-xl border border-slate-400/40 bg-slate-950 px-4 py-3 pr-9 text-sm text-slate-50 outline-none transition focus:-translate-y-px focus:border-yellow-400/90 focus:shadow-[0_0_0_1px_rgba(250,204,21,0.6)]"
               />
               <button type="button" onClick={() => setShowPass(!showPass)}
