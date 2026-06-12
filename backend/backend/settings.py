@@ -1,5 +1,6 @@
 from datetime import timedelta
 from pathlib import Path
+import sys
 import dj_database_url
 from dotenv import load_dotenv
 import os
@@ -132,3 +133,9 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+if 'test' in sys.argv:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'test_db.sqlite3',
+    }
